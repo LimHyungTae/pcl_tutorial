@@ -26,6 +26,9 @@ int main(int argc, char **argv)
     pt.x = 10.0; pt.y = 10.0; pt.z = 0;
     cloud->points.push_back(pt);
 
+    /*
+     * Main
+     */
     // Create the normal estimation class, and pass the input dataset to it
     pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne;
     ne.setInputCloud (cloud);

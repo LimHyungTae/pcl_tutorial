@@ -21,7 +21,9 @@ int main(int argc, char **argv){
         pc_src.push_back(point_xyz);
     }
 
-
+    /*
+     * Main
+     */
     pcl::PointCloud<pcl::PointXYZ> pc_sor_filtered;
     pcl::PointCloud<pcl::PointXYZ>::Ptr ptr_sor_filtered(new pcl::PointCloud<pcl::PointXYZ>);
 

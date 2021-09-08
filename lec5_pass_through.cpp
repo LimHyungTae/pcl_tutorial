@@ -20,6 +20,9 @@ int main(int argc, char **argv){
         pc_src.push_back(point_xyz);
     }
 
+    /*
+     * Main
+     */
     pcl::PointCloud<pcl::PointXYZ> pc_filtered;
     pcl::PointCloud<pcl::PointXYZ>::Ptr ptr_filtered(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PassThrough<pcl::PointXYZ> filter;

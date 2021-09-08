@@ -28,6 +28,9 @@ int main(int argc, char **argv){
         cloud_src.push_back(point_xyz);
     }
 
+    /*
+     * Main
+     */
     pcl::PointCloud<pcl::PointXYZ> pc_transformed;
     pcl::PointCloud<pcl::PointXYZ>::Ptr ptr_transformed(new pcl::PointCloud<pcl::PointXYZ>);
 
