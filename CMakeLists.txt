@@ -27,36 +27,36 @@ include_directories(
 )
 
 file(COPY ./materials/
-        DESTINATION ./example_data/
+        DESTINATION ./auxiliary/
         FILES_MATCHING
-        PATTERN *.ply)
+        PATTERN *.bin)
 
-add_executable(lec1_usage lec1_usage.cpp)
-target_link_libraries(lec1_usage ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+add_executable(lec00_usage lec00_usage.cpp)
+target_link_libraries(lec00_usage ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
-add_executable(lec2_1_shared_ptr lec2_1_shared_ptr.cpp)
-target_link_libraries(lec2_1_shared_ptr ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+add_executable(lec01_1_shared_ptr lec01_1_shared_ptr.cpp)
+target_link_libraries(lec01_1_shared_ptr ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
-add_executable(lec2_2_ptr lec2_2_ptr.cpp)
-target_link_libraries(lec2_2_ptr ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+add_executable(lec01_2_ptr lec01_2_ptr.cpp)
+target_link_libraries(lec01_2_ptr ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
-add_executable(lec2_3_ptr_in_class lec2_3_ptr_in_class.cpp)
-target_link_libraries(lec2_3_ptr_in_class ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+add_executable(lec01_3_ptr_in_class lec01_3_ptr_in_class.cpp)
+target_link_libraries(lec01_3_ptr_in_class ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
-add_executable(lec3_tf lec3_transformation.cpp)
-target_link_libraries(lec3_tf ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+add_executable(lec03_tf lec03_transformation.cpp)
+target_link_libraries(lec03_tf ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
-add_executable(lec4_voxel lec4_voxelization.cpp)
-target_link_libraries(lec4_voxel ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+add_executable(lec04_visualization lec04_visualization.cpp)
+target_link_libraries(lec04_visualization ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
-add_executable(lec5_pass_through lec5_pass_through.cpp)
-target_link_libraries(lec5_pass_through ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+add_executable(lec05_voxel lec05_voxelization.cpp)
+target_link_libraries(lec05_voxel ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
-add_executable(lec6_sor lec6_sor.cpp)
-target_link_libraries(lec6_sor ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+add_executable(lec06_pass_through lec06_pass_through.cpp)
+target_link_libraries(lec06_pass_through ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
-add_executable(lec7_visualization lec7_visualization.cpp)
-target_link_libraries(lec7_visualization ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+add_executable(lec07_sor lec07_sor.cpp)
+target_link_libraries(lec07_sor ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
 add_executable(lec8_radius_search lec8_radius_search.cpp)
 target_link_libraries(lec8_radius_search ${catkin_LIBRARIES} ${PCL_LIBRARIES})

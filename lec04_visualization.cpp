@@ -1,10 +1,10 @@
 //
 // Tutorial Author: shapelim@kaist.ac.kr (임형태)
-
+#include <limits.h> /* PATH_MAX = 4096 */
 #include <pcl/point_types.h>
 #include <pcl/PCLPointCloud2.h>
-#include <pcl/conversions.h>
 #include <pcl/visualization/cloud_viewer.h>
+#include <pcl/visualization/pcl_visualizer.h>
 #include <pcl/common/transforms.h>
 
 using namespace std;
@@ -60,7 +60,19 @@ int main(int argc, char**argv) {
      */
     pcl::PointCloud<pcl::PointXYZ>::Ptr src(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr tgt(new pcl::PointCloud<pcl::PointXYZ>);
-    *src = *load_bin("/home/shapelim/catkin_ws/src/pcl_tutorial/materials/000000.bin");
+    *src = *load_bin("/home/shapelim/catkin_ws/src/pcl_tutorial/materials/kitti00_000000.bin");
+
+
+    char buf[PATH_MAX];
+    char *res = realpath(".", buf);
+    if (res)
+    {
+        printf("%s\n", buf);
+    } else
+    {
+        perror("realpath");
+        exit(1);
+    }
 
     Eigen::Matrix4f tf;
     tf << 1, 0, 0, 5.0,
@@ -74,20 +86,32 @@ int main(int argc, char**argv) {
     colorize(*src, *src_colored, {255, 0, 0});
     colorize(*tgt, *tgt_colored, {0, 255, 0});
 
-    /*
-     * 주의: PCL 버전이 높은 데서만 지원 (TEST: PCL v.1.8)
-     * Visualization
-     */
-    pcl::visualization::CloudViewer viewer("Cloud Viewer");
-    viewer.showCloud(src_colored, "src_viz");
-    viewer.showCloud(tgt_colored, "tgt_viz");
 
-    int cnt = 0;
-    while (!viewer.wasStopped()) {
-        //you can also do cool processing here
-        //FIXME: Note that this is running in a separate thread from viewerPsycho
-        //and you should guard against race conditions yourself...
-        cnt++;
+
+    /*
+     * Method 1. PCLVisualizer
+     */
+
+    pcl::visualization::PCLVisualizer viewer1("Simple Cloud Viewer");
+    viewer1.addPointCloud<pcl::PointXYZRGB>(src_colored, "src_red");
+    viewer1.addPointCloud<pcl::PointXYZRGB>(tgt_colored, "tgt_green");
+
+    while (!viewer1.wasStopped()) {
+        viewer1.spinOnce();
     }
+
+
+    /*
+     * Method 2. CloudViewer
+     * 주의: PCL 버전이 높은 데서만 지원 (TEST: PCL v.1.8)
+     */
+//    pcl::visualization::CloudViewer viewer2("Cloud Viewer");
+//    viewer2.showCloud(src_colored, "src_red");
+//    viewer2.showCloud(tgt_colored, "tgt_green");
+//
+//    int cnt = 0;
+//    while (!viewer2.wasStopped()) {
+//        cnt++;
+//    }
 
 }
