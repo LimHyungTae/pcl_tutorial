@@ -6,6 +6,7 @@
 #include <pcl/conversions.h>
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/common/transforms.h>
+#include <pcl/registration/icp.h>
 
 using namespace std;
 
@@ -60,36 +61,40 @@ int main(int argc, char**argv) {
      */
     pcl::PointCloud<pcl::PointXYZ>::Ptr src(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr tgt(new pcl::PointCloud<pcl::PointXYZ>);
-    *src = *load_bin("/home/shapelim/catkin_ws/src/pcl_tutorial/materials/000000.bin");
+    *src = *load_bin("/home/shapelim/catkin_ws/src/pcl_tutorial/materials/kitti00_000000.bin");
 
     Eigen::Matrix4f tf;
-    tf << 1, 0, 0, 5.0,
+    tf << 1, 0, 0, 2.0,
             0, 1, 0, 0.0,
             0, 0, 1, 0.0,
             0, 0, 0, 1.0;
     pcl::transformPointCloud(*src, *tgt, tf);
 
-    pcl::GeneralizedIterativeClosestPoint<PointType, PointType> gicp;
-    gicp.setMaxCorrespondenceDistance(maxDist);
-    gicp.setTransformationEpsilon(epsilon);
-    gicp.setMaximumIterations(numMaxIter);
-    gicp.setRANSACIterations(numIter);
-    gicp.setEuclideanFitnessEpsilon(1);
+    pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
+    icp.setMaxCorrespondenceDistance(1.0);
+    icp.setTransformationEpsilon(0.003);
+    icp.setMaximumIterations(1000);
+    icp.setRANSACIterations(500);
+    icp.setEuclideanFitnessEpsilon(1);
 
-    pcl::PointCloud<PointType>::Ptr ptr_aligned(new pcl::PointCloud<PointType>);
-    gicp.setInputSource(src);
-    gicp.setInputTarget(target);
-    gicp.align(*ptr_aligned);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr align(new pcl::PointCloud<pcl::PointXYZ>);
+    icp.setInputSource(src);
+    icp.setInputTarget(tgt);
+    icp.align(*align);
     // Set outputs
-    aligned = *ptr_aligned;
-    output.src2tgt   = gicp.getFinalTransformation();
-    output.score     = gicp.getFitnessScore();
-    output.converged = gicp.hasConverged();
+    Eigen::Matrix4f src2tgt   = icp.getFinalTransformation();
+    double score     = icp.getFitnessScore();
+    bool is_converged = icp.hasConverged();
+
+    cout<<src2tgt<<endl;
+    cout<<score<<endl;
 
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr src_colored(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr tgt_colored(new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr align_colored(new pcl::PointCloud<pcl::PointXYZRGB>);
     colorize(*src, *src_colored, {255, 0, 0});
     colorize(*tgt, *tgt_colored, {0, 255, 0});
+    colorize(*align, *align_colored, {0, 0, 255});
 
     /*
      * 주의: PCL 버전이 높은 데서만 지원 (TEST: PCL v.1.8)
@@ -98,6 +103,7 @@ int main(int argc, char**argv) {
     pcl::visualization::CloudViewer viewer("Cloud Viewer");
     viewer.showCloud(src_colored, "src_viz");
     viewer.showCloud(tgt_colored, "tgt_viz");
+    viewer.showCloud(align_colored, "align_viz");
 
     int cnt = 0;
     while (!viewer.wasStopped()) {

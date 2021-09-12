@@ -8,32 +8,35 @@
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/common/transforms.h>
 #include <pcl/registration/gicp.h>
+#include <random>
 
 using namespace std;
 
-pcl::PointCloud<pcl::PointXYZ>::ConstPtr load_bin(const string &filename) {
-    FILE*file                     = fopen(filename.c_str(), "rb");
-    if (!file) {
-        std::cerr << "Error: failed to load " << filename << std::endl;
-        return nullptr;
-    }
-    std::vector<float> buffer(1000000);
-    size_t             num_points =
-                               fread(reinterpret_cast<char*>(buffer.data()), sizeof(float), buffer.size(), file) / 4;
-    fclose(file);
+Eigen::Matrix3d getRz(const double rad) {
+    Eigen::Matrix3d rot = Eigen::Matrix3d::Identity();
+    rot(0, 0) = static_cast<double>(cos(rad));
+    rot(0, 1) = static_cast<double>(-sin(rad));
+    rot(1, 0) = static_cast<double>(sin(rad));
+    rot(1, 1) = static_cast<double>(cos(rad));
+    return rot;
+}
 
-    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
-    cloud->resize(num_points);
+Eigen::Matrix3d getRy(const double rad) {
+    Eigen::Matrix3d rot = Eigen::Matrix3d::Identity();
+    rot(0, 0) = static_cast<double>(cos(rad));
+    rot(0, 2) = static_cast<double>(sin(rad));
+    rot(2, 0) = static_cast<double>(-sin(rad));
+    rot(2, 2) = static_cast<double>(cos(rad));
+    return rot;
+}
 
-    for (int i = 0; i < num_points; i++) {
-        auto &pt = cloud->at(i);
-        pt.x = buffer[i * 4];
-        pt.y = buffer[i * 4 + 1];
-        pt.z = buffer[i * 4 + 2];
-        // pt.intensity = buffer[i * 4 + 3];
-    }
-
-    return cloud;
+Eigen::Matrix3d getRx(const double rad) {
+    Eigen::Matrix3d rot = Eigen::Matrix3d::Identity();
+    rot(1, 1) = static_cast<double>(cos(rad));
+    rot(1, 2) = static_cast<double>(-sin(rad));
+    rot(2, 1) = static_cast<double>(sin(rad));
+    rot(2, 2) = static_cast<double>(cos(rad));
+    return rot;
 }
 
 void colorize(const pcl::PointCloud<pcl::PointXYZ> &pc,
@@ -62,7 +65,60 @@ int main(int argc, char**argv) {
      */
     pcl::PointCloud<pcl::PointXYZ>::Ptr src(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr tgt(new pcl::PointCloud<pcl::PointXYZ>);
-    *src = *load_bin("/home/shapelim/catkin_ws/src/pcl_tutorial/materials/kitti00_000000.bin");
+
+    double lower_bound                               = -20.0;
+    double upper_bound                               = 20.0;
+
+    std::random_device                     rd;  //Will be used to obtain a seed for the random number engine
+    std::mt19937                           gen(rd());
+    std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+    std::default_random_engine             re;
+
+    /*
+     * Generate dummy source point cloud
+     */
+    Eigen::Matrix<double, 4, Eigen::Dynamic> src_h;
+    int                                      num_pts = 100;
+    src_h.resize(4, num_pts);
+    for (int i = 0; i < num_pts; ++i) {
+
+        for (int j  = 0; j < 3; ++j) {
+            double random_value = unif(re);
+            cout << random_value << endl;
+            cout << i << " " << j << endl;
+            src_h(j, i) = random_value;
+        }
+        src_h(3, i) = 1;
+    }
+
+    double upper_small_angle_bound = 10.0;
+    double upper_translation_bound = 5.0;
+
+    std::uniform_real_distribution<double> unif_rot(-upper_small_angle_bound, upper_small_angle_bound);
+    std::uniform_real_distribution<double> unif_ts(-upper_translation_bound, upper_translation_bound);
+
+    /*
+     * Generate Dummy SE(3)
+     */
+    const double yaw_gt   = unif_rot(re) * M_PI / 180; // radian
+    const double pitch_gt = unif_rot(re) * M_PI / 180; // radian
+    const double roll_gt  = unif_rot(re) * M_PI / 180; // radian
+
+    const double x_gt  = unif_ts(re);
+    const double y_gt  = unif_ts(re);
+    const double z_gt  = unif_ts(re);
+
+    Eigen::Matrix3d rot_gt;
+    Eigen::Matrix3d Rz = getRz(yaw_gt);
+    Eigen::Matrix3d Ry = getRy(pitch_gt);
+    Eigen::Matrix3d Rx = getRx(roll_gt);
+    rot_gt = Rz * Ry * Rx;
+
+    Eigen::Matrix4d T_gt = Eigen::Matrix4d::Identity();
+    T_gt.block<3, 3>(0, 0) = rot_gt;
+    T_gt(0, 3)             = x_gt;
+    T_gt(1, 3)             = y_gt;
+    T_gt(2, 3)             = z_gt;
 
     Eigen::Matrix4f tf;
     tf << 1, 0, 0, 2.0,
