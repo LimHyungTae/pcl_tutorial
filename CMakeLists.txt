@@ -23,7 +23,7 @@ add_definitions(${PCL_DEFINITIONS})
 include_directories(
         include
         src
-        ${catkin_INCLUDE_DIRS}
+        # ${catkin_INCLUDE_DIRS}
 )
 
 file(COPY ./materials/
@@ -58,14 +58,11 @@ target_link_libraries(lec06_pass_through ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 add_executable(lec07_sor lec07_sor.cpp)
 target_link_libraries(lec07_sor ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
-add_executable(lec8_radius_search lec8_radius_search.cpp)
-target_link_libraries(lec8_radius_search ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+add_executable(lec08_radius_search lec08_radius_search.cpp)
+target_link_libraries(lec08_radius_search ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
-add_executable(lec9_knn lec9_knn.cpp)
-target_link_libraries(lec9_knn ${catkin_LIBRARIES} ${PCL_LIBRARIES})
-
-add_executable(lec9_1_extract lec9_1_extract.cpp)
-target_link_libraries(lec9_1_extract ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+add_executable(lec09_knn lec09_knn.cpp)
+target_link_libraries(lec09_knn ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
 add_executable(lec10_1_normal lec10_1_normal.cpp)
 target_link_libraries(lec10_1_normal ${catkin_LIBRARIES} ${PCL_LIBRARIES})
@@ -78,12 +75,6 @@ target_link_libraries(lec11_icp ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
 add_executable(lec12_gicp lec12_gicp.cpp)
 target_link_libraries(lec12_gicp ${catkin_LIBRARIES} ${PCL_LIBRARIES})
-
-add_executable(lec13_1_ransac_pose lec13_1_ransac_pose.cpp)
-target_link_libraries(lec13_1_ransac_pose ${catkin_LIBRARIES} ${PCL_LIBRARIES})
-
-add_executable(lec13_2_ransac_ground lec13_2_ransac_ground.cpp)
-target_link_libraries(lec13_2_ransac_ground ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
 # ToDo
 # ICP, G-ICP, RANSAC

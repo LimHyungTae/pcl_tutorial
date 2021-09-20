@@ -64,6 +64,7 @@ int main(int argc, char**argv) {
     pcl::PointCloud<pcl::PointXYZ>::Ptr tgt(new pcl::PointCloud<pcl::PointXYZ>);
     *src = *load_bin("/home/shapelim/catkin_ws/src/pcl_tutorial/materials/kitti00_000000.bin");
 
+    /** Test를 위해 앞으로 2m 전진시킨 target을 만듦 */
     Eigen::Matrix4f tf;
     tf << 1, 0, 0, 2.0,
             0, 1, 0, 0.0,
@@ -71,21 +72,24 @@ int main(int argc, char**argv) {
             0, 0, 0, 1.0;
     pcl::transformPointCloud(*src, *tgt, tf);
 
-    pcl::GeneralizedIterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
-    icp.setMaxCorrespondenceDistance(1.0);
-    icp.setTransformationEpsilon(0.003);
-    icp.setMaximumIterations(1000);
-    icp.setRANSACIterations(500);
-    icp.setEuclideanFitnessEpsilon(1);
+    /**
+     * Main
+     */
+    pcl::GeneralizedIterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> gicp;
+    gicp.setMaxCorrespondenceDistance(1.0);
+    gicp.setTransformationEpsilon(0.003);
+    gicp.setMaximumIterations(1000);
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr align(new pcl::PointCloud<pcl::PointXYZ>);
-    icp.setInputSource(src);
-    icp.setInputTarget(tgt);
-    icp.align(*align);
+    gicp.setInputSource(src);
+    gicp.setInputTarget(tgt);
+    gicp.align(*align);
+    /*******************************************/
+
     // Set outputs
-    Eigen::Matrix4f src2tgt   = icp.getFinalTransformation();
-    double score     = icp.getFitnessScore();
-    bool is_converged = icp.hasConverged();
+    Eigen::Matrix4f src2tgt   = gicp.getFinalTransformation();
+    double score     = gicp.getFitnessScore();
+    bool is_converged = gicp.hasConverged();
 
     cout<<src2tgt<<endl;
     cout<<score<<endl;
@@ -97,9 +101,8 @@ int main(int argc, char**argv) {
     colorize(*tgt, *tgt_colored, {0, 255, 0});
     colorize(*align, *align_colored, {0, 0, 255});
 
-    /*
-     * 주의: PCL 버전이 높은 데서만 지원 (TEST: PCL v.1.8)
-     * Visualization
+    /**
+     * 결과 visualization 하기
      */
     pcl::visualization::CloudViewer viewer("Cloud Viewer");
     viewer.showCloud(src_colored, "src_viz");

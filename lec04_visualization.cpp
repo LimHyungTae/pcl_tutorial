@@ -60,19 +60,7 @@ int main(int argc, char**argv) {
      */
     pcl::PointCloud<pcl::PointXYZ>::Ptr src(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr tgt(new pcl::PointCloud<pcl::PointXYZ>);
-    *src = *load_bin("/home/shapelim/catkin_ws/src/pcl_tutorial/materials/kitti00_000000.bin");
-
-
-    char buf[PATH_MAX];
-    char *res = realpath(".", buf);
-    if (res)
-    {
-        printf("%s\n", buf);
-    } else
-    {
-        perror("realpath");
-        exit(1);
-    }
+    *src = *load_bin("/home/shapelim/git/pcl_tutorial/materials/kitti00_000000.bin");
 
     Eigen::Matrix4f tf;
     tf << 1, 0, 0, 5.0,
@@ -83,10 +71,10 @@ int main(int argc, char**argv) {
 
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr src_colored(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr tgt_colored(new pcl::PointCloud<pcl::PointXYZRGB>);
+
+    // Point cloud XYZ에 RGB 칼라 추가하기
     colorize(*src, *src_colored, {255, 0, 0});
     colorize(*tgt, *tgt_colored, {0, 255, 0});
-
-
 
     /*
      * Method 1. PCLVisualizer

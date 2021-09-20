@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     pt.x = 10.0; pt.y = 10.0; pt.z = 0;
     cloud->points.push_back(pt);
 
-    /*
+    /**
      * Main
      */
     // Create the normal estimation class, and pass the input dataset to it
@@ -45,8 +45,9 @@ int main(int argc, char **argv)
     ne.setRadiusSearch (0.03);
 
     ne.compute (*cloud_normals);
+
+    /** print */
     for (auto const &pt:cloud_normals->points){
         std::cout<<pt<<std::endl;
     }
-    // cloud_normals->size () should have the same size as the input cloud->size ()*
 }

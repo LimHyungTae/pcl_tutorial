@@ -5,11 +5,9 @@
 #include <pcl/features/normal_3d.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/visualization/pcl_visualizer.h>
-#include <fstream>
 #include <iostream>
 #include <vector>
-#include <ctime>
-
+#include <chrono>
 #include <pcl/common/transforms.h>
 #include <pcl/filters/voxel_grid.h>
 
@@ -21,88 +19,102 @@ void voxelize(const boost::shared_ptr<pcl::PointCloud<T> > srcPtr, pcl::PointClo
     voxel_filter.setLeafSize(voxelSize, voxelSize, voxelSize);
     voxel_filter.filter(dst);
 }
-template <typename KDTree>
 
-void calc_normal(KDTree& kdtree,
-                 pcl::PointCloud<pcl::PointXYZ>::Ptr& input_cloud,
+template<typename KDTree>
+void calc_normal(KDTree &kdtree,
+                 pcl::PointCloud<pcl::PointXYZ>::Ptr &src,
                  int K,
-                 pcl::PointCloud<pcl::Normal>::Ptr& cloud_normal){
+                 pcl::PointCloud<pcl::Normal>::Ptr &cloud_normal) {
 
     //Initialization
-    clock_t start, middle, end;
-    start = clock();
-    kdtree.setInputCloud(input_cloud);
-    middle = clock();
+    /** KdTree 세팅 */
+    std::chrono::system_clock::time_point t_start = std::chrono::system_clock::now();
+    kdtree.setInputCloud(src);
+    std::chrono::system_clock::time_point t_mid = std::chrono::system_clock::now();
+
     pcl::Normal normal_tmp;
-    std::vector<int> idxNano(K);
-    std::vector<float> distNano(K);
-    int num_pc = input_cloud->points.size();
+    std::vector<int> idxes(K);
+    std::vector<float> sqr_dists(K);
+    int num_pc = src->points.size();
 
     for (int i = 0; i < num_pc; ++i) {
-        pcl::PointXYZ &query = input_cloud->points[i];
-        kdtree.nearestKSearch(query, K, idxNano, distNano);
-        // Reserve() is important for speed up!
+        pcl::PointXYZ &query = src->points[i];
+        kdtree.nearestKSearch(query, K, idxes, sqr_dists);
+        // reserve() is important for speed up!
         pcl::PointCloud<pcl::PointXYZ>::Ptr NN(new pcl::PointCloud<pcl::PointXYZ>);
         NN->reserve(num_pc);
-        for (int tgt_idx:idxNano) {
-            NN->points.emplace_back(input_cloud->points[tgt_idx]);
+        for (int tgt_idx: idxes) {
+            NN->points.emplace_back(src->points[tgt_idx]);
         }
         Eigen::Matrix3f cov;
         Eigen::Vector4f mean;
         pcl::computeMeanAndCovarianceMatrix(*NN, cov, mean);
         // Singular Value Decomposition: SVD
         Eigen::JacobiSVD<Eigen::MatrixXf> svd(cov, Eigen::DecompositionOptions::ComputeFullU);
-        // use the least singular vector as normal
+        /**
+         * SVD에서 가장 작은 eigenvalue와 대응되는 eigenvector가
+         * 그 인근 pointcloud에서 추출한 normal vector
+         */
         Eigen::MatrixXf normal = (svd.matrixU().col(2));
         normal_tmp.normal_x = normal(0, 0);
         normal_tmp.normal_y = normal(1, 0);
         normal_tmp.normal_z = normal(2, 0);
         cloud_normal->points.emplace_back(normal_tmp);
     }
-    end = clock();
-    float time_setting = float(middle-start) /  CLOCKS_PER_SEC;
-    float time_taken = float(end-start) /  CLOCKS_PER_SEC;
-    std::cout<<"Setting: "<<time_setting<<" s..."<<std::endl;
-    std::cout<<"Searching: "<<time_taken - time_setting<<" s..."<<std::endl;
-    std::cout<<"Total: "<<time_taken<<" s..."<<std::endl;
+    std::chrono::system_clock::time_point t_end = std::chrono::system_clock::now();
 
+    std::chrono::duration<double> t_setting = t_mid - t_start;
+    std::chrono::duration<double> t_normal = t_end - t_mid;
+
+    cout << "Setting: " << t_setting.count() << " sec..." << endl;
+    cout << "Searching: " << t_normal.count() << " sec..." << endl;
 }
-int main (int argc, char** argv) {
+
+int main(int argc, char **argv) {
+    /*
+     * Load toy data
+     */
     pcl::PointCloud<pcl::PointXYZ>::Ptr raw_cloud(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_voxel(new pcl::PointCloud<pcl::PointXYZ>);
     if (pcl::io::loadPCDFile<pcl::PointXYZ>(
-            "/home/shapelim/catkin_ws/src/pcl_tutorial/materials/naverlabs_vel16.pcd", *raw_cloud) ==
+            "/home/shapelim/git/pcl_tutorial/materials/naverlabs_vel16.pcd", *raw_cloud) ==
         -1) {
         PCL_ERROR ("Couldn't read source pcd file! \n");
         return (-1);
     }
+
+    /*
+     * Preprocessing
+     * Voxelization -> Transformation 순으로 처리하는게 연산 효율적임
+     */
+    voxelize(raw_cloud, *cloud_voxel, 0.05);
+    *raw_cloud = *cloud_voxel;
+
     Eigen::Matrix4f lidar0ToBody;
     lidar0ToBody << 0, -1, 0, 0,
             -1, 0, -0, 0,
             0, 0, -1, 0.4,
             0, 0, 0, 1;
     pcl::transformPointCloud(*raw_cloud, *cloud, lidar0ToBody);
-    voxelize(cloud, *cloud_voxel, 0.05);
-    *cloud = *cloud_voxel;
-    std::cout<<cloud->points.size()<<std::endl;
-    pcl::KdTreeFLANN<pcl::PointXYZ> PCLFLANN_kdtree;
-    int K = 20;
-    std::vector<int> idxNano(K);
-    std::vector<float> distNano(K);
 
+    /**
+     * Main
+     */
+    pcl::KdTreeFLANN<pcl::PointXYZ> kdtree;
+    int K = 20;
     int num_pc = cloud->points.size();
-    pcl::PointCloud<pcl::Normal>::Ptr cloud_normal_dummy(new pcl::PointCloud<pcl::Normal>);
+
     pcl::PointCloud<pcl::Normal>::Ptr cloud_normal(new pcl::PointCloud<pcl::Normal>);
     cloud_normal->points.reserve(num_pc);
 
+    calc_normal(kdtree, cloud, K, cloud_normal);
+    std::cout << "Total Num: " << num_pc << std::endl;
+    /*******************************************/
 
-    std::cout<<"PCL: "<<std::endl;
-    calc_normal(PCLFLANN_kdtree, cloud, K, cloud_normal);
-
-
-    std::cout << "Total num: " << num_pc << std::endl;
-
+    /**
+     * 결과 visualization 하기
+     */
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_color(new pcl::PointCloud<pcl::PointXYZRGB>);
     std::uint8_t r(255), g(15), b(15);
     for (const auto &basic_point: cloud->points) {
@@ -116,14 +128,15 @@ int main (int argc, char** argv) {
         cloud_color->points.push_back(point);
     }
 
-    std::cout<<"[Debug]: "<<cloud_color->points.size()<< " <-> "<<cloud_normal->points.size()<<std::endl;
     pcl::visualization::PCLVisualizer viewer("Simple Cloud Viewer");
     viewer.addPointCloud<pcl::PointXYZRGB>(cloud_color);
 
     int level = 7; // the larger, more normal vectors are displayed
     float scale = 0.7; // size of arrow
     viewer.addPointCloudNormals<pcl::PointXYZRGB, pcl::Normal>(cloud_color, cloud_normal, level, scale,
-                                                               "Simple Cloud Viewer", 0);
+                                                               "pc_w_normal", 0);
+    viewer.setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "pc_w_normal");
+
     while (!viewer.wasStopped()) {
         viewer.spinOnce();
     }
