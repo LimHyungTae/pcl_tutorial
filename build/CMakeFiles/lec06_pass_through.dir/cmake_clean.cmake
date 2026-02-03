@@ -1,7 +1,9 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/lec06_pass_through.dir/link.d"
   "CMakeFiles/lec06_pass_through.dir/lec06_pass_through.cpp.o"
-  "lec06_pass_through.pdb"
+  "CMakeFiles/lec06_pass_through.dir/lec06_pass_through.cpp.o.d"
   "lec06_pass_through"
+  "lec06_pass_through.pdb"
 )
 
 # Per-language clean rules from dependency scanning.

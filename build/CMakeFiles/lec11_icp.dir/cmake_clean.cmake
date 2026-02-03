@@ -1,7 +1,9 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/lec11_icp.dir/link.d"
   "CMakeFiles/lec11_icp.dir/lec11_icp.cpp.o"
-  "lec11_icp.pdb"
+  "CMakeFiles/lec11_icp.dir/lec11_icp.cpp.o.d"
   "lec11_icp"
+  "lec11_icp.pdb"
 )
 
 # Per-language clean rules from dependency scanning.

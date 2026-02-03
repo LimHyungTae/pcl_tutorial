@@ -1,7 +1,9 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/lec01_3_ptr_in_class.dir/link.d"
   "CMakeFiles/lec01_3_ptr_in_class.dir/lec01_3_ptr_in_class.cpp.o"
-  "lec01_3_ptr_in_class.pdb"
+  "CMakeFiles/lec01_3_ptr_in_class.dir/lec01_3_ptr_in_class.cpp.o.d"
   "lec01_3_ptr_in_class"
+  "lec01_3_ptr_in_class.pdb"
 )
 
 # Per-language clean rules from dependency scanning.

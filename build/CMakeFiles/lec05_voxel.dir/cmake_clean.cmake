@@ -1,7 +1,9 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/lec05_voxel.dir/link.d"
   "CMakeFiles/lec05_voxel.dir/lec05_voxelization.cpp.o"
-  "lec05_voxel.pdb"
+  "CMakeFiles/lec05_voxel.dir/lec05_voxelization.cpp.o.d"
   "lec05_voxel"
+  "lec05_voxel.pdb"
 )
 
 # Per-language clean rules from dependency scanning.
