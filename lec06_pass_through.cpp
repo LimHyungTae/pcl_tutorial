@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
     // 중앙 이외의 부분 추출
     // 한번 setInputCloud를 해두면 여러가지로 filter를 계속 할 수 있음
     // Class 내부에 setInputCloud로 설정된 member변수 pointcloud는 변하지 않기 때문
-    xfilter.setFilterLimitsNegative(true);
+    xfilter.setNegative(true);
     xfilter.filter(*outskirt);
 
     // 그 후 y축 방향으로 중앙에 있는 부분 제거
@@ -87,7 +87,7 @@ int main(int argc, char **argv) {
     xfilter.setInputCloud(center);
     xfilter.setFilterFieldName("y");
     xfilter.setFilterLimits(-car_size, car_size);
-    xfilter.setFilterLimitsNegative(true);
+    xfilter.setNegative(true);
     xfilter.filter(*output);
 
     *output += *outskirt;

@@ -62,7 +62,7 @@ int main(int argc, char**argv) {
      */
     pcl::PointCloud<pcl::PointXYZ>::Ptr src(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr tgt(new pcl::PointCloud<pcl::PointXYZ>);
-    *src = *load_bin("/home/shapelim/catkin_ws/src/pcl_tutorial/materials/kitti00_000000.bin");
+    *src = *load_bin("./auxiliary/kitti00_000000.bin");
 
     /** Test를 위해 앞으로 2m 전진시킨 target을 만듦 */
     Eigen::Matrix4f tf;

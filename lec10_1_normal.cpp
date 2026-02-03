@@ -13,7 +13,7 @@
 
 
 template<typename T>
-void voxelize(const boost::shared_ptr<pcl::PointCloud<T> > srcPtr, pcl::PointCloud<T> &dst, double voxelSize) {
+void voxelize(const typename pcl::PointCloud<T>::Ptr srcPtr, pcl::PointCloud<T> &dst, double voxelSize) {
     static pcl::VoxelGrid<T> voxel_filter;
     voxel_filter.setInputCloud(srcPtr);
     voxel_filter.setLeafSize(voxelSize, voxelSize, voxelSize);
