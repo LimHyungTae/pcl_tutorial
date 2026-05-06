@@ -73,6 +73,13 @@ compile_commands.json
 *.out
 *.app
 
+### Web (web/) ###
+node_modules/
+web/dist/
+*.tsbuildinfo
+# Auto-synced from materials/ at build time — don't commit duplicates.
+web/public/data/
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -89,8 +96,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+/lib/
+/lib64/
 parts/
 sdist/
 var/

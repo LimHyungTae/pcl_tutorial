@@ -1,6 +1,7 @@
 <div align="center">
 <h1>PCL Tutorial (한글.ver)</h1>
 
+<a href="https://limhyungtae.github.io/pcl_tutorial/"><img src="https://img.shields.io/badge/Live%20Demo-limhyungtae.github.io%2Fpcl__tutorial-10b981.svg" alt="Live Demo"></a>
 <img src="https://img.shields.io/badge/Language-C%2B%2B17-blue.svg" alt="C++17">
 <img src="https://img.shields.io/badge/PCL-%E2%89%A51.8-brightgreen.svg" alt="PCL">
 <img src="https://img.shields.io/badge/CMake-%E2%89%A53.10-064F8C.svg" alt="CMake">
@@ -20,6 +21,41 @@ ______________________________________________________________________
 
 - Original author: Hyungtae Lim (`shapelim` at `mit` dot `edu`)
 - Tested OS: Ubuntu 24.04
+
+______________________________________________________________________
+
+## :sparkles: 인터랙티브 데모 (`web/`)
+
+브라우저에서 슬라이더를 만져 가며 챕터별 동작을 직접 확인할 수 있습니다 — **<https://limhyungtae.github.io/pcl_tutorial/>**.
+
+| 트랙              | 챕터                                  | 어디서 도느냐                                           |
+| ----------------- | ------------------------------------- | ------------------------------------------------------- |
+| **인터랙티브**    | Voxelization, PassThrough             | TypeScript 재구현 → 브라우저에서 실시간                 |
+| **Pre-computed**  | ICP, GICP, Normal Estimation          | C++ 바이너리(`export_precomputed`)가 뽑은 PCD를 fetch  |
+| **코드 설명**     | shared_ptr, Ptr, Transformation 등    | 소스코드 + 블로그 글 링크 (개념 위주)                  |
+
+### 로컬에서 사이트 띄우기
+
+```bash
+cd web
+npm install
+npm run dev          # http://localhost:5173/pcl_tutorial/
+```
+
+`predev` / `prebuild` 훅이 `materials/`의 데이터(`.bin` / `.pcd` / `.ply`)를 자동으로 `web/public/data/`로 복사합니다.
+
+### Pre-computed 자산 다시 뽑기 (선택)
+
+`lec11_icp.cpp` / `lec12_gicp.cpp`의 출력은 미리 PCD로 저장돼 `web/public/precomputed/`에 들어 있습니다. 알고리즘이나 입력을 바꿨다면 다시 뽑아주세요:
+
+```bash
+cd build && make export_precomputed
+KMP_DUPLICATE_LIB_OK=TRUE ./export_precomputed     # macOS Homebrew PCL은 이 플래그 필요
+```
+
+### 배포
+
+`main` 브랜치에 `web/**` 변경이 push되면 GitHub Actions(`.github/workflows/deploy.yml`)가 자동으로 빌드 후 GitHub Pages에 배포합니다. 첫 배포 전에는 GitHub repo settings → Pages → Source를 **GitHub Actions**로 설정해 주세요.
 
 ______________________________________________________________________
 
@@ -81,10 +117,18 @@ ______________________________________________________________________
 ```
 pcl_tutorial/
 ├── CMakeLists.txt
-├── lec*.cpp           # 챕터별 예제 코드
-├── auxiliary/         # 본 빌드와 무관한 보조 스니펫
-├── img/               # README/블로그용 이미지
-└── materials/         # 예제용 포인트클라우드 데이터 (.bin / .pcd / .ply)
+├── lec*.cpp                         # 챕터별 예제 코드 (PCL/C++)
+├── scripts/
+│   └── export_precomputed.cpp       # ICP/GICP 결과를 PCD로 저장 (web/이 사용)
+├── auxiliary/                       # 본 빌드와 무관한 보조 스니펫
+├── img/                             # README/블로그용 이미지
+├── materials/                       # 예제용 포인트클라우드 데이터 (.bin / .pcd / .ply)
+└── web/                             # React + Vite 기반 인터랙티브 사이트
+    ├── src/
+    │   ├── pages/                   # 챕터별 페이지
+    │   ├── components/              # 뷰어, 슬라이더, 드롭존
+    │   └── lib/filters/             # voxel, passthrough, … (TS 재구현)
+    └── public/precomputed/          # C++가 미리 뽑은 .pcd (커밋됨)
 ```
 
 ______________________________________________________________________

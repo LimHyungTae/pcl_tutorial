@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family:
+    "Pretendard Variable",
+    "Pretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Apple SD Gothic Neo",
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+  font-feature-settings: "tnum";
+}
+
+.code-font {
+  font-family:
+    "JetBrains Mono",
+    "SF Mono",
+    Menlo,
+    Consolas,
+    monospace;
+}
