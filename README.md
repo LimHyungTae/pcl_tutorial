@@ -18,7 +18,7 @@ ______________________________________________________________________
 수식적인 optimization 유도나 C++ 문법에 대한 깊은 설명보다는, **실제로 어떻게 잘 쓰는지**에 무게를 둔 튜토리얼입니다.
 각 챕터는 [블로그 글](https://limhyungtae.github.io/)과 1:1로 매칭되며, 이 레포는 그 글에 등장하는 모든 코드의 유지보수용 저장소입니다.
 
-- Original author: Hyungtae Lim (`shapelim@kaist.ac.kr`)
+- Original author: Hyungtae Lim (`shapelim` at `mit` dot `edu`)
 - Tested OS: Ubuntu 24.04
 
 ______________________________________________________________________
