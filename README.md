@@ -1,20 +1,37 @@
-# PCL Tutorial (한글.ver)
+<div align="center">
+<h1>PCL Tutorial (한글.ver)</h1>
 
-Original author: Hyungtae Lim (shapelim@kaist.ac.kr)
+<img src="https://img.shields.io/badge/Language-C%2B%2B17-blue.svg" alt="C++17">
+<img src="https://img.shields.io/badge/PCL-%E2%89%A51.8-brightgreen.svg" alt="PCL">
+<img src="https://img.shields.io/badge/CMake-%E2%89%A53.10-064F8C.svg" alt="CMake">
+<img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT">
 
----
+<p align="center"><img src="img/rot_no_convergence.png" alt="ICP rotation case" width="65%"/></p>
 
-## PCL tutorial 코드의 유지보수를 위한 repository
+<p><strong><em>Point Cloud Library(PCL)를 어떻게 잘 쓰는지에 초점을 맞춘 한글 튜토리얼.</em></strong></p>
+</div>
 
-수식적으로 optimization이나 C++ 문법에 대한 상세한 설명보다는 오롯이 **어떻게 잘 쓰는지**에 대한 tutorial
+______________________________________________________________________
+
+## :rocket: 개요
+
+수식적인 optimization 유도나 C++ 문법에 대한 깊은 설명보다는, **실제로 어떻게 잘 쓰는지**에 무게를 둔 튜토리얼입니다.
+각 챕터는 [블로그 글](https://limhyungtae.github.io/)과 1:1로 매칭되며, 이 레포는 그 글에 등장하는 모든 코드의 유지보수용 저장소입니다.
+
+- Original author: Hyungtae Lim (`shapelim@kaist.ac.kr`)
+- Tested OS: Ubuntu 24.04
+
+______________________________________________________________________
+
+## :hammer: Prerequisites & Build
 
 ### Prerequisites
 
-- CMake >= 3.10
-- PCL >= 1.8
-- Boost >= 1.58
+- CMake ≥ 3.10
+- PCL ≥ 1.8
+- Boost ≥ 1.58
 
-### Compile
+### Build
 
 ```bash
 mkdir build && cd build
@@ -22,33 +39,56 @@ cmake ..
 make -j$(nproc)
 ```
 
-### 실행
-
-빌드 후 `build` 폴더 안에서 실행 파일들을 실행할 수 있습니다:
+빌드 단계에서 `materials/` 안의 데이터(`.bin`, `.pcd`, `.ply`)가 `build/auxiliary/`로 자동 복사되므로,
+실행 파일은 항상 `build/` 디렉토리 **내부에서** 실행해 주세요.
 
 ```bash
 cd build
 ./lec00_usage
 ./lec04_visualization
-# etc.
+# ...
 ```
 
-### 코드 구성
+______________________________________________________________________
 
-| 파일명 | 내용 |
-|--------|------|
-| `lec00_usage.cpp` | PCL 기본 사용법 |
-| `lec01_1_shared_ptr.cpp` | shared_ptr 사용법 |
-| `lec01_2_ptr.cpp` | PCL에서의 포인터 사용 |
-| `lec01_3_ptr_in_class.cpp` | 클래스 내 포인터 멤버 |
-| `lec03_transformation.cpp` | Point cloud 변환 (4x4 행렬) |
-| `lec04_visualization.cpp` | PCL Visualizer 사용법 |
-| `lec05_voxelization.cpp` | Voxel Grid 필터링 |
-| `lec06_pass_through.cpp` | PassThrough 필터링 |
-| `lec07_sor.cpp` | Statistical Outlier Removal |
-| `lec08_radius_search.cpp` | KdTree Radius Search |
-| `lec09_knn.cpp` | K-Nearest Neighbor Search |
-| `lec10_1_normal.cpp` | Normal 추정 |
-| `lec10_2_normal_corner.cpp` | 간단한 Normal 계산 |
-| `lec11_icp.cpp` | Iterative Closest Point |
-| `lec12_gicp.cpp` | Generalized ICP |
+## :books: 챕터별 코드 & 블로그 글
+
+| #     | 코드                                                                                | 주제                                | 블로그 글                                                                                                                                                                                                  |
+| :---: | :-----------------------------------------------------------------------------------: | :-----------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0     | [`lec00_usage.cpp`](lec00_usage.cpp)                                                | PCL 기본 사용법                     | [0. Tutorial 및 기본 사용법](https://limhyungtae.github.io/2021-09-09-ROS-Point-Cloud-Library-(PCL)-0.-Tutorial-및-기본-사용법/)                                                                          |
+| 1-1   | [`lec01_1_shared_ptr.cpp`](lec01_1_shared_ptr.cpp)                                  | `shared_ptr` 기본                   | [1-(1). Ptr/ConstPtr의 완벽 이해 — `shared_ptr`](https://limhyungtae.github.io/2021-09-09-ROS-Point-Cloud-Library-(PCL)-1.-Ptr,-ConstPtr의-완벽-이해-(1)-shared_ptr/)                                     |
+| 1-2   | [`lec01_2_ptr.cpp`](lec01_2_ptr.cpp)                                                | PCL에서의 Ptr 사용                  | [1-(2). Ptr/ConstPtr의 완벽 이해 — Ptr in PCL](https://limhyungtae.github.io/2021-09-10-ROS-Point-Cloud-Library-(PCL)-1.-Ptr,-ConstPtr의-완벽-이해-(2)-Ptr-in-PCL/)                                       |
+| 1-3   | [`lec01_3_ptr_in_class.cpp`](lec01_3_ptr_in_class.cpp)                              | 클래스 멤버변수 Ptr                 | [1-(3). Ptr/ConstPtr의 완벽 이해 — Ptr in 클래스 멤버변수](https://limhyungtae.github.io/2021-09-10-ROS-Point-Cloud-Library-(PCL)-1.-Ptr,-ConstPtr의-완벽-이해-(3)-Ptr-in-클래스-멤버변수/)               |
+| 2     | *(코드 없음)*                                                                       | 형변환 — `toROSMsg` / `fromROSMsg` | [2. 형변환 — toROSMsg, fromROSMsg](https://limhyungtae.github.io/2021-09-10-ROS-Point-Cloud-Library-(PCL)-2.-형변환-toROSMsg,-fromROSMsg/)                                                                |
+| 3     | [`lec03_transformation.cpp`](lec03_transformation.cpp)                              | 4×4 행렬 기반 변환                  | [3. Transformation](https://limhyungtae.github.io/2021-09-10-ROS-Point-Cloud-Library-(PCL)-3.-Transformation/)                                                                                              |
+| 4     | [`lec04_visualization.cpp`](lec04_visualization.cpp)                                | PCLVisualizer 사용법                | [4. Viewer로 visualization하는 법](https://limhyungtae.github.io/2021-09-10-ROS-Point-Cloud-Library-(PCL)-4.-Viewer로-visualization하는-법/)                                                              |
+| 5     | [`lec05_voxelization.cpp`](lec05_voxelization.cpp)                                  | Voxel Grid 필터링                   | [5. Voxelization](https://limhyungtae.github.io/2021-09-12-ROS-Point-Cloud-Library-(PCL)-5.-Voxelization/)                                                                                                  |
+| 6     | [`lec06_pass_through.cpp`](lec06_pass_through.cpp)                                  | PassThrough 필터링                  | [6. PassThrough](https://limhyungtae.github.io/2021-09-12-ROS-Point-Cloud-Library-(PCL)-6.-PassThrough/)                                                                                                    |
+| 7     | [`lec07_sor.cpp`](lec07_sor.cpp)                                                    | Statistical Outlier Removal         | [7. Statistical Outlier Removal](https://limhyungtae.github.io/2021-09-12-ROS-Point-Cloud-Library-(PCL)-7.-Statistical-Outlier-Removal/)                                                                    |
+| 8     | [`lec08_radius_search.cpp`](lec08_radius_search.cpp)                                | KdTree 기반 Radius Search           | [8. KdTree를 활용한 Radius Search](https://limhyungtae.github.io/2021-09-12-ROS-Point-Cloud-Library-(PCL)-8.-KdTree를-활용한-Radius-Search/)                                                              |
+| 9     | [`lec09_knn.cpp`](lec09_knn.cpp)                                                    | K-Nearest Neighbor Search           | [9. KdTree를 활용한 K-NN Search](https://limhyungtae.github.io/2021-09-12-ROS-Point-Cloud-Library-(PCL)-9.-KdTree를-활용한-K-nearest-Neighbor-Search-(KNN)/)                                              |
+| 10-1  | [`lec10_1_normal.cpp`](lec10_1_normal.cpp)                                          | KdTree + SVD로 Normal 추정          | [10. Normal Estimation](https://limhyungtae.github.io/2021-09-13-ROS-Point-Cloud-Library-(PCL)-10.-Normal-Estimation/)                                                                                      |
+| 10-2  | [`lec10_2_normal_corner.cpp`](lec10_2_normal_corner.cpp)                            | 단순 케이스의 Normal 계산           | (위 글의 corner case 예시)                                                                                                                                                                                |
+| 11    | [`lec11_icp.cpp`](lec11_icp.cpp)                                                    | Iterative Closest Point             | [11. Iterative Closest Point (ICP)](https://limhyungtae.github.io/2021-09-14-ROS-Point-Cloud-Library-(PCL)-11.-Iterative-Closest-Point-(ICP)/)                                                              |
+| 12    | [`lec12_gicp.cpp`](lec12_gicp.cpp)                                                  | Generalized ICP                     | [12. Generalized ICP (G-ICP)](https://limhyungtae.github.io/2021-09-14-ROS-Point-Cloud-Library-(PCL)-12.-Generalized-Iterative-Closest-Point-(G-ICP)/)                                                      |
+
+> 참고: `auxiliary/pass_by_address.cpp`는 본 빌드에 포함되지 않은 보조 예제입니다 (Ceres + Eigen 학습용 스니펫).
+
+______________________________________________________________________
+
+## :file_folder: 디렉토리 구조
+
+```
+pcl_tutorial/
+├── CMakeLists.txt
+├── lec*.cpp           # 챕터별 예제 코드
+├── auxiliary/         # 본 빌드와 무관한 보조 스니펫
+├── img/               # README/블로그용 이미지
+└── materials/         # 예제용 포인트클라우드 데이터 (.bin / .pcd / .ply)
+```
+
+______________________________________________________________________
+
+## :page_facing_up: License
+
+MIT License. 라이선스 표기는 [`package.xml`](package.xml)을 참조하세요.
