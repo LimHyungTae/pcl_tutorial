@@ -16,7 +16,7 @@ void print_pc(pcl::PointCloud<T> &cloud) {
     }
 }
 
-int main(int argc, char**argv) {
+int main(int argc, char **argv) {
     pcl::PointCloud<pcl::PointXYZ> cloud_init0;
     cloud_init0.resize(3); //cloud의 size를 3으로 설정
 

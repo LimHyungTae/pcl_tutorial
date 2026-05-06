@@ -1,7 +1,6 @@
 //
 // Tutorial Author: shapelim@kaist.ac.kr (임형태)
 
-
 #include <pcl/point_types.h>
 #include <pcl/PCLPointCloud2.h>
 #include <pcl/conversions.h>
@@ -12,14 +11,14 @@
 using namespace std;
 
 pcl::PointCloud<pcl::PointXYZ>::ConstPtr load_bin(const string &filename) {
-    FILE*file                     = fopen(filename.c_str(), "rb");
+    FILE *file = fopen(filename.c_str(), "rb");
     if (!file) {
         std::cerr << "Error: failed to load " << filename << std::endl;
         return nullptr;
     }
     std::vector<float> buffer(1000000);
-    size_t             num_points =
-                               fread(reinterpret_cast<char*>(buffer.data()), sizeof(float), buffer.size(), file) / 4;
+    size_t num_points =
+            fread(reinterpret_cast<char *>(buffer.data()), sizeof(float), buffer.size(), file) / 4;
     fclose(file);
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
@@ -39,12 +38,11 @@ pcl::PointCloud<pcl::PointXYZ>::ConstPtr load_bin(const string &filename) {
 void colorize(const pcl::PointCloud<pcl::PointXYZ> &pc,
               pcl::PointCloud<pcl::PointXYZRGB> &pc_colored,
               const std::vector<int> &color) {
-
-    int N              = pc.points.size();
+    int N = pc.points.size();
 
     pc_colored.clear();
     pcl::PointXYZRGB pt_tmp;
-    for (int         i = 0; i < N; ++i) {
+    for (int i = 0; i < N; ++i) {
         const auto &pt = pc.points[i];
         pt_tmp.x = pt.x;
         pt_tmp.y = pt.y;
@@ -56,7 +54,7 @@ void colorize(const pcl::PointCloud<pcl::PointXYZ> &pc,
     }
 }
 
-int main(int argc, char**argv) {
+int main(int argc, char **argv) {
     /*
      * Load toy data
      */
@@ -87,12 +85,12 @@ int main(int argc, char**argv) {
     /*******************************************/
 
     // Set outputs
-    Eigen::Matrix4f src2tgt   = gicp.getFinalTransformation();
-    double score     = gicp.getFitnessScore();
+    Eigen::Matrix4f src2tgt = gicp.getFinalTransformation();
+    double score = gicp.getFitnessScore();
     bool is_converged = gicp.hasConverged();
 
-    cout<<src2tgt<<endl;
-    cout<<score<<endl;
+    cout << src2tgt << endl;
+    cout << score << endl;
 
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr src_colored(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr tgt_colored(new pcl::PointCloud<pcl::PointXYZRGB>);
@@ -111,10 +109,11 @@ int main(int argc, char**argv) {
 
     int cnt = 0;
     while (!viewer.wasStopped()) {
-        //you can also do cool processing here
-        //FIXME: Note that this is running in a separate thread from viewerPsycho
-        //and you should guard against race conditions yourself...
+        // you can also do cool processing here
+        // FIXME: Note that this is running in a separate thread from viewerPsycho
+        // and you should guard against race conditions yourself...
         cnt++;
     }
 
+    return 0;
 }

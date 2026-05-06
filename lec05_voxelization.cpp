@@ -10,14 +10,14 @@
 using namespace std;
 
 pcl::PointCloud<pcl::PointXYZ>::ConstPtr load_bin(const string &filename) {
-    FILE*file                     = fopen(filename.c_str(), "rb");
+    FILE *file = fopen(filename.c_str(), "rb");
     if (!file) {
         std::cerr << "Error: failed to load " << filename << std::endl;
         return nullptr;
     }
     std::vector<float> buffer(1000000);
-    size_t             num_points =
-            fread(reinterpret_cast<char*>(buffer.data()), sizeof(float), buffer.size(), file) / 4;
+    size_t num_points =
+            fread(reinterpret_cast<char *>(buffer.data()), sizeof(float), buffer.size(), file) / 4;
     fclose(file);
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
@@ -37,12 +37,11 @@ pcl::PointCloud<pcl::PointXYZ>::ConstPtr load_bin(const string &filename) {
 void colorize(const pcl::PointCloud<pcl::PointXYZ> &pc,
               pcl::PointCloud<pcl::PointXYZRGB> &pc_colored,
               const std::vector<int> &color) {
-
-    int N              = pc.points.size();
+    int N = pc.points.size();
 
     pc_colored.clear();
     pcl::PointXYZRGB pt_tmp;
-    for (int         i = 0; i < N; ++i) {
+    for (int i = 0; i < N; ++i) {
         const auto &pt = pc.points[i];
         pt_tmp.x = pt.x;
         pt_tmp.y = pt.y;
@@ -54,22 +53,23 @@ void colorize(const pcl::PointCloud<pcl::PointXYZ> &pc,
     }
 }
 
-void voxelize(pcl::PointCloud<pcl::PointXYZ>::Ptr pc_src, pcl::PointCloud<pcl::PointXYZ>& pc_dst, double var_voxel_size){
-
+void voxelize(pcl::PointCloud<pcl::PointXYZ>::Ptr pc_src,
+              pcl::PointCloud<pcl::PointXYZ> &pc_dst,
+              double var_voxel_size) {
     static pcl::VoxelGrid<pcl::PointXYZ> voxel_filter;
     voxel_filter.setInputCloud(pc_src);
     voxel_filter.setLeafSize(var_voxel_size, var_voxel_size, var_voxel_size);
     voxel_filter.filter(pc_dst);
 }
 
-//Input: pcl::PointCloud source, pc_src
-//Output: voxelized pcl::PointCloud, pc_voxelized
-int main(int argc, char **argv){
+// Input:  pcl::PointCloud source, pc_src
+// Output: voxelized pcl::PointCloud, pc_voxelized
+int main(int argc, char **argv) {
     /*
      * Load toy data
      */
     pcl::PointCloud<pcl::PointXYZ>::Ptr src(new pcl::PointCloud<pcl::PointXYZ>);
-    *src = *load_bin("/home/shapelim/git/pcl_tutorial/materials/kitti00_000000.bin");
+    *src = *load_bin("./auxiliary/kitti00_000000.bin");
 
     /**
      * Main
@@ -112,7 +112,5 @@ int main(int argc, char **argv){
         viewer2.spinOnce();
     }
 
-
     return 0;
-
 }

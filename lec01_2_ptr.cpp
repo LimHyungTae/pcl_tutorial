@@ -7,7 +7,7 @@ using namespace std;
 
 template<class T>
 void print_pc(pcl::PointCloud<T> &cloud) {
-    int             count = 0;
+    int count = 0;
     for (const auto &pt: cloud.points) {
         cout << count++ << ": ";
         cout << pt.x << ", " << pt.y << ", " << pt.z << endl;
@@ -16,7 +16,7 @@ void print_pc(pcl::PointCloud<T> &cloud) {
 
 template<class T>
 void print_pc_via_copy(pcl::PointCloud<T> cloud) {
-    int             count = 0;
+    int count = 0;
     for (const auto &pt: cloud.points) {
         cout << count++ << ": ";
         cout << pt.x << ", " << pt.y << ", " << pt.z << endl;
@@ -24,7 +24,7 @@ void print_pc_via_copy(pcl::PointCloud<T> cloud) {
 }
 
 void print_ptr(pcl::PointCloud<pcl::PointXYZ>::Ptr ptr_cloud) {
-    int             count = 0;
+    int count = 0;
     for (const auto &pt: ptr_cloud->points) {
         cout << count++ << ": ";
         cout << pt.x << ", " << pt.y << ", " << pt.z << endl;

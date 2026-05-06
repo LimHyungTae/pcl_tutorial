@@ -20,7 +20,9 @@ include_directories(
 file(COPY ${CMAKE_SOURCE_DIR}/materials/
         DESTINATION ${CMAKE_BINARY_DIR}/auxiliary/
         FILES_MATCHING
-        PATTERN *.bin)
+        PATTERN *.bin
+        PATTERN *.pcd
+        PATTERN *.ply)
 
 add_executable(lec00_usage lec00_usage.cpp)
 target_link_libraries(lec00_usage ${PCL_LIBRARIES})
@@ -34,14 +36,14 @@ target_link_libraries(lec01_2_ptr ${PCL_LIBRARIES})
 add_executable(lec01_3_ptr_in_class lec01_3_ptr_in_class.cpp)
 target_link_libraries(lec01_3_ptr_in_class ${PCL_LIBRARIES})
 
-add_executable(lec03_tf lec03_transformation.cpp)
-target_link_libraries(lec03_tf ${PCL_LIBRARIES})
+add_executable(lec03_transformation lec03_transformation.cpp)
+target_link_libraries(lec03_transformation ${PCL_LIBRARIES})
 
 add_executable(lec04_visualization lec04_visualization.cpp)
 target_link_libraries(lec04_visualization ${PCL_LIBRARIES})
 
-add_executable(lec05_voxel lec05_voxelization.cpp)
-target_link_libraries(lec05_voxel ${PCL_LIBRARIES})
+add_executable(lec05_voxelization lec05_voxelization.cpp)
+target_link_libraries(lec05_voxelization ${PCL_LIBRARIES})
 
 add_executable(lec06_pass_through lec06_pass_through.cpp)
 target_link_libraries(lec06_pass_through ${PCL_LIBRARIES})

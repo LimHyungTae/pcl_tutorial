@@ -77,11 +77,9 @@ int main(int argc, char **argv) {
     pcl::PointCloud<pcl::PointXYZ>::Ptr raw_cloud(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_voxel(new pcl::PointCloud<pcl::PointXYZ>);
-    if (pcl::io::loadPCDFile<pcl::PointXYZ>(
-            "/home/shapelim/git/pcl_tutorial/materials/naverlabs_vel16.pcd", *raw_cloud) ==
-        -1) {
-        PCL_ERROR ("Couldn't read source pcd file! \n");
-        return (-1);
+    if (pcl::io::loadPCDFile<pcl::PointXYZ>("./auxiliary/naverlabs_vel16.pcd", *raw_cloud) == -1) {
+        PCL_ERROR("Couldn't read source pcd file! \n");
+        return -1;
     }
 
     /*

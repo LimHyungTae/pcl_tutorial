@@ -37,7 +37,6 @@ pcl::PointCloud<pcl::PointXYZ>::ConstPtr load_bin(const string &filename) {
 void colorize(const pcl::PointCloud<pcl::PointXYZ> &pc,
               pcl::PointCloud<pcl::PointXYZRGB> &pc_colored,
               const std::vector<int> &color) {
-
     int N = pc.points.size();
 
     pc_colored.clear();
@@ -59,7 +58,7 @@ int main(int argc, char **argv) {
      * Load toy data
      */
     pcl::PointCloud<pcl::PointXYZ>::Ptr src(new pcl::PointCloud<pcl::PointXYZ>);
-    *src = *load_bin("/home/shapelim/git/pcl_tutorial/materials/kitti00_000000.bin");
+    *src = *load_bin("./auxiliary/kitti00_000000.bin");
 
     /**
      * Main
@@ -114,8 +113,6 @@ int main(int argc, char **argv) {
         viewer2.spinOnce();
     }
 
-
     return 0;
-
 }
 

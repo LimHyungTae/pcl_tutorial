@@ -12,14 +12,14 @@
 using namespace std;
 
 pcl::PointCloud<pcl::PointXYZ>::ConstPtr load_bin(const string &filename) {
-    FILE*file                     = fopen(filename.c_str(), "rb");
+    FILE *file = fopen(filename.c_str(), "rb");
     if (!file) {
         std::cerr << "Error: failed to load " << filename << std::endl;
         return nullptr;
     }
     std::vector<float> buffer(1000000);
-    size_t             num_points =
-                               fread(reinterpret_cast<char*>(buffer.data()), sizeof(float), buffer.size(), file) / 4;
+    size_t num_points =
+            fread(reinterpret_cast<char *>(buffer.data()), sizeof(float), buffer.size(), file) / 4;
     fclose(file);
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
@@ -36,13 +36,13 @@ pcl::PointCloud<pcl::PointXYZ>::ConstPtr load_bin(const string &filename) {
     return cloud;
 }
 
-int main (int argc, char** argv) {
+int main(int argc, char **argv) {
     /*
      * Load toy data
      */
     pcl::PointCloud<pcl::PointXYZ>::Ptr src(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr boundary(new pcl::PointCloud<pcl::PointXYZ>);
-    *src = *load_bin("/home/shapelim/git/pcl_tutorial/materials/kitti00_000000.bin");
+    *src = *load_bin("./auxiliary/kitti00_000000.bin");
 
     /**
      * Main
@@ -56,14 +56,14 @@ int main (int argc, char** argv) {
     /** 기준점: 차량 위의 points **/
     pcl::PointXYZ query(6.0, 6.0, 0.0);
 
-    cout<<query.x <<", "<< query.y<<", "<< query.z<<endl;
+    cout << query.x << ", " << query.y << ", " << query.z << endl;
     /**
      * Input: query point, N
      * Output: indices, squred distances
      */
     kdtree.nearestKSearch(query, N, idxes, sqr_dists);
 
-    for (const auto& idx: idxes){
+    for (const auto &idx: idxes) {
         boundary->points.push_back(src->points[idx]);
     }
 

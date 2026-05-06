@@ -11,7 +11,6 @@
 void colorize(const pcl::PointCloud<pcl::PointXYZ> &pc,
               pcl::PointCloud<pcl::PointXYZRGB> &pc_colored,
               const std::vector<int> &color) {
-
     int N = pc.points.size();
 
     pc_colored.clear();
@@ -28,14 +27,11 @@ void colorize(const pcl::PointCloud<pcl::PointXYZ> &pc,
     }
 }
 
-int main(int argc, char **argv){
-
+int main(int argc, char **argv) {
     pcl::PointCloud<pcl::PointXYZ>::Ptr src(new pcl::PointCloud<pcl::PointXYZ>);
-    if (pcl::io::loadPCDFile<pcl::PointXYZ>(
-            "/home/shapelim/git/pcl_tutorial/materials/naverlabs_vel16.pcd", *src) ==
-        -1) {
-        PCL_ERROR ("Couldn't read source pcd file! \n");
-        return (-1);
+    if (pcl::io::loadPCDFile<pcl::PointXYZ>("./auxiliary/naverlabs_vel16.pcd", *src) == -1) {
+        PCL_ERROR("Couldn't read source pcd file! \n");
+        return -1;
     }
 
     /**
@@ -47,9 +43,9 @@ int main(int argc, char **argv){
     double std_multiplier = 1.0;
 
     pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
-    sor.setInputCloud (src);
-    sor.setMeanK (num_neigbor_points);
-    sor.setStddevMulThresh (std_multiplier);
+    sor.setInputCloud(src);
+    sor.setMeanK(num_neigbor_points);
+    sor.setStddevMulThresh(std_multiplier);
     sor.filter(*output);
     /*******************************************/
 

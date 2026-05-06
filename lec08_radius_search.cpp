@@ -12,14 +12,14 @@
 using namespace std;
 
 pcl::PointCloud<pcl::PointXYZ>::ConstPtr load_bin(const string &filename) {
-    FILE*file                     = fopen(filename.c_str(), "rb");
+    FILE *file = fopen(filename.c_str(), "rb");
     if (!file) {
         std::cerr << "Error: failed to load " << filename << std::endl;
         return nullptr;
     }
     std::vector<float> buffer(1000000);
-    size_t             num_points =
-                               fread(reinterpret_cast<char*>(buffer.data()), sizeof(float), buffer.size(), file) / 4;
+    size_t num_points =
+            fread(reinterpret_cast<char *>(buffer.data()), sizeof(float), buffer.size(), file) / 4;
     fclose(file);
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
@@ -36,7 +36,7 @@ pcl::PointCloud<pcl::PointXYZ>::ConstPtr load_bin(const string &filename) {
     return cloud;
 }
 
-int main (int argc, char** argv) {
+int main(int argc, char **argv) {
     /*
      * Load toy data
      */
@@ -44,7 +44,7 @@ int main (int argc, char** argv) {
     pcl::PointCloud<pcl::PointXYZ>::Ptr boundary1(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr boundary2(new pcl::PointCloud<pcl::PointXYZ>);
 
-    *src = *load_bin("/home/shapelim/git/pcl_tutorial/materials/kitti00_000000.bin");
+    *src = *load_bin("./auxiliary/kitti00_000000.bin");
 
     /**
      * Main
@@ -63,12 +63,12 @@ int main (int argc, char** argv) {
      * Output: indices, squred distances
      */
     kdtree.radiusSearch(query1, radius, idxes, sqr_dists);
-    for (const auto& idx: idxes){
+    for (const auto &idx: idxes) {
         boundary1->points.push_back(src->points[idx]);
     }
 
     kdtree.radiusSearch(query2, radius, idxes, sqr_dists);
-    for (const auto& idx: idxes){
+    for (const auto &idx: idxes) {
         boundary2->points.push_back(src->points[idx]);
     }
     /*******************************************/
