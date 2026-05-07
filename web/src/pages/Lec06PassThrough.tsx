@@ -8,6 +8,7 @@ import PointCloudViewer from "../components/PointCloudViewer";
 import Slider from "../components/Slider";
 import DataSourcePicker from "../components/DataSourcePicker";
 import { useT } from "../i18n";
+import { CameraSyncStore } from "../lib/cameraSync";
 import { passThrough, type Axis } from "../lib/filters/passThrough";
 import { emptyCloud, type PointCloud } from "../lib/types";
 
@@ -27,6 +28,7 @@ export default function Lec06PassThrough() {
     [src, axis, min, max, negative],
   );
   const ptSize = 0.05 * scale;
+  const sync = useMemo(() => new CameraSyncStore(), []);
 
   return (
     <div className="mx-auto max-w-7xl px-8 py-10">
@@ -39,12 +41,20 @@ export default function Lec06PassThrough() {
           afterMeta={`${filtered.count.toLocaleString()} ${t.viewer.pointsSuffix}`}
           before={
             <PointCloudViewer
-              layers={[{ cloud: src, color: "#f87171", size: ptSize }]}
+              sync={sync}
+              layers={[
+                { cloud: src, color: "#f87171", size: ptSize },
+                { cloud: filtered, color: "#000", boundsOnly: true },
+              ]}
             />
           }
           after={
             <PointCloudViewer
-              layers={[{ cloud: filtered, color: "#34d399", size: ptSize }]}
+              sync={sync}
+              layers={[
+                { cloud: src, color: "#000", boundsOnly: true },
+                { cloud: filtered, color: "#34d399", size: ptSize },
+              ]}
             />
           }
         />

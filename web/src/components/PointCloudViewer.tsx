@@ -1,21 +1,21 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, GizmoHelper, GizmoViewport } from "@react-three/drei";
 import * as THREE from "three";
+import { CameraSyncStore, nextSyncId } from "../lib/cameraSync";
 import type { PointCloud } from "../lib/types";
 
 type Layer = {
   cloud: PointCloud;
-  /** Either a single CSS color (applied to all points), or per-point RGB
-   *  (Float32Array of length 3*count, values in [0,1]). */
   color: string | Float32Array;
   size?: number;
   opacity?: number;
+  /** Contributes to camera framing only — skip rendering. Useful when two
+   *  synced viewers should share a bbox: each pane includes the other's
+   *  cloud as a bounds-only layer. */
+  boundsOnly?: boolean;
 };
 
-/** Line-segment overlay (e.g. ICP correspondence lines).
- *  positions: flat Float32Array [x1,y1,z1, x2,y2,z2, ...] — every two
- *  consecutive vertices form a segment. */
 type LineLayer = {
   positions: Float32Array;
   color: string;
@@ -26,12 +26,11 @@ type Props = {
   layers: Layer[];
   lines?: LineLayer[];
   background?: string;
-  /** Called with [x, y, z] when the user clicks a point in any layer. */
   onPick?: (xyz: [number, number, number]) => void;
-  /** Initial value of the pt-size slider (1× by default). Some demos
-   *  default points are too small to read at 1× (e.g. SOR), so the
-   *  caller can bump it. */
   defaultSizeMult?: number;
+  /** When two viewers share a CameraSyncStore, orbiting one mirrors to the
+   *  other. */
+  sync?: CameraSyncStore;
 };
 
 export default function PointCloudViewer({
@@ -40,6 +39,7 @@ export default function PointCloudViewer({
   background = "#0a0f1a",
   onPick,
   defaultSizeMult = 1,
+  sync,
 }: Props) {
   const [sizeMult, setSizeMult] = useState(defaultSizeMult);
   const { center, radius } = useMemo(() => unionBounds(layers), [layers]);
@@ -72,13 +72,9 @@ export default function PointCloudViewer({
         dpr={[1, 2]}
       >
         <ambientLight intensity={0.6} />
-        {scaledLayers.map((l, idx) => (
-          <PointsLayer
-            key={idx}
-            layer={l}
-            onPick={onPick}
-          />
-        ))}
+        {scaledLayers.map((l, idx) =>
+          l.boundsOnly ? null : <PointsLayer key={idx} layer={l} onPick={onPick} />,
+        )}
         {lines?.map((l, idx) => <LinesLayer key={`l${idx}`} layer={l} />)}
         <axesHelper args={[Math.max(0.05, radius * 0.2)]} />
         <ViewFrame
@@ -89,6 +85,7 @@ export default function PointCloudViewer({
         />
         <PickConfig radius={radius} pickable={!!onPick} />
         <OrbitControls enableDamping dampingFactor={0.08} makeDefault />
+        {sync && <CameraSyncBridge store={sync} />}
         <GizmoHelper alignment="bottom-right" margin={[64, 64]}>
           <GizmoViewport
             axisColors={["#ef4444", "#22c55e", "#3b82f6"]}
@@ -185,9 +182,73 @@ function ViewFrame({
   return null;
 }
 
-/** Adjust the raycaster's Points threshold to the current scale so picking
- *  works whether the cloud is the Stanford Bunny (~10 cm) or a KITTI scan
- *  (~100 m). */
+/** Bridge between this viewer's OrbitControls and a shared store, so two
+ *  viewers can keep their cameras locked together. */
+function CameraSyncBridge({ store }: { store: CameraSyncStore }) {
+  const camera = useThree((s) => s.camera);
+  const controls = useThree((s) => s.controls) as
+    | (THREE.EventDispatcher & {
+        target: THREE.Vector3;
+        update?: () => void;
+        addEventListener: (type: string, fn: () => void) => void;
+        removeEventListener: (type: string, fn: () => void) => void;
+      })
+    | null;
+
+  // Per-instance ID — used to ignore our own echoed publishes.
+  const idRef = useRef<number | null>(null);
+  if (idRef.current === null) idRef.current = nextSyncId();
+
+  // Tracks the most recently *applied* remote state. The change handler
+  // checks against this to filter out events that are just our own
+  // remote-applied updates being re-broadcast through OrbitControls.
+  const lastAppliedRef = useRef<{
+    pos: THREE.Vector3;
+    tgt: THREE.Vector3;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!camera || !controls) return;
+    return store.subscribe((e) => {
+      if (e.sourceId === idRef.current) return;
+      camera.position.copy(e.pos);
+      controls.target.copy(e.tgt);
+      controls.update?.();
+      lastAppliedRef.current = {
+        pos: e.pos.clone(),
+        tgt: e.tgt.clone(),
+      };
+    });
+  }, [store, camera, controls]);
+
+  useEffect(() => {
+    if (!camera || !controls) return;
+    const handler = () => {
+      const last = lastAppliedRef.current;
+      if (
+        last &&
+        camera.position.distanceTo(last.pos) < 1e-4 &&
+        controls.target.distanceTo(last.tgt) < 1e-4
+      ) {
+        return; // still echoing the remote state — don't re-broadcast
+      }
+      store.publish({
+        pos: camera.position.clone(),
+        tgt: controls.target.clone(),
+        sourceId: idRef.current!,
+      });
+      lastAppliedRef.current = {
+        pos: camera.position.clone(),
+        tgt: controls.target.clone(),
+      };
+    };
+    controls.addEventListener("change", handler);
+    return () => controls.removeEventListener("change", handler);
+  }, [store, camera, controls]);
+
+  return null;
+}
+
 function PickConfig({ radius, pickable }: { radius: number; pickable: boolean }) {
   const raycaster = useThree((s) => s.raycaster);
   useEffect(() => {

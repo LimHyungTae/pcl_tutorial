@@ -8,6 +8,7 @@ import PointCloudViewer from "../components/PointCloudViewer";
 import Slider from "../components/Slider";
 import DataSourcePicker from "../components/DataSourcePicker";
 import { useT } from "../i18n";
+import { CameraSyncStore } from "../lib/cameraSync";
 import { voxelGrid } from "../lib/filters/voxelGrid";
 import { emptyCloud, type PointCloud } from "../lib/types";
 
@@ -23,6 +24,7 @@ export default function Lec05Voxelization() {
   const reduction =
     src.count > 0 ? (1 - filtered.count / src.count) * 100 : 0;
   const ptSize = 0.05 * scale;
+  const sync = useMemo(() => new CameraSyncStore(), []);
 
   return (
     <div className="mx-auto max-w-7xl px-8 py-10">
@@ -35,12 +37,21 @@ export default function Lec05Voxelization() {
           afterMeta={`${filtered.count.toLocaleString()} ${t.viewer.pointsSuffix} (-${reduction.toFixed(1)}%)`}
           before={
             <PointCloudViewer
-              layers={[{ cloud: src, color: "#f87171", size: ptSize }]}
+              sync={sync}
+              layers={[
+                { cloud: src, color: "#f87171", size: ptSize },
+                // bounds anchor → keeps both panes' bbox identical so framing stays in sync
+                { cloud: filtered, color: "#000", boundsOnly: true },
+              ]}
             />
           }
           after={
             <PointCloudViewer
-              layers={[{ cloud: filtered, color: "#34d399", size: ptSize }]}
+              sync={sync}
+              layers={[
+                { cloud: src, color: "#000", boundsOnly: true },
+                { cloud: filtered, color: "#34d399", size: ptSize },
+              ]}
             />
           }
         />
