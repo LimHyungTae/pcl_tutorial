@@ -7,7 +7,7 @@
 <img src="https://img.shields.io/badge/CMake-%E2%89%A53.10-064F8C.svg" alt="CMake">
 <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT">
 
-<p align="center"><img src="https://github.com/user-attachments/assets/5b727855-353f-4a10-baa1-89ec9f019187" alt="thumbnail" width="70%"/></p>
+<p align="center"><img src="https://github.com/user-attachments/assets/5b727855-353f-4a10-baa1-89ec9f019187" alt="thumbnail" width="80%"/></p>
 
 <p><strong><em>A hands-on, browser-based tutorial for the Point Cloud Library.</em></strong></p>
 </div>
@@ -88,7 +88,7 @@ cd build
 
 ______________________________________________________________________
 
-## :books: Chapters & Source (Korean Only)
+## :books: Chapters & Source (Blog posts are written in Korean)
 
 | #     | Code                                                                                | Topic                               | Blog post                                                                                                                                                                                                  |
 | :---: | :-----------------------------------------------------------------------------------: | :-----------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
