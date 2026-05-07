@@ -1,42 +1,49 @@
-import { Chapter, statusColor, statusLabel } from "../chapters";
+import { ChapterMeta, statusColor } from "../chapters";
+import { useT } from "../i18n";
 
 const REPO = "https://github.com/LimHyungTae/pcl_tutorial/blob/main";
 
-export default function ChapterHeader({ chapter }: { chapter: Chapter }) {
+export default function ChapterHeader({ chapter }: { chapter: ChapterMeta }) {
+  const t = useT();
+  const tc = t.chapters[chapter.slug as keyof typeof t.chapters];
   return (
-    <header className="border-b border-slate-800/80 pb-6">
-      <div className="flex items-center gap-3 text-xs">
-        <span className="code-font text-slate-500">
-          Chapter {chapter.number}
+    <header className="border-b border-[var(--border)] pb-7 fade-up">
+      <div className="flex items-center gap-3 text-[11px]">
+        <span className="code-font uppercase tracking-[0.2em] text-[var(--mut)]">
+          {t.home.chapterPrefix} {chapter.number.padStart(2, "0")}
         </span>
         <span
           className={`rounded px-1.5 py-0.5 text-[10px] ring-1 ring-inset ${statusColor[chapter.status]}`}
         >
-          {statusLabel[chapter.status]}
+          {t.status[chapter.status]}
         </span>
       </div>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-        {chapter.title}
+      <h1 className="heading-mono mt-3 text-3xl font-extrabold tracking-tight">
+        <span className="gradient-text">{tc.title}</span>
       </h1>
-      <p className="mt-2 text-base text-slate-400">{chapter.subtitle}</p>
+      <p className="mt-2 max-w-3xl text-[14px] leading-relaxed text-[var(--dim)]">
+        {tc.subtitle}
+      </p>
 
-      <div className="mt-4 flex flex-wrap gap-3 text-xs">
-        <a
-          href={`${REPO}/${chapter.source}`}
-          target="_blank"
-          rel="noreferrer"
-          className="code-font rounded-md border border-slate-700/80 px-3 py-1.5 text-slate-300 transition hover:border-slate-500 hover:text-white"
-        >
-          {chapter.source}
-        </a>
+      <div className="mt-4 flex flex-wrap gap-2 text-xs">
+        {chapter.source && (
+          <a
+            href={`${REPO}/${chapter.source}`}
+            target="_blank"
+            rel="noreferrer"
+            className="code-font rounded-md border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-1.5 text-[var(--dim)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+          >
+            {chapter.source}
+          </a>
+        )}
         {chapter.blog && (
           <a
             href={chapter.blog}
             target="_blank"
             rel="noreferrer"
-            className="rounded-md border border-slate-700/80 px-3 py-1.5 text-slate-300 transition hover:border-slate-500 hover:text-white"
+            className="rounded-md border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-1.5 text-[var(--dim)] transition hover:border-[var(--accent-2)] hover:text-[var(--accent-2)]"
           >
-            블로그 글 ↗
+            {t.nav.blogPost} ↗
           </a>
         )}
       </div>

@@ -6,21 +6,20 @@ import type { PointCloud } from "../lib/types";
 
 type Layer = {
   cloud: PointCloud;
-  color: string;
+  /** Either a single CSS color (applied to all points), or per-point RGB
+   *  (Float32Array of length 3*count, values in [0,1]). */
+  color: string | Float32Array;
   size?: number;
   opacity?: number;
 };
 
 type Props = {
   layers: Layer[];
-  /** If true, viewer auto-frames the union bbox. */
-  autoFrame?: boolean;
   background?: string;
 };
 
 export default function PointCloudViewer({
   layers,
-  autoFrame = true,
   background = "#0b1220",
 }: Props) {
   const { center, radius } = useMemo(() => unionBounds(layers), [layers]);
@@ -35,7 +34,7 @@ export default function PointCloudViewer({
   return (
     <Canvas
       style={{ background }}
-      camera={{ position: camPos, fov: 50, near: 0.01, far: radius * 50 + 1000 }}
+      camera={{ position: camPos, fov: 50, near: Math.max(radius * 0.001, 0.01), far: radius * 50 + 1000 }}
       dpr={[1, 2]}
     >
       <ambientLight intensity={0.6} />
@@ -47,7 +46,7 @@ export default function PointCloudViewer({
         target={center}
         enableDamping
         dampingFactor={0.08}
-        makeDefault={autoFrame}
+        makeDefault
       />
       <GizmoHelper alignment="bottom-right" margin={[64, 64]}>
         <GizmoViewport
@@ -63,20 +62,30 @@ function PointsLayer({ layer }: { layer: Layer }) {
   const geom = useMemo(() => {
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.BufferAttribute(layer.cloud.positions, 3));
+    if (layer.color instanceof Float32Array) {
+      g.setAttribute("color", new THREE.BufferAttribute(layer.color, 3));
+    }
     return g;
-  }, [layer.cloud]);
+  }, [layer.cloud, layer.color]);
 
-  const mat = useMemo(
-    () =>
-      new THREE.PointsMaterial({
-        color: new THREE.Color(layer.color),
+  const mat = useMemo(() => {
+    if (layer.color instanceof Float32Array) {
+      return new THREE.PointsMaterial({
+        vertexColors: true,
         size: layer.size ?? 0.05,
         sizeAttenuation: true,
         transparent: (layer.opacity ?? 1) < 1,
         opacity: layer.opacity ?? 1,
-      }),
-    [layer.color, layer.size, layer.opacity],
-  );
+      });
+    }
+    return new THREE.PointsMaterial({
+      color: new THREE.Color(layer.color),
+      size: layer.size ?? 0.05,
+      sizeAttenuation: true,
+      transparent: (layer.opacity ?? 1) < 1,
+      opacity: layer.opacity ?? 1,
+    });
+  }, [layer.color, layer.size, layer.opacity]);
 
   return <points geometry={geom} material={mat} />;
 }
@@ -109,6 +118,6 @@ function unionBounds(layers: Layer[]) {
   const cx = (minX + maxX) / 2;
   const cy = (minY + maxY) / 2;
   const cz = (minZ + maxZ) / 2;
-  const r = Math.max(maxX - minX, maxY - minY, maxZ - minZ) * 0.6 + 1;
+  const r = Math.max(maxX - minX, maxY - minY, maxZ - minZ) * 0.6 + 0.1;
   return { center: new THREE.Vector3(cx, cy, cz), radius: r };
 }

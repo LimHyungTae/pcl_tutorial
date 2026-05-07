@@ -1,31 +1,228 @@
 @import "tailwindcss";
 
+:root {
+  --bg: #0a0f1a;
+  --surface: #111827;
+  --surface-2: #0f1623;
+  --border: #1e293b;
+  --border-strong: #2d3a4f;
+  --accent: #00d4aa;
+  --accent-2: #4da6ff;
+  --warn: #ff8c42;
+  --rose: #ff5ca0;
+  --text: #e2e8f0;
+  --text-strong: #f8fafc;
+  --dim: #64748b;
+  --mut: #475569;
+}
+
+@theme {
+  --color-app-bg: var(--bg);
+  --color-app-surface: var(--surface);
+  --color-app-border: var(--border);
+  --color-app-text: var(--text);
+  --color-app-dim: var(--dim);
+  --color-app-mut: var(--mut);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --font-sans:
+    "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Apple SD Gothic Neo", sans-serif;
+  --font-mono:
+    "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+
 html,
 body,
 #root {
   height: 100%;
 }
 
-body {
+html[lang="ko"] body {
   font-family:
+    "Inter",
     "Pretendard Variable",
     "Pretendard",
+    system-ui,
+    "Apple SD Gothic Neo",
+    sans-serif;
+}
+
+body {
+  font-family:
+    "Inter",
+    system-ui,
     -apple-system,
     BlinkMacSystemFont,
-    "Apple SD Gothic Neo",
     "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
     sans-serif;
   font-feature-settings: "tnum";
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+/* Subtle grid backdrop, fixed regardless of scroll. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 212, 170, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 170, 0.035) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
 }
 
 .code-font {
-  font-family:
-    "JetBrains Mono",
-    "SF Mono",
-    Menlo,
-    Consolas,
-    monospace;
+  font-family: var(--font-mono);
+}
+
+.heading-mono {
+  font-family: var(--font-mono);
+  letter-spacing: -0.5px;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.lab-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.85;
+}
+
+.pill {
+  display: inline-block;
+  padding: 6px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 20px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--mut);
+  background: var(--surface);
+}
+
+.app-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.app-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--accent),
+    var(--accent-2),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.app-card:hover {
+  border-color: rgba(0, 212, 170, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 30px rgba(0, 212, 170, 0.06);
+}
+
+.app-card:hover::before {
+  opacity: 1;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fadeUp 0.5s ease both;
+}
+
+/* Range slider: cleaner, on-brand. */
+input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--border);
+}
+input[type="range"]::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--border);
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-top: -5px;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 1px var(--accent);
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+input[type="range"]:hover::-webkit-slider-thumb {
+  transform: scale(1.1);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 1px var(--accent);
+  cursor: pointer;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.1);
 }

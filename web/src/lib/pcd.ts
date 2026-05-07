@@ -1,4 +1,5 @@
 import { parseKittiBin } from "./kitti";
+import { parsePly } from "./ply";
 import { cloudFromPositions, type PointCloud } from "./types";
 
 /**
@@ -129,8 +130,16 @@ export async function loadCloud(url: string): Promise<PointCloud> {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`fetch ${url}: ${res.status}`);
   const buf = await res.arrayBuffer();
-  if (url.toLowerCase().endsWith(".bin")) {
-    return parseKittiBin(buf);
-  }
+  const lower = url.toLowerCase();
+  if (lower.endsWith(".bin")) return parseKittiBin(buf);
+  if (lower.endsWith(".ply")) return parsePly(buf);
+  return parsePcd(buf);
+}
+
+/** Parse from an in-memory buffer with explicit format hint. */
+export function parseFromBuffer(buf: ArrayBuffer, filename: string): PointCloud {
+  const lower = filename.toLowerCase();
+  if (lower.endsWith(".bin")) return parseKittiBin(buf);
+  if (lower.endsWith(".ply")) return parsePly(buf);
   return parsePcd(buf);
 }

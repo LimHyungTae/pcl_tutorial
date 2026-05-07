@@ -19,10 +19,10 @@ export default function BeforeAfterPanel({
 }: Props) {
   return (
     <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-      <Pane label={beforeLabel} meta={beforeMeta} tone="rose">
+      <Pane label={beforeLabel} meta={beforeMeta} dot="#f87171" tint="rgba(248,113,113,0.06)">
         {before}
       </Pane>
-      <Pane label={afterLabel} meta={afterMeta} tone="emerald">
+      <Pane label={afterLabel} meta={afterMeta} dot="#00d4aa" tint="rgba(0,212,170,0.06)">
         {after}
       </Pane>
     </div>
@@ -32,30 +32,30 @@ export default function BeforeAfterPanel({
 function Pane({
   label,
   meta,
-  tone,
+  dot,
+  tint,
   children,
 }: {
   label: string;
   meta?: string;
-  tone: "rose" | "emerald";
+  dot: string;
+  tint: string;
   children: ReactNode;
 }) {
-  const tones = {
-    rose: "border-rose-500/30 bg-rose-500/[.04]",
-    emerald: "border-emerald-500/30 bg-emerald-500/[.04]",
-  } as const;
-  const dots = {
-    rose: "bg-rose-400",
-    emerald: "bg-emerald-400",
-  } as const;
   return (
-    <div className={`overflow-hidden rounded-xl border ${tones[tone]}`}>
-      <div className="flex items-center justify-between border-b border-white/5 bg-slate-950/40 px-4 py-2 text-xs">
+    <div
+      className="overflow-hidden rounded-xl border border-[var(--border)]"
+      style={{ background: tint }}
+    >
+      <div className="flex items-center justify-between border-b border-white/5 bg-[color:rgba(10,15,26,0.4)] px-4 py-2 text-[11px]">
         <div className="flex items-center gap-2">
-          <span className={`inline-block h-2 w-2 rounded-full ${dots[tone]}`} />
-          <span className="font-medium text-slate-200">{label}</span>
+          <span
+            className="inline-block h-2 w-2 rounded-full"
+            style={{ background: dot }}
+          />
+          <span className="font-semibold text-[var(--text)]">{label}</span>
         </div>
-        {meta && <span className="code-font text-slate-500">{meta}</span>}
+        {meta && <span className="code-font text-[var(--dim)]">{meta}</span>}
       </div>
       <div className="aspect-[4/3] w-full">{children}</div>
     </div>

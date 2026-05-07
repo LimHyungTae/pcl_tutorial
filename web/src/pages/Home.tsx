@@ -1,59 +1,61 @@
 import { Link } from "react-router-dom";
-import { chapters, statusColor, statusLabel } from "../chapters";
+import { chapters, statusColor } from "../chapters";
+import { useT } from "../i18n";
 
 export default function Home() {
+  const t = useT();
   return (
-    <div className="mx-auto max-w-5xl px-8 py-12">
-      <div className="mb-10">
-        <div className="mb-2 text-xs font-semibold uppercase tracking-widest text-emerald-400">
-          PCL Tutorial · 한글
-        </div>
-        <h1 className="text-4xl font-semibold tracking-tight text-white">
-          Point Cloud Library를{" "}
-          <span className="text-emerald-300">손으로 만져 보는</span> 튜토리얼
+    <div className="mx-auto max-w-5xl px-8 pt-14 pb-16">
+      <header className="mb-12 text-center fade-up">
+        <div className="lab-tag">{t.home.eyebrow}</div>
+        <h1 className="heading-mono mt-4 text-4xl font-extrabold leading-[1.1] sm:text-5xl">
+          <span className="gradient-text">
+            {t.home.headline1} {t.home.headlineEm} {t.home.headline2}
+          </span>
         </h1>
-        <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-400">
-          C++ 코드 그대로의 동작을 브라우저에서 슬라이더로 만져볼 수 있게
-          옮겼습니다. 가벼운 필터(Voxel / PassThrough / SOR / KNN)는 TypeScript로
-          재구현했고, 무거운 연산(ICP / GICP / Normal)은 PCL 바이너리로 미리
-          뽑은 결과를 before / after로 비교합니다.
+        <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-relaxed text-[var(--dim)]">
+          {t.home.intro}
         </p>
-      </div>
+        <div className="pill mt-6">PCL · ROS · LiDAR · SLAM</div>
+      </header>
 
-      <div className="mb-8 flex flex-wrap gap-2 text-xs">
-        <Legend label="인터랙티브" tone="emerald" hint="슬라이더로 실시간 갱신" />
-        <Legend label="Pre-computed" tone="sky" hint="C++ 결과를 토글" />
-        <Legend label="코드 설명" tone="amber" hint="개념·소스 해설" />
-        <Legend label="준비중" tone="slate" hint="추후 추가" />
+      <div className="mb-6 flex flex-wrap gap-x-4 gap-y-2 text-xs">
+        <Legend label={t.status.interactive} dot="#00d4aa" hint={t.legend.interactive} />
+        <Legend label={t.status.precomputed} dot="#4da6ff" hint={t.legend.precomputed} />
+        <Legend label={t.status.stub} dot="#475569" hint={t.legend.stub} />
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        {chapters.map((c) => (
-          <Link
-            key={c.slug}
-            to={`/${c.slug}`}
-            className="group flex flex-col gap-3 rounded-xl border border-slate-800/80 bg-slate-900/40 p-5 transition hover:border-slate-600 hover:bg-slate-900"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="code-font text-xs text-slate-500">
-                  Chapter {c.number}
+        {chapters.map((c, i) => {
+          const tc = t.chapters[c.slug as keyof typeof t.chapters];
+          return (
+            <Link
+              key={c.slug}
+              to={`/${c.slug}`}
+              className="app-card fade-up flex flex-col gap-3 px-5 py-4"
+              style={{ animationDelay: `${0.04 * i}s` }}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="code-font text-[11px] uppercase tracking-wider text-[var(--mut)]">
+                    {t.home.chapterPrefix} {c.number}
+                  </div>
+                  <div className="code-font mt-1 truncate text-[15px] font-bold text-[var(--text-strong)]">
+                    {tc.title}
+                  </div>
                 </div>
-                <div className="mt-1 truncate text-base font-medium text-white">
-                  {c.title}
-                </div>
+                <span
+                  className={`shrink-0 rounded px-2 py-0.5 text-[10px] font-medium ring-1 ring-inset ${statusColor[c.status]}`}
+                >
+                  {t.status[c.status]}
+                </span>
               </div>
-              <span
-                className={`shrink-0 rounded px-2 py-0.5 text-[10px] ring-1 ring-inset ${statusColor[c.status]}`}
-              >
-                {statusLabel[c.status]}
-              </span>
-            </div>
-            <p className="text-sm leading-relaxed text-slate-400">
-              {c.subtitle}
-            </p>
-          </Link>
-        ))}
+              <p className="text-[13px] leading-relaxed text-[var(--dim)]">
+                {tc.subtitle}
+              </p>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );
@@ -62,24 +64,20 @@ export default function Home() {
 function Legend({
   label,
   hint,
-  tone,
+  dot,
 }: {
   label: string;
   hint: string;
-  tone: "emerald" | "sky" | "amber" | "slate";
+  dot: string;
 }) {
-  const tones = {
-    emerald: "bg-emerald-500/15 text-emerald-300 ring-emerald-500/30",
-    sky: "bg-sky-500/15 text-sky-300 ring-sky-500/30",
-    amber: "bg-amber-500/15 text-amber-300 ring-amber-500/30",
-    slate: "bg-slate-500/15 text-slate-400 ring-slate-500/30",
-  } as const;
   return (
-    <span className="inline-flex items-center gap-2">
-      <span className={`rounded px-1.5 py-0.5 text-[10px] ring-1 ring-inset ${tones[tone]}`}>
-        {label}
-      </span>
-      <span className="text-slate-500">— {hint}</span>
+    <span className="inline-flex items-center gap-2 text-[var(--dim)]">
+      <span
+        className="inline-block h-1.5 w-1.5 rounded-full"
+        style={{ background: dot }}
+      />
+      <span className="text-[var(--text)]">{label}</span>
+      <span>· {hint}</span>
     </span>
   );
 }
