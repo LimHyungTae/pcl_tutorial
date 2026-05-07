@@ -4,12 +4,33 @@ import { asset } from "../lib/useCloud";
 import { loadCloud, parseFromBuffer } from "../lib/pcd";
 import { emptyCloud, type PointCloud } from "../lib/types";
 
-export type PresetId = "kitti" | "naverlabs" | "bunny";
+export type PresetId = "bunny" | "naverlabs" | "kitti";
+
+/** Order here drives the on-screen button order (left → right). */
+const PRESET_ORDER: PresetId[] = ["bunny", "naverlabs", "kitti"];
+
+const SCENE_TONES: Record<PresetId, { fg: string; bg: string; bd: string }> = {
+  bunny: {
+    fg: "#fbbf24",
+    bg: "rgba(251, 191, 36, 0.10)",
+    bd: "rgba(251, 191, 36, 0.30)",
+  },
+  naverlabs: {
+    fg: "#4da6ff",
+    bg: "rgba(77, 166, 255, 0.10)",
+    bd: "rgba(77, 166, 255, 0.30)",
+  },
+  kitti: {
+    fg: "#00d4aa",
+    bg: "rgba(0, 212, 170, 0.10)",
+    bd: "rgba(0, 212, 170, 0.30)",
+  },
+};
 
 const PRESETS: Record<PresetId, { url: string; suggestedScale: number }> = {
-  kitti: { url: "data/kitti00_000000.bin", suggestedScale: 1 },
-  naverlabs: { url: "data/naverlabs_vel16.pcd", suggestedScale: 1 },
   bunny: { url: "data/bun_zipper_res3.ply", suggestedScale: 0.01 },
+  naverlabs: { url: "data/naverlabs_vel16.pcd", suggestedScale: 1 },
+  kitti: { url: "data/kitti00_000000.bin", suggestedScale: 1 },
 };
 
 type Props = {
@@ -77,7 +98,7 @@ export default function DataSourcePicker({
     }
   };
 
-  const presetIds = useMemo(() => Object.keys(PRESETS) as PresetId[], []);
+  const presetIds = useMemo(() => PRESET_ORDER, []);
 
   return (
     <div>
@@ -85,22 +106,40 @@ export default function DataSourcePicker({
         <span className="text-sm text-slate-200">{t.source.label}</span>
       </div>
       <div className="grid grid-cols-3 gap-1.5">
-        {presetIds.map((id) => (
-          <button
-            key={id}
-            onClick={() => pick(id)}
-            className={`rounded-md border px-2 py-2 text-left transition ${
-              active === id
-                ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-100"
-                : "border-slate-700 bg-slate-900/40 text-slate-300 hover:border-slate-500 hover:text-white"
-            }`}
-          >
-            <div className="text-xs font-medium">{t.source.presets[id].name}</div>
-            <div className="mt-0.5 text-[10px] leading-tight text-slate-500">
-              {t.source.presets[id].hint}
-            </div>
-          </button>
-        ))}
+        {presetIds.map((id) => {
+          const isActive = active === id;
+          const sceneTone = SCENE_TONES[id];
+          return (
+            <button
+              key={id}
+              onClick={() => pick(id)}
+              className={`rounded-md border px-2 py-2 text-left transition ${
+                isActive
+                  ? "border-[color:rgba(0,212,170,0.5)] bg-[color:rgba(0,212,170,0.08)] text-[var(--text-strong)]"
+                  : "border-[var(--border-strong)] bg-[var(--surface-2)] text-[var(--dim)] hover:border-[var(--border-strong)] hover:text-[var(--text)]"
+              }`}
+            >
+              <div className="flex items-center gap-1.5">
+                <span className="code-font text-[11px] font-bold">
+                  {t.source.presets[id].name}
+                </span>
+                <span
+                  className="code-font rounded-sm px-1 py-px text-[9px] font-semibold ring-1 ring-inset"
+                  style={{
+                    color: sceneTone.fg,
+                    background: sceneTone.bg,
+                    boxShadow: `inset 0 0 0 1px ${sceneTone.bd}`,
+                  }}
+                >
+                  {t.source.presets[id].scene}
+                </span>
+              </div>
+              <div className="code-font mt-1 text-[9px] leading-tight text-[var(--mut)]">
+                {t.source.presets[id].hint}
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       <div

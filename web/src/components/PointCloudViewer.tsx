@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { Canvas } from "@react-three/fiber";
+import { useEffect, useMemo } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, GizmoHelper, GizmoViewport } from "@react-three/drei";
 import * as THREE from "three";
 import type { PointCloud } from "../lib/types";
@@ -20,12 +20,11 @@ type Props = {
 
 export default function PointCloudViewer({
   layers,
-  background = "#0b1220",
+  background = "#0a0f1a",
 }: Props) {
   const { center, radius } = useMemo(() => unionBounds(layers), [layers]);
 
-  // Camera sized so the union bbox comfortably fills view.
-  const camPos: [number, number, number] = [
+  const initialPos: [number, number, number] = [
     center.x + radius * 1.6,
     center.y + radius * 1.0,
     center.z + radius * 1.4,
@@ -34,16 +33,26 @@ export default function PointCloudViewer({
   return (
     <Canvas
       style={{ background }}
-      camera={{ position: camPos, fov: 50, near: Math.max(radius * 0.001, 0.01), far: radius * 50 + 1000 }}
+      camera={{
+        position: initialPos,
+        fov: 50,
+        near: Math.max(radius * 0.001, 0.0001),
+        far: radius * 50 + 1000,
+      }}
       dpr={[1, 2]}
     >
       <ambientLight intensity={0.6} />
       {layers.map((l, idx) => (
         <PointsLayer key={idx} layer={l} />
       ))}
-      <axesHelper args={[Math.max(1, radius * 0.2)]} />
+      <axesHelper args={[Math.max(0.05, radius * 0.2)]} />
+      <ViewFrame
+        cx={center.x}
+        cy={center.y}
+        cz={center.z}
+        radius={radius}
+      />
       <OrbitControls
-        target={center}
         enableDamping
         dampingFactor={0.08}
         makeDefault
@@ -56,6 +65,54 @@ export default function PointCloudViewer({
       </GizmoHelper>
     </Canvas>
   );
+}
+
+/**
+ * Side effect: whenever the bounds-defining numbers change, re-frame the
+ * camera and re-target the orbit controls so the cloud fills the view.
+ *
+ * We depend on primitives (cx, cy, cz, radius) instead of a Vector3 so the
+ * effect doesn't refire on every render — only when bounds actually change.
+ */
+function ViewFrame({
+  cx,
+  cy,
+  cz,
+  radius,
+}: {
+  cx: number;
+  cy: number;
+  cz: number;
+  radius: number;
+}) {
+  const camera = useThree((s) => s.camera);
+  const controls = useThree((s) => s.controls) as
+    | (THREE.EventDispatcher & {
+        target: THREE.Vector3;
+        update?: () => void;
+      })
+    | null;
+
+  useEffect(() => {
+    if (!camera) return;
+    camera.position.set(
+      cx + radius * 1.6,
+      cy + radius * 1.0,
+      cz + radius * 1.4,
+    );
+    if ((camera as THREE.PerspectiveCamera).isPerspectiveCamera) {
+      const c = camera as THREE.PerspectiveCamera;
+      c.near = Math.max(radius * 0.001, 0.0001);
+      c.far = radius * 50 + 1000;
+      c.updateProjectionMatrix();
+    }
+    if (controls?.target) {
+      controls.target.set(cx, cy, cz);
+      controls.update?.();
+    }
+  }, [cx, cy, cz, radius, camera, controls]);
+
+  return null;
 }
 
 function PointsLayer({ layer }: { layer: Layer }) {
@@ -110,14 +167,11 @@ function unionBounds(layers: Layer[]) {
     if (max[2] > maxZ) maxZ = max[2];
   }
   if (!any) {
-    return {
-      center: new THREE.Vector3(0, 0, 0),
-      radius: 10,
-    };
+    return { center: new THREE.Vector3(0, 0, 0), radius: 10 };
   }
   const cx = (minX + maxX) / 2;
   const cy = (minY + maxY) / 2;
   const cz = (minZ + maxZ) / 2;
-  const r = Math.max(maxX - minX, maxY - minY, maxZ - minZ) * 0.6 + 0.1;
+  const r = Math.max(maxX - minX, maxY - minY, maxZ - minZ) * 0.6 + 0.05;
   return { center: new THREE.Vector3(cx, cy, cz), radius: r };
 }

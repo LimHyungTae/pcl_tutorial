@@ -1,5 +1,4 @@
-import { useMemo, useState } from "react";
-import * as THREE from "three";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { findChapter } from "../chapters";
 import ChapterHeader from "../components/ChapterHeader";
 import PointCloudViewer from "../components/PointCloudViewer";
@@ -7,7 +6,7 @@ import Slider from "../components/Slider";
 import DataSourcePicker from "../components/DataSourcePicker";
 import { useT } from "../i18n";
 import {
-  clusterColor,
+  ClusterColorMatcher,
   euclideanCluster,
 } from "../lib/filters/euclideanCluster";
 import { ransacPlane } from "../lib/filters/ransacPlane";
@@ -48,39 +47,52 @@ export default function Extra02EuclideanCluster() {
     [cleaned, tolerance, minSize],
   );
 
+  // Persistent color matcher — colors follow the same cluster across
+  // slider tweaks (keyed by centroid proximity).
+  const matcherRef = useRef(new ClusterColorMatcher());
+  const lastCloudRef = useRef<PointCloud | null>(null);
+
+  // Reset color memory when the underlying cloud changes (preset switch /
+  // ground-removal toggle); otherwise stale anchors would stick around.
+  useEffect(() => {
+    if (lastCloudRef.current !== cleaned) {
+      matcherRef.current.reset();
+      lastCloudRef.current = cleaned;
+    }
+  }, [cleaned]);
+
+  const colors = useMemo(
+    () => matcherRef.current.assign(clusters, Math.max(tolerance * 3, 0.5 * scale)),
+    [clusters, tolerance, scale],
+  );
+
   const ptSize = 0.05 * scale;
 
-  // Build a colored layer per cluster (Three.js is fine with many small
-  // BufferGeometries here since cluster counts stay modest).
   const layers = useMemo(() => {
     const out = clusters.slice(0, 80).map((c, idx) => ({
       cloud: c.cloud,
-      color: clusterColor(idx),
-      size: ptSize * 1.2,
+      color: colors[idx] ?? "#94a3b8",
+      size: ptSize * 1.25,
     }));
     return [
-      { cloud: cleaned, color: "#1e293b", size: ptSize, opacity: 0.0 }, // bbox anchor
+      // Phantom layer to keep the viewer's bbox aware of the unclustered
+      // points so the camera frames the whole cleaned cloud.
+      { cloud: cleaned, color: "#1e293b", size: ptSize, opacity: 0 },
       ...out,
     ];
-  }, [clusters, cleaned, ptSize]);
-
-  // Pre-warm three.js types tree-shaking would otherwise drop.
-  void THREE.Color;
+  }, [clusters, colors, cleaned, ptSize]);
 
   return (
     <div className="mx-auto max-w-7xl px-8 py-10">
       <ChapterHeader chapter={chapter} />
 
       <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_18rem]">
-        <div className="overflow-hidden rounded-xl border border-slate-800/80">
-          <div className="flex items-center justify-between border-b border-slate-800/80 bg-slate-950/60 px-4 py-2 text-xs">
-            <div className="text-slate-300">
-              {t.extra02.found.replace(
-                "{n}",
-                clusters.length.toLocaleString(),
-              )}
+        <div className="overflow-hidden rounded-xl border border-[var(--border)]">
+          <div className="flex items-center justify-between border-b border-[var(--border)] bg-[color:rgba(10,15,26,0.6)] px-4 py-2 text-[11px]">
+            <div className="text-[var(--text)]">
+              {t.extra02.found.replace("{n}", clusters.length.toLocaleString())}
             </div>
-            <span className="code-font text-slate-500">
+            <span className="code-font text-[var(--dim)]">
               {cleaned.count.toLocaleString()} {t.viewer.pointsSuffix}
             </span>
           </div>
@@ -89,7 +101,7 @@ export default function Extra02EuclideanCluster() {
           </div>
         </div>
 
-        <aside className="flex flex-col gap-5 rounded-xl border border-slate-800/80 bg-slate-900/40 p-5">
+        <aside className="flex flex-col gap-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
           <DataSourcePicker
             onCloudChange={(c, info) => {
               setRaw(c);
@@ -97,12 +109,12 @@ export default function Extra02EuclideanCluster() {
               setTolerance(0.5 * info.suggestedScale);
             }}
           />
-          <label className="flex items-start gap-2 text-sm text-slate-300">
+          <label className="flex items-start gap-2 text-sm text-[var(--text)]">
             <input
               type="checkbox"
               checked={removeGround}
               onChange={(e) => setRemoveGround(e.target.checked)}
-              className="mt-0.5 h-4 w-4 accent-emerald-400"
+              className="mt-0.5 h-4 w-4 accent-[var(--accent)]"
             />
             <span>{t.extra02.removeGround}</span>
           </label>
@@ -125,7 +137,7 @@ export default function Extra02EuclideanCluster() {
             hint={t.extra02.minSizeHint}
             onChange={(v) => setMinSize(Math.round(v))}
           />
-          <pre className="code-font overflow-x-auto rounded-md bg-slate-950/60 p-3 text-[11px] leading-relaxed text-slate-300">
+          <pre className="code-font overflow-x-auto rounded-md bg-[var(--surface-2)] p-3 text-[10px] leading-relaxed text-[var(--text)]">
             {`pcl::EuclideanClusterExtraction<
     pcl::PointXYZ> ec;
 ec.setClusterTolerance(${tolerance.toFixed(2)});

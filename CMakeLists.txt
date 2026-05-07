@@ -68,11 +68,3 @@ target_link_libraries(lec11_icp ${PCL_LIBRARIES})
 
 add_executable(lec12_gicp lec12_gicp.cpp)
 target_link_libraries(lec12_gicp ${PCL_LIBRARIES})
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Pre-compute pipeline for the React/web tutorial site (web/).
-# Run from the build/ directory after `make export_precomputed`:
-#   ./export_precomputed
-# It dumps src/tgt/aligned PCDs into ../web/public/precomputed/.
-add_executable(export_precomputed scripts/export_precomputed.cpp)
-target_link_libraries(export_precomputed ${PCL_LIBRARIES})

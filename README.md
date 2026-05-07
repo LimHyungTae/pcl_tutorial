@@ -28,11 +28,20 @@ ______________________________________________________________________
 
 브라우저에서 슬라이더를 만져 가며 챕터별 동작을 직접 확인할 수 있습니다 — **<https://limhyungtae.github.io/pcl_tutorial/>**.
 
-| 트랙              | 챕터                                  | 어디서 도느냐                                           |
-| ----------------- | ------------------------------------- | ------------------------------------------------------- |
-| **인터랙티브**    | Voxelization, PassThrough             | TypeScript 재구현 → 브라우저에서 실시간                 |
-| **Pre-computed**  | ICP, GICP, Normal Estimation          | C++ 바이너리(`export_precomputed`)가 뽑은 PCD를 fetch  |
-| **코드 설명**     | shared_ptr, Ptr, Transformation 등    | 소스코드 + 블로그 글 링크 (개념 위주)                  |
+모든 인터랙티브 데모는 **TypeScript로 재구현된 알고리즘이 브라우저에서 실시간으로** 돕니다 (외부 컴퓨트 없음). 입력은 KITTI(Outdoor LiDAR) / NaverLabs(Indoor LiDAR) / Stanford Bunny(CAD) 프리셋 + 자유 드래그&드롭.
+
+| #  | 챕터                                  | 핵심                                                |
+| -- | ------------------------------------- | --------------------------------------------------- |
+| 1  | Voxelization                          | leaf size 슬라이더, before/after                    |
+| 2  | PassThrough                           | 축 + min/max + negative 토글                        |
+| 3  | Transformation                        | tx/ty/tz/rx/ry/rz, 진입 시 랜덤 offset              |
+| 4  | Statistical Outlier Removal           | mean K + stddev mult, 인라이어/아웃라이어 분리       |
+| 5  | Radius Search                         | KdTree 기반 반경 내 이웃                             |
+| 6  | K-Nearest Neighbor                    | KdTree 기반 K-NN                                    |
+| 7  | Normal Estimation                     | KdTree + 닫힌형 3×3 sym eig                         |
+| 8  | RANSAC Plane Segmentation             | 지면/벽 검출 (extra)                                |
+| 9  | Euclidean Clustering                  | 색상이 슬라이더 변화에도 안정적으로 유지 (extra)    |
+| 10 | Iterative Closest Point               | **Step / Play 버튼으로 매 iteration 관찰**          |
 
 ### 로컬에서 사이트 띄우기
 
@@ -43,15 +52,6 @@ npm run dev          # http://localhost:5173/pcl_tutorial/
 ```
 
 `predev` / `prebuild` 훅이 `materials/`의 데이터(`.bin` / `.pcd` / `.ply`)를 자동으로 `web/public/data/`로 복사합니다.
-
-### Pre-computed 자산 다시 뽑기 (선택)
-
-`lec11_icp.cpp` / `lec12_gicp.cpp`의 출력은 미리 PCD로 저장돼 `web/public/precomputed/`에 들어 있습니다. 알고리즘이나 입력을 바꿨다면 다시 뽑아주세요:
-
-```bash
-cd build && make export_precomputed
-KMP_DUPLICATE_LIB_OK=TRUE ./export_precomputed     # macOS Homebrew PCL은 이 플래그 필요
-```
 
 ### 배포
 
@@ -118,8 +118,6 @@ ______________________________________________________________________
 pcl_tutorial/
 ├── CMakeLists.txt
 ├── lec*.cpp                         # 챕터별 예제 코드 (PCL/C++)
-├── scripts/
-│   └── export_precomputed.cpp       # ICP/GICP 결과를 PCD로 저장 (web/이 사용)
 ├── auxiliary/                       # 본 빌드와 무관한 보조 스니펫
 ├── img/                             # README/블로그용 이미지
 ├── materials/                       # 예제용 포인트클라우드 데이터 (.bin / .pcd / .ply)
@@ -127,8 +125,12 @@ pcl_tutorial/
     ├── src/
     │   ├── pages/                   # 챕터별 페이지
     │   ├── components/              # 뷰어, 슬라이더, 드롭존
-    │   └── lib/filters/             # voxel, passthrough, … (TS 재구현)
-    └── public/precomputed/          # C++가 미리 뽑은 .pcd (커밋됨)
+    │   ├── i18n/                    # 영/한 사전 + 토글
+    │   └── lib/                     # KdTree, PCD/BIN/PLY 파서,
+    │       └── filters/             # voxel · passthrough · sor · normal ·
+    │                                #   ransacPlane · euclideanCluster · icp ·
+    │                                #   transform (모두 TS 재구현)
+    └── public/data/                 # materials/에서 자동 복사 (build 시)
 ```
 
 ______________________________________________________________________
