@@ -7,7 +7,7 @@
 <img src="https://img.shields.io/badge/CMake-%E2%89%A53.10-064F8C.svg" alt="CMake">
 <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT">
 
-<p align="center"><img src="img/rot_no_convergence.png" alt="ICP rotation case" width="65%"/></p>
+<p align="center"><img src="https://github.com/user-attachments/assets/5b727855-353f-4a10-baa1-89ec9f019187" alt="thumbnail" width="70%"/></p>
 
 <p><strong><em>A hands-on, browser-based tutorial for the Point Cloud Library.</em></strong></p>
 </div>
@@ -34,17 +34,16 @@ Every interactive demo runs **entirely in the browser**, with the algorithms rei
 
 | #  | Chapter                               | Highlights                                               |
 | -- | ------------------------------------- | -------------------------------------------------------- |
-| 1  | Voxelization                          | leaf size slider, before/after view                      |
-| 2  | PassThrough                           | axis + min/max + negative toggle                         |
+| 1  | Voxelization                          | leaf size slider, synced before/after view               |
+| 2  | PassThrough                           | axis + min/max + negative toggle, synced before/after    |
 | 3  | Transformation                        | tx/ty/tz/rx/ry/rz, random offset on entry                |
 | 4  | Statistical Outlier Removal           | mean K + stddev mult, inlier/outlier split               |
-| 5  | Radius Search                         | KdTree-based neighbors within a radius                   |
-| 6  | K-Nearest Neighbor                    | KdTree-based K-NN                                        |
-| 7  | Normal Estimation                     | KdTree + closed-form 3×3 symmetric eigendecomposition    |
+| 5  | Radius Search                         | KdTree-based; click any point to set the query           |
+| 6  | K-Nearest Neighbor                    | KdTree-based K-NN; click any point to set the query      |
+| 7  | Normal Estimation                     | KdTree + SVD; normals overlaid as white line segments    |
 | 8  | RANSAC Plane Segmentation             | ground / wall detection (extra)                          |
-| 9  | Ground Removal Pipeline               | PassThrough → VoxelGrid → RANSAC plane scaffold          |
-| 10 | Euclidean Clustering                  | colors stay stable as sliders change (extra)             |
-| 11 | Iterative Closest Point               | **Step / Play buttons to watch each iteration**          |
+| 9  | Euclidean Clustering                  | stable per-cluster colors across slider changes (extra)  |
+| 10 | Iterative Closest Point               | **Step / Play to watch each iteration's correspondences** |
 
 ### Run the site locally
 
@@ -89,7 +88,7 @@ cd build
 
 ______________________________________________________________________
 
-## :books: Chapters & Source
+## :books: Chapters & Source (Korean Only)
 
 | #     | Code                                                                                | Topic                               | Blog post                                                                                                                                                                                                  |
 | :---: | :-----------------------------------------------------------------------------------: | :-----------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

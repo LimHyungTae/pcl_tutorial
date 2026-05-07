@@ -34,17 +34,16 @@ ______________________________________________________________________
 
 | #  | 챕터                                  | 핵심                                                |
 | -- | ------------------------------------- | --------------------------------------------------- |
-| 1  | Voxelization                          | leaf size 슬라이더, before/after                    |
-| 2  | PassThrough                           | 축 + min/max + negative 토글                        |
+| 1  | Voxelization                          | leaf size 슬라이더, before/after 카메라 동기화      |
+| 2  | PassThrough                           | 축 + min/max + negative 토글, before/after 동기화   |
 | 3  | Transformation                        | tx/ty/tz/rx/ry/rz, 진입 시 랜덤 offset              |
 | 4  | Statistical Outlier Removal           | mean K + stddev mult, 인라이어/아웃라이어 분리       |
-| 5  | Radius Search                         | KdTree 기반 반경 내 이웃                             |
-| 6  | K-Nearest Neighbor                    | KdTree 기반 K-NN                                    |
-| 7  | Normal Estimation                     | KdTree + 닫힌형 3×3 sym eig                         |
+| 5  | Radius Search                         | KdTree 기반; 점 클릭으로 쿼리 설정                   |
+| 6  | K-Nearest Neighbor                    | KdTree 기반 K-NN; 점 클릭으로 쿼리 설정              |
+| 7  | Normal Estimation                     | KdTree + SVD; normal을 흰색 선으로 시각화            |
 | 8  | RANSAC Plane Segmentation             | 지면/벽 검출 (extra)                                |
-| 9  | Ground Removal Pipeline               | PassThrough → VoxelGrid → RANSAC plane scaffold     |
-| 10 | Euclidean Clustering                  | 색상이 슬라이더 변화에도 안정적으로 유지 (extra)    |
-| 11 | Iterative Closest Point               | **Step / Play 버튼으로 매 iteration 관찰**          |
+| 9  | Euclidean Clustering                  | 슬라이더 변화에도 cluster별 색이 유지됨 (extra)      |
+| 10 | Iterative Closest Point               | **Step / Play로 매 iteration의 짝과 pose update 관찰** |
 
 ### 로컬에서 사이트 띄우기
 
