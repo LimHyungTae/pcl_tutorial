@@ -70,6 +70,7 @@ export default function Lec08RadiusSearch() {
           </div>
           <div className="aspect-[16/10] w-full">
             <PointCloudViewer
+              defaultSizeMult={5}
               layers={[
                 { cloud: src, color: "#475569", size: ptSize, opacity: 0.55 },
                 { cloud: neighbors, color: "#34d399", size: ptSize * 1.3 },

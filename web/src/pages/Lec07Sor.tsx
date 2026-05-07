@@ -57,7 +57,7 @@ export default function Lec07Sor() {
           </div>
           <div className="aspect-[16/10] w-full">
             <PointCloudViewer
-              defaultSizeMult={4}
+              defaultSizeMult={5}
               layers={[
                 { cloud: result.inliers, color: "#34d399", size: ptSize },
                 { cloud: result.outliers, color: "#f87171", size: ptSize * 1.4 },

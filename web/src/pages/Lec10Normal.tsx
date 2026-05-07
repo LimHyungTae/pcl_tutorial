@@ -55,6 +55,7 @@ export default function Lec10Normal() {
           </div>
           <div className="aspect-[16/10] w-full">
             <PointCloudViewer
+              defaultSizeMult={5}
               layers={[
                 {
                   cloud: src,
