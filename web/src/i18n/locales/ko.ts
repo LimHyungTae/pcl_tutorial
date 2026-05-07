@@ -175,7 +175,7 @@ export const ko: LocaleDict = {
   chapters: {
     lec03: {
       title: "Transformation",
-      subtitle: "4×4 강체 변환 — 평행이동과 회전을 슬라이더로 직접 적용.",
+      subtitle: "3D motion을 위한 4×4 강체 변환.",
       about:
         "모든 점에 4×4 강체 변환 T = [R | t; 0 | 1]을 적용하는 연산을 transformation이라고 부르며, 이 4×4 행렬을 transformation matrix라고 부릅니다. 정합 · 센서 fusion · world ↔ body 좌표계 변환 등 거의 모든 SLAM 파이프라인의 토대가 되는 기본 연산입니다.",
       params: [
@@ -185,7 +185,7 @@ export const ko: LocaleDict = {
     },
     lec05: {
       title: "Voxelization",
-      subtitle: "Voxel grid 다운샘플링 — leaf size를 슬라이더로.",
+      subtitle: "Voxel grid 다운샘플링.",
       about:
         "Voxel-grid 필터(voxelization)는 3차원 공간을 균일한 정육면체 셀로 나누고, 각 셀에 들어가는 점들을 그 centroid 한 점으로 대체합니다. 거의 모든 point cloud 처리 파이프라인의 첫 전처리 단계로 사용되며, redundant한 점 수를 줄여 뒤이은 알고리즘의 연산 효율을 크게 높여줍니다.",
       params: [
@@ -209,7 +209,7 @@ export const ko: LocaleDict = {
     },
     lec07: {
       title: "Statistical Outlier Removal",
-      subtitle: "이웃 거리 분포로 outlier 제거.",
+      subtitle: "이웃 거리 분포 기반 outlier 제거.",
       about:
         "각 점의 K개 최근접 이웃까지의 평균 거리를 구하고, 전체 cloud의 그 평균과 표준편차를 계산해 (평균 + mult × 표준편차)를 넘는 점을 outlier로 제거합니다.",
       params: [
@@ -227,7 +227,7 @@ export const ko: LocaleDict = {
     },
     lec08: {
       title: "Radius Search",
-      subtitle: "쿼리 점의 반경 내 이웃 (KdTree).",
+      subtitle: "KdTree 기반 쿼리 점의 반경 내 이웃 찾기.",
       about:
         "KdTree를 활용해 주어진 쿼리(query) 점 주변 반경 내의 모든 이웃을 반환합니다. 뷰어의 점을 클릭하면 쿼리 점이 그 위치로 옮겨집니다.",
       params: [
@@ -241,7 +241,7 @@ export const ko: LocaleDict = {
     },
     lec09: {
       title: "K-Nearest Neighbor",
-      subtitle: "쿼리 점의 K개 최근접 이웃 (KdTree).",
+      subtitle: "KdTree 기반 쿼리 점의 K개 최근접 이웃 찾기.",
       about:
         "KdTree가 쿼리 점에서 가장 가까운 K개를 거리 순으로 반환합니다. 뷰어의 점을 클릭하면 쿼리 점이 옮겨갑니다.",
       params: [
@@ -255,7 +255,7 @@ export const ko: LocaleDict = {
     },
     lec10: {
       title: "Normal Estimation",
-      subtitle: "KdTree + SVD로 점별 normal 추정.",
+      subtitle: "KdTree + SVD로 point 별 normal 추정.",
       about:
         "각 점의 K개 이웃으로 공분산 행렬을 만들고, 가장 작은 eigenvalue의 eigenvector가 그 점의 표면 법선이 됩니다. 색 = (|nx|, |ny|, |nz|).",
       params: [
@@ -273,7 +273,7 @@ export const ko: LocaleDict = {
     },
     lec11: {
       title: "Iterative Closest Point",
-      subtitle: "Step / Play로 매 iteration의 짝 찾기 → pose update를 직접 관찰.",
+      subtitle: "Step / Play로 ICP 매 iteration의 짝 찾기 → pose update 관찰해보기.",
       about:
         "Iterative Closest Point(ICP)는 매 iteration마다 가장 인접한 점을 유효한 대응(correspondence)으로 보고 최적화하는 local registration 기법입니다. (1) 각 src 점의 nearest tgt 점 찾기, (2) 매칭된 pair들에 가장 잘 맞는 강체 (R, t)를 SVD로 추정(Procrustes)하는 두 단계로 구성되며, pose 변화량이 임계값 아래로 떨어질 때까지 반복합니다.",
       params: [
@@ -306,7 +306,7 @@ export const ko: LocaleDict = {
     },
     extra02: {
       title: "Euclidean Clustering",
-      subtitle: "공간 인접성으로 연결된 점들끼리 묶기.",
+      subtitle: "공간 인접성으로 연결된 점들끼리 cluster로 묶기.",
       about:
         "공간 상에 인접한 점들을 하나의 객체로 묶는 작업을 clustering이라고 부릅니다. 여기서는 BFS로 tolerance 이내로 연결된 점들을 같은 cluster로 묶습니다.",
       params: [

@@ -173,7 +173,7 @@ export const en = {
   chapters: {
     lec03: {
       title: "Transformation",
-      subtitle: "Apply a 4×4 rigid transform — translate and rotate the cloud.",
+      subtitle: "4×4 rigid transform for 3D motion.",
       about:
         "Applying a 4×4 rigid transform T = [R | t; 0 | 1] to every point is called transformation; the 4×4 matrix itself is the transformation matrix. It's the foundational operation behind point-cloud registration, multi-sensor fusion, and world ↔ body frame conversions — found in essentially every SLAM pipeline.",
       params: [
@@ -183,7 +183,7 @@ export const en = {
     },
     lec05: {
       title: "Voxelization",
-      subtitle: "Voxel-grid downsampling — drag the leaf size slider.",
+      subtitle: "Voxel-grid downsampling.",
       about:
         "Voxel-grid filtering (a.k.a. voxelization) discretizes 3D space into uniform cubic cells and replaces every cell's points with a single centroid. It's the most common first step in any point cloud pipeline — it strips redundant points so downstream algorithms run far faster while the overall shape stays intact.",
       params: [
@@ -211,7 +211,7 @@ export const en = {
     },
     lec07: {
       title: "Statistical Outlier Removal",
-      subtitle: "Remove sparse outliers using neighbor distance statistics.",
+      subtitle: "Outlier removal via neighbor-distance statistics.",
       about:
         "For each point, average its distance to the K nearest neighbors. Compute the mean and stddev of those averages over the whole cloud, and drop any point whose value exceeds (mean + mult × stddev).",
       params: [
@@ -229,7 +229,7 @@ export const en = {
     },
     lec08: {
       title: "Radius Search",
-      subtitle: "All neighbors of a query point within a given radius (KdTree).",
+      subtitle: "KdTree-based search for neighbors of a query point within a given radius.",
       about:
         "Use a KdTree to return every point within a fixed radius of a query position. Click any point in the viewer to move the query there.",
       params: [
@@ -243,7 +243,7 @@ export const en = {
     },
     lec09: {
       title: "K-Nearest Neighbor",
-      subtitle: "K closest neighbors of a query point (KdTree).",
+      subtitle: "KdTree-based search for the K closest neighbors of a query point.",
       about:
         "KdTree returns the K closest points to a query, sorted by distance. Click any point in the viewer to set the query.",
       params: [
@@ -261,7 +261,7 @@ export const en = {
     },
     lec10: {
       title: "Normal Estimation",
-      subtitle: "Per-point normals from KdTree + SVD on local neighborhoods.",
+      subtitle: "Per-point normal estimation via KdTree + SVD.",
       about:
         "For each point, build the covariance of its K nearest neighbors. The eigenvector of the smallest eigenvalue is the surface normal at that point. Color = (|nx|, |ny|, |nz|).",
       params: [
@@ -279,7 +279,7 @@ export const en = {
     },
     lec11: {
       title: "Iterative Closest Point",
-      subtitle: "Step through correspondences and pose updates one iteration at a time.",
+      subtitle: "Watch ICP find correspondences → update pose each iteration with Step / Play.",
       about:
         "Iterative Closest Point (ICP) is a local registration method that, on each iteration, treats the nearest tgt point of every src point as a valid correspondence and optimizes from there. The two-step loop: (1) for each src point find the nearest tgt point, (2) solve the rigid (R, t) that best aligns those pairs (Procrustes / SVD). Repeat until the pose update drops below a threshold.",
       params: [
@@ -312,7 +312,7 @@ export const en = {
     },
     extra02: {
       title: "Euclidean Clustering",
-      subtitle: "Connected-component grouping by spatial proximity.",
+      subtitle: "Group spatially adjacent points into clusters.",
       about:
         "Grouping spatially adjacent points into a single object is called clustering. Here, a BFS connects any two points within `tolerance` and assigns them to the same cluster.",
       params: [
