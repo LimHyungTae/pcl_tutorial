@@ -28,6 +28,10 @@ type Props = {
   background?: string;
   /** Called with [x, y, z] when the user clicks a point in any layer. */
   onPick?: (xyz: [number, number, number]) => void;
+  /** Initial value of the pt-size slider (1× by default). Some demos
+   *  default points are too small to read at 1× (e.g. SOR), so the
+   *  caller can bump it. */
+  defaultSizeMult?: number;
 };
 
 export default function PointCloudViewer({
@@ -35,8 +39,9 @@ export default function PointCloudViewer({
   lines,
   background = "#0a0f1a",
   onPick,
+  defaultSizeMult = 1,
 }: Props) {
-  const [sizeMult, setSizeMult] = useState(1);
+  const [sizeMult, setSizeMult] = useState(defaultSizeMult);
   const { center, radius } = useMemo(() => unionBounds(layers), [layers]);
 
   const initialPos: [number, number, number] = [

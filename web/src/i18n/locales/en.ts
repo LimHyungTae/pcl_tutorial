@@ -34,6 +34,7 @@ export const en = {
     toggle: "How's Hyungtae Lim?",
     title: "Hyungtae Lim",
     role: "Postdoctoral Associate · MIT SPARK Lab",
+    focus: "Focuses on robust perception, simultaneous localization and mapping (SLAM), and state estimation.",
     bio: "Hyungtae Lim is a Postdoctoral Associate at MIT's SPARK Lab, working with Prof. Luca Carlone. He received his Ph.D. in Electrical Engineering from KAIST in 2023, advised by Prof. Hyun Myung. His research focuses on robust perception, state estimation, and lifelong mapping for mobile robots and autonomous vehicles. He is a recipient of the RSS Pioneers 2024 award and the 2022 IEEE RA-L Best Paper Award, an Associate Editor for IEEE RA-L, and the author of widely used open-source LiDAR-based libraries.",
     libsLabel: "Open-source libraries",
     libs: [

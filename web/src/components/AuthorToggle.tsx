@@ -29,6 +29,9 @@ export default function AuthorToggle() {
               {t.author.role}
             </span>
           </div>
+          <p className="mt-2 text-[12px] italic leading-relaxed text-[var(--accent)]">
+            {t.author.focus}
+          </p>
           <p className="mt-3 text-[13.5px] leading-relaxed text-[var(--dim)]">
             {t.author.bio}
           </p>
