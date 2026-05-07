@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, GizmoHelper, GizmoViewport } from "@react-three/drei";
 import * as THREE from "three";
@@ -22,6 +22,7 @@ export default function PointCloudViewer({
   layers,
   background = "#0a0f1a",
 }: Props) {
+  const [sizeMult, setSizeMult] = useState(1);
   const { center, radius } = useMemo(() => unionBounds(layers), [layers]);
 
   const initialPos: [number, number, number] = [
@@ -30,40 +31,86 @@ export default function PointCloudViewer({
     center.z + radius * 1.4,
   ];
 
+  // Apply the multiplier on the way down so PointsLayer doesn't need to know
+  // about it. This keeps the slider state local to the viewer and means
+  // pages stay unchanged.
+  const scaledLayers = useMemo(
+    () =>
+      layers.map((l) => ({
+        ...l,
+        size: (l.size ?? 0.05) * sizeMult,
+      })),
+    [layers, sizeMult],
+  );
+
   return (
-    <Canvas
-      style={{ background }}
-      camera={{
-        position: initialPos,
-        fov: 50,
-        near: Math.max(radius * 0.001, 0.0001),
-        far: radius * 50 + 1000,
-      }}
-      dpr={[1, 2]}
-    >
-      <ambientLight intensity={0.6} />
-      {layers.map((l, idx) => (
-        <PointsLayer key={idx} layer={l} />
-      ))}
-      <axesHelper args={[Math.max(0.05, radius * 0.2)]} />
-      <ViewFrame
-        cx={center.x}
-        cy={center.y}
-        cz={center.z}
-        radius={radius}
-      />
-      <OrbitControls
-        enableDamping
-        dampingFactor={0.08}
-        makeDefault
-      />
-      <GizmoHelper alignment="bottom-right" margin={[64, 64]}>
-        <GizmoViewport
-          axisColors={["#ef4444", "#22c55e", "#3b82f6"]}
-          labelColor="#e2e8f0"
+    <div className="relative h-full w-full">
+      <Canvas
+        style={{ background }}
+        camera={{
+          position: initialPos,
+          fov: 50,
+          near: Math.max(radius * 0.001, 0.0001),
+          far: radius * 50 + 1000,
+        }}
+        dpr={[1, 2]}
+      >
+        <ambientLight intensity={0.6} />
+        {scaledLayers.map((l, idx) => (
+          <PointsLayer key={idx} layer={l} />
+        ))}
+        <axesHelper args={[Math.max(0.05, radius * 0.2)]} />
+        <ViewFrame
+          cx={center.x}
+          cy={center.y}
+          cz={center.z}
+          radius={radius}
         />
-      </GizmoHelper>
-    </Canvas>
+        <OrbitControls enableDamping dampingFactor={0.08} makeDefault />
+        <GizmoHelper alignment="bottom-right" margin={[64, 64]}>
+          <GizmoViewport
+            axisColors={["#ef4444", "#22c55e", "#3b82f6"]}
+            labelColor="#e2e8f0"
+          />
+        </GizmoHelper>
+      </Canvas>
+
+      <PointSizeControl value={sizeMult} onChange={setSizeMult} />
+    </div>
+  );
+}
+
+function PointSizeControl({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  return (
+    <div
+      className="absolute left-3 top-3 z-10 flex items-center gap-2 rounded-md border border-[var(--border)] bg-[color:rgba(10,15,26,0.7)] px-2.5 py-1 backdrop-blur-sm"
+      // Drag/click on the slider should not start an orbit gesture below.
+      onPointerDown={(e) => e.stopPropagation()}
+      onWheel={(e) => e.stopPropagation()}
+    >
+      <span className="code-font text-[10px] uppercase tracking-wider text-[var(--mut)]">
+        pt
+      </span>
+      <input
+        type="range"
+        min={0.25}
+        max={8}
+        step={0.05}
+        value={value}
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+        className="w-24 sm:w-28"
+        aria-label="Point size"
+      />
+      <span className="code-font min-w-[2.6em] text-right text-[10px] text-[var(--text)]">
+        {value.toFixed(2)}×
+      </span>
+    </div>
   );
 }
 
