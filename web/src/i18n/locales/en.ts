@@ -25,10 +25,30 @@ export const en = {
     eyebrow: "PCL Tutorial",
     headline1: "A Point Cloud Library tutorial",
     headlineEm: "you can play with",
-    headline2: ".",
+    headline2: "",
     intro:
-      "Lightweight filters (Voxel / PassThrough / SOR / Radius / KNN / Normal) are reimplemented in TypeScript and run live in your browser. Heavier registration (ICP / GICP) was run once with the PCL C++ binary; the result is served as static PCD assets.",
+      "Must-to-know techniques for processing 3D point clouds — voxelization, KdTree, RANSAC, ICP and more — reimplemented in TypeScript and running live in your browser.",
     chapterPrefix: "Chapter",
+  },
+  author: {
+    toggle: "How's Hyungtae Lim?",
+    title: "Hyungtae Lim",
+    role: "Postdoctoral Associate · MIT SPARK Lab",
+    bio: "Hyungtae Lim is a Postdoctoral Associate at MIT's SPARK Lab, working with Prof. Luca Carlone. He received his Ph.D. in Electrical Engineering from KAIST in 2023, advised by Prof. Hyun Myung. His research focuses on robust perception, state estimation, and lifelong mapping for mobile robots and autonomous vehicles. He is a recipient of the RSS Pioneers 2024 award and the 2022 IEEE RA-L Best Paper Award, an Associate Editor for IEEE RA-L, and the author of widely used open-source LiDAR-based libraries.",
+    libsLabel: "Open-source libraries",
+    libs: [
+      { name: "GenZ-ICP", url: "https://github.com/cocel-postech/genz-icp" },
+      { name: "Patchwork", url: "https://github.com/LimHyungTae/patchwork" },
+      { name: "Patchwork++", url: "https://github.com/url-kaist/patchwork-plusplus" },
+      { name: "TRAVEL", url: "https://github.com/url-kaist/TRAVEL" },
+      { name: "KISS-Matcher", url: "https://github.com/MIT-SPARK/KISS-Matcher" },
+    ],
+    blog: "Personal site",
+    blogUrl: "https://limhyungtae.github.io",
+    github: "GitHub",
+    githubUrl: "https://github.com/LimHyungTae",
+    email: "Email",
+    emailAddress: "shapelim@mit.edu",
   },
   stub: {
     badge: "Coming soon",
@@ -38,14 +58,17 @@ export const en = {
   source: {
     label: "Input",
     presets: {
-      bunny:     { name: "Stanford Bunny", scene: "CAD",     hint: "Mesh vertices · ~1.9k pts" },
-      naverlabs: { name: "NaverLabs",      scene: "Indoor",  hint: "VLP-16 LiDAR · ~29k pts" },
-      kitti:     { name: "KITTI",          scene: "Outdoor", hint: "HDL-64 LiDAR · ~120k pts" },
+      bunny:     { name: "Stanford Bunny", scene: "CAD",     hint: "~1.9k pts" },
+      naverlabs: { name: "VLP-16",         scene: "Indoor",  hint: "NaverLabs · ~29k pts" },
+      kitti:     { name: "HDL-64",         scene: "Outdoor", hint: "KITTI · ~120k pts" },
     },
     custom: "Custom",
     dropHint: "Drop a .bin / .pcd / .ply here",
     pickFile: "or choose a file",
     using: "Using",
+  },
+  demo: {
+    parameters: "Parameters",
   },
   viewer: {
     pointsSuffix: "pts",
@@ -147,16 +170,164 @@ export const en = {
     found: "{n} clusters found",
   },
   chapters: {
-    lec03: { title: "Transformation", subtitle: "Apply a 4×4 rigid transform — translate and rotate the cloud." },
-    lec05: { title: "Voxelization", subtitle: "Voxel-grid downsampling — drag the leaf size slider." },
-    lec06: { title: "PassThrough", subtitle: "Crop the cloud with an axis-aligned interval filter." },
-    lec07: { title: "Statistical Outlier Removal", subtitle: "Remove sparse outliers using neighbor distance statistics." },
-    lec08: { title: "Radius Search", subtitle: "All neighbors of a query point within a given radius (KdTree)." },
-    lec09: { title: "K-Nearest Neighbor", subtitle: "K closest neighbors of a query point (KdTree)." },
-    lec10: { title: "Normal Estimation", subtitle: "Per-point normals from KdTree + SVD on local neighborhoods." },
-    lec11: { title: "Iterative Closest Point", subtitle: "Step through correspondences and pose updates one iteration at a time." },
-    extra01: { title: "RANSAC Plane Segmentation", subtitle: "Find the dominant plane (e.g. ground) and split inliers / outliers." },
-    extra02: { title: "Euclidean Clustering", subtitle: "Connected-component grouping by spatial proximity." },
+    lec03: {
+      title: "Transformation",
+      subtitle: "Apply a 4×4 rigid transform — translate and rotate the cloud.",
+      about:
+        "Apply a 4×4 rigid transform T = [R | t; 0 | 1] to every point. The same operation behind point-cloud registration, multi-sensor fusion and world ↔ body frame conversions.",
+      params: [
+        { name: "tx / ty / tz", desc: "Translation along each axis (meters).", effect: "" },
+        { name: "rx / ry / rz", desc: "Euler rotation in degrees, applied as Rz · Ry · Rx.", effect: "" },
+      ],
+    },
+    lec05: {
+      title: "Voxelization",
+      subtitle: "Voxel-grid downsampling — drag the leaf size slider.",
+      about:
+        "Voxel-grid filtering discretizes 3D space into uniform cubic cells and replaces every cell's points with their centroid. A staple preprocessing step — fast, deterministic, and preserves overall shape.",
+      params: [
+        {
+          name: "leaf size",
+          desc: "Side length of each voxel cell.",
+          effect: "Larger → sparser, faster, less detail.",
+        },
+      ],
+    },
+    lec06: {
+      title: "PassThrough",
+      subtitle: "Crop the cloud with an axis-aligned interval filter.",
+      about:
+        "PassThrough is the simplest spatial filter: keep points whose value along one axis falls inside an interval (or, with negative=true, drop them).",
+      params: [
+        { name: "axis", desc: "Spatial axis the filter runs along.", effect: "" },
+        {
+          name: "min / max",
+          desc: "Interval bounds (meters).",
+          effect: "Wider → keeps more points.",
+        },
+        { name: "negative", desc: "Flips the filter to keep points outside the interval.", effect: "" },
+      ],
+    },
+    lec07: {
+      title: "Statistical Outlier Removal",
+      subtitle: "Remove sparse outliers using neighbor distance statistics.",
+      about:
+        "For each point, average its distance to the K nearest neighbors. Compute the mean and stddev of those averages over the whole cloud, and drop any point whose value exceeds (mean + mult × stddev).",
+      params: [
+        {
+          name: "mean K",
+          desc: "Neighbors used to estimate each point's local density.",
+          effect: "Larger → smoother density estimate.",
+        },
+        {
+          name: "stddev mult",
+          desc: "Threshold multiplier on top of the global stddev.",
+          effect: "Smaller → stricter (removes more).",
+        },
+      ],
+    },
+    lec08: {
+      title: "Radius Search",
+      subtitle: "All neighbors of a query point within a given radius (KdTree).",
+      about:
+        "KdTree-accelerated query: return every point within a fixed radius of a query position. Click any point in the viewer to set the query.",
+      params: [
+        {
+          name: "query x / y / z",
+          desc: "Query position (meters). Click any point to set.",
+          effect: "",
+        },
+        { name: "radius", desc: "Search distance (meters).", effect: "Larger → more neighbors." },
+      ],
+    },
+    lec09: {
+      title: "K-Nearest Neighbor",
+      subtitle: "K closest neighbors of a query point (KdTree).",
+      about:
+        "KdTree returns the K closest points to a query, sorted by distance. Click any point in the viewer to set the query.",
+      params: [
+        {
+          name: "query x / y / z",
+          desc: "Query position (meters). Click any point to set.",
+          effect: "",
+        },
+        {
+          name: "K",
+          desc: "Number of nearest neighbors to fetch.",
+          effect: "Larger → bigger highlighted region.",
+        },
+      ],
+    },
+    lec10: {
+      title: "Normal Estimation",
+      subtitle: "Per-point normals from KdTree + SVD on local neighborhoods.",
+      about:
+        "For each point, build the covariance of its K nearest neighbors. The eigenvector of the smallest eigenvalue is the surface normal at that point. Color = (|nx|, |ny|, |nz|).",
+      params: [
+        {
+          name: "preprocess voxel",
+          desc: "Voxel size used to thin the cloud first.",
+          effect: "Smaller → more detail, slower.",
+        },
+        {
+          name: "K",
+          desc: "Neighbors used in each point's local PCA.",
+          effect: "Larger → smoother but blurrier normals.",
+        },
+      ],
+    },
+    lec11: {
+      title: "Iterative Closest Point",
+      subtitle: "Step through correspondences and pose updates one iteration at a time.",
+      about:
+        "ICP alternates two steps: (1) for each src point find the nearest tgt point, (2) solve the rigid (R, t) that best aligns those pairs (Procrustes / SVD). Repeat until convergence.",
+      params: [
+        {
+          name: "max correspondence distance",
+          desc: "Pairs farther apart than this are dropped each iteration.",
+          effect: "Smaller → robust to outliers but may stall when far from convergence.",
+        },
+        { name: "Step", desc: "Run one iteration manually.", effect: "" },
+        { name: "Play", desc: "Auto-iterate every ~180 ms.", effect: "" },
+      ],
+    },
+    extra01: {
+      title: "RANSAC Plane Segmentation",
+      subtitle: "Find the dominant plane (e.g. ground) and split inliers / outliers.",
+      about:
+        "RANSAC samples 3 random points to fit a plane, scores it by the number of inliers (within `threshold`), and keeps the best across many trials. The classic ground / wall / table extractor.",
+      params: [
+        {
+          name: "distance threshold",
+          desc: "Maximum distance from a point to the plane to count as inlier.",
+          effect: "Larger → admits more (noisier inliers).",
+        },
+        {
+          name: "iterations",
+          desc: "Number of random 3-point trials.",
+          effect: "Larger → more reliably finds the dominant plane.",
+        },
+      ],
+    },
+    extra02: {
+      title: "Euclidean Clustering",
+      subtitle: "Connected-component grouping by spatial proximity.",
+      about:
+        "Group points by spatial proximity: BFS that connects any two points within `tolerance`. Cluster colors stay stable across slider changes by matching centroids to the previous frame.",
+      params: [
+        {
+          name: "tolerance",
+          desc: "Maximum gap between two points in the same cluster.",
+          effect: "Larger → fewer, bigger clusters.",
+        },
+        {
+          name: "min size",
+          desc: "Clusters smaller than this are discarded.",
+          effect: "Larger → drop more noise.",
+        },
+        { name: "remove ground", desc: "Run RANSAC plane removal first as preprocessing.", effect: "" },
+      ],
+    },
   },
 };
 

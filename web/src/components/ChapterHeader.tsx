@@ -1,10 +1,11 @@
 import { ChapterMeta, statusColor } from "../chapters";
-import { useT } from "../i18n";
+import { useLocale, useT } from "../i18n";
 
 const REPO = "https://github.com/LimHyungTae/pcl_tutorial/blob/main";
 
 export default function ChapterHeader({ chapter }: { chapter: ChapterMeta }) {
   const t = useT();
+  const { locale } = useLocale();
   const tc = t.chapters[chapter.slug as keyof typeof t.chapters];
   return (
     <header className="border-b border-[var(--border)] pb-7 fade-up">
@@ -36,7 +37,7 @@ export default function ChapterHeader({ chapter }: { chapter: ChapterMeta }) {
             {chapter.source}
           </a>
         )}
-        {chapter.blog && (
+        {chapter.blog && locale !== "en" && (
           <a
             href={chapter.blog}
             target="_blank"

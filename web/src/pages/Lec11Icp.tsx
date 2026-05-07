@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { findChapter } from "../chapters";
 import ChapterHeader from "../components/ChapterHeader";
+import DemoAbout from "../components/DemoAbout";
+import DemoParams from "../components/DemoParams";
 import PointCloudViewer from "../components/PointCloudViewer";
 import Slider from "../components/Slider";
 import DataSourcePicker from "../components/DataSourcePicker";
@@ -10,7 +12,11 @@ import {
   buildTransform,
   transformCloud,
 } from "../lib/filters/transform";
-import { icpStep, identityTransform } from "../lib/filters/icp";
+import {
+  icpStep,
+  identityTransform,
+  samplePairCoords,
+} from "../lib/filters/icp";
 import { voxelGrid } from "../lib/filters/voxelGrid";
 import { emptyCloud, type PointCloud } from "../lib/types";
 
@@ -25,6 +31,7 @@ export default function Lec11Icp() {
   const [iter, setIter] = useState(0);
   const [fitness, setFitness] = useState<number | null>(null);
   const [pairs, setPairs] = useState<number | null>(null);
+  const [pairCoords, setPairCoords] = useState<Float32Array>(new Float32Array(0));
   const [playing, setPlaying] = useState(false);
   const lastSrcId = useRef<PointCloud | null>(null);
 
@@ -42,8 +49,6 @@ export default function Lec11Icp() {
 
   const tgtTree = useMemo(() => new KdTree(tgt.positions), [tgt]);
 
-  // Source = target × ground-truth offset. We don't expose the ground truth
-  // to the algorithm, but use it to set up a misalignment to recover from.
   const [src, setSrc] = useState<PointCloud>(emptyCloud());
 
   useEffect(() => {
@@ -66,6 +71,7 @@ export default function Lec11Icp() {
     setIter(0);
     setFitness(null);
     setPairs(null);
+    setPairCoords(new Float32Array(0));
     setPlaying(false);
   }
 
@@ -75,15 +81,15 @@ export default function Lec11Icp() {
     setTransform(result.transform);
     setFitness(result.fitness);
     setPairs(result.pairs);
+    setPairCoords(samplePairCoords(result.pairCoords, 250));
     setIter((i) => i + 1);
   };
 
-  // Auto-play loop (≈ 6 fps so the user can actually see each step).
   useEffect(() => {
     if (!playing) return;
     const id = window.setTimeout(() => {
       step();
-    }, 180);
+    }, 220);
     return () => window.clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playing, transform, src, tgt, maxDist]);
@@ -97,6 +103,7 @@ export default function Lec11Icp() {
   return (
     <div className="mx-auto max-w-7xl px-8 py-10">
       <ChapterHeader chapter={chapter} />
+      <DemoAbout slug="lec11" />
 
       <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_18rem]">
         <div className="overflow-hidden rounded-xl border border-[var(--border)]">
@@ -104,6 +111,7 @@ export default function Lec11Icp() {
             <div className="flex items-center gap-3">
               <Dot color="#f87171" /> {t.lec11.legendSrc}
               <Dot color="#00d4aa" /> {t.lec11.legendTgt}
+              <Dot color="#facc15" /> pairs
             </div>
             <div className="code-font flex items-center gap-3 text-[var(--dim)]">
               <span>iter {iter}</span>
@@ -127,11 +135,17 @@ export default function Lec11Icp() {
                 { cloud: tgt, color: "#00d4aa", size: ptSize, opacity: 0.85 },
                 { cloud: transformed, color: "#f87171", size: ptSize, opacity: 0.85 },
               ]}
+              lines={
+                pairCoords.length > 0
+                  ? [{ positions: pairCoords, color: "#facc15", opacity: 0.55 }]
+                  : undefined
+              }
             />
           </div>
         </div>
 
         <aside className="flex flex-col gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
+          <DemoParams slug="lec11" />
           <DataSourcePicker
             defaultPreset="naverlabs"
             onCloudChange={(c, info) => {
@@ -174,18 +188,8 @@ export default function Lec11Icp() {
             step={0.05 * scale}
             value={maxDist}
             unit="m"
-            hint={t.lec11.maxDistHint}
             onChange={setMaxDist}
           />
-
-          <div className="rounded-md border border-[var(--border)] bg-[var(--surface-2)] p-3 text-[11px] leading-relaxed text-[var(--dim)]">
-            <strong className="text-[var(--text)]">{t.lec11.howItWorks}</strong>
-            <ol className="mt-1 list-decimal pl-4">
-              <li>{t.lec11.step1}</li>
-              <li>{t.lec11.step2}</li>
-              <li>{t.lec11.step3}</li>
-            </ol>
-          </div>
 
           <pre className="code-font overflow-x-auto rounded-md bg-[var(--surface-2)] p-3 text-[10px] leading-relaxed text-[var(--text)]">
             {`pcl::IterativeClosestPoint<

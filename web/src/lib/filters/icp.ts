@@ -9,6 +9,10 @@ export type IcpStep = {
   fitness: number;
   /** Number of correspondences used. */
   pairs: number;
+  /** Per-pair endpoints, packed [sx,sy,sz, tx,ty,tz, ...] (length = 6*pairs).
+   *  src endpoint is the *transformed* source point as it stood before this
+   *  step's update — i.e. matches what the user is seeing on screen. */
+  pairCoords: Float32Array;
 };
 
 /**
@@ -47,9 +51,27 @@ export function icpStep(
     kept++;
   }
   if (kept < 6) {
-    return { transform: current, fitness: Infinity, pairs: kept };
+    return {
+      transform: current,
+      fitness: Infinity,
+      pairs: kept,
+      pairCoords: new Float32Array(0),
+    };
   }
   const fitness = fitnessSum / kept;
+
+  // Pack the matched pairs for visualization.
+  const pairCoords = new Float32Array(kept * 6);
+  for (let k = 0; k < kept; k++) {
+    const so = srcIdx[k] * 3;
+    const to = tgtIdx[k] * 3;
+    pairCoords[k * 6] = transformed.positions[so];
+    pairCoords[k * 6 + 1] = transformed.positions[so + 1];
+    pairCoords[k * 6 + 2] = transformed.positions[so + 2];
+    pairCoords[k * 6 + 3] = tgtTree.positions[to];
+    pairCoords[k * 6 + 4] = tgtTree.positions[to + 1];
+    pairCoords[k * 6 + 5] = tgtTree.positions[to + 2];
+  }
 
   // Pass 2: centroids of matched pairs (using the transformed src — that
   // way the Procrustes solve gives us the *delta* transform).
@@ -134,7 +156,25 @@ export function icpStep(
 
   // Compose: new = delta · current.
   const next = compose(delta, current);
-  return { transform: next, fitness, pairs: kept };
+  return { transform: next, fitness, pairs: kept, pairCoords };
+}
+
+/** Sub-sample correspondence segments for rendering — line counts blow up
+ *  fast, and we only need a representative cross-section. */
+export function samplePairCoords(
+  pairCoords: Float32Array,
+  maxSegments: number,
+): Float32Array {
+  const total = pairCoords.length / 6;
+  if (total <= maxSegments) return pairCoords;
+  const out = new Float32Array(maxSegments * 6);
+  for (let i = 0; i < maxSegments; i++) {
+    const src = Math.floor((i * total) / maxSegments);
+    for (let k = 0; k < 6; k++) {
+      out[i * 6 + k] = pairCoords[src * 6 + k];
+    }
+  }
+  return out;
 }
 
 /** 4×4 row-major matrix multiply. */

@@ -105,7 +105,7 @@ export default function DataSourcePicker({
       <div className="mb-1.5 flex items-baseline justify-between">
         <span className="text-sm text-slate-200">{t.source.label}</span>
       </div>
-      <div className="grid grid-cols-3 gap-1.5">
+      <div className="grid grid-cols-3 gap-1.5 pt-2">
         {presetIds.map((id) => {
           const isActive = active === id;
           const sceneTone = SCENE_TONES[id];
@@ -113,28 +113,27 @@ export default function DataSourcePicker({
             <button
               key={id}
               onClick={() => pick(id)}
-              className={`rounded-md border px-2 py-2 text-left transition ${
+              className={`relative rounded-md border px-2 pt-3 pb-2 text-left transition ${
                 isActive
                   ? "border-[color:rgba(0,212,170,0.5)] bg-[color:rgba(0,212,170,0.08)] text-[var(--text-strong)]"
                   : "border-[var(--border-strong)] bg-[var(--surface-2)] text-[var(--dim)] hover:border-[var(--border-strong)] hover:text-[var(--text)]"
               }`}
             >
-              <div className="flex items-center gap-1.5">
-                <span className="code-font text-[11px] font-bold">
-                  {t.source.presets[id].name}
-                </span>
-                <span
-                  className="code-font rounded-sm px-1 py-px text-[9px] font-semibold ring-1 ring-inset"
-                  style={{
-                    color: sceneTone.fg,
-                    background: sceneTone.bg,
-                    boxShadow: `inset 0 0 0 1px ${sceneTone.bd}`,
-                  }}
-                >
-                  {t.source.presets[id].scene}
-                </span>
+              {/* Scene chip overhanging the top edge as a label tag. */}
+              <span
+                className="code-font absolute -top-2 left-1.5 rounded px-1.5 py-px text-[9px] font-semibold leading-none ring-1 ring-inset"
+                style={{
+                  color: sceneTone.fg,
+                  background: sceneTone.bg,
+                  boxShadow: `inset 0 0 0 1px ${sceneTone.bd}, 0 0 0 2px var(--surface)`,
+                }}
+              >
+                {t.source.presets[id].scene}
+              </span>
+              <div className="code-font truncate text-[11px] font-bold leading-tight">
+                {t.source.presets[id].name}
               </div>
-              <div className="code-font mt-1 text-[9px] leading-tight text-[var(--mut)]">
+              <div className="code-font mt-1 truncate text-[9px] leading-tight text-[var(--mut)]">
                 {t.source.presets[id].hint}
               </div>
             </button>

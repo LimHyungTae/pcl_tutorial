@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { findChapter } from "../chapters";
 import ChapterHeader from "../components/ChapterHeader";
+import DemoAbout from "../components/DemoAbout";
+import DemoParams from "../components/DemoParams";
 import BeforeAfterPanel from "../components/BeforeAfterPanel";
 import PointCloudViewer from "../components/PointCloudViewer";
 import Slider from "../components/Slider";
@@ -25,6 +27,7 @@ export default function Lec05Voxelization() {
   return (
     <div className="mx-auto max-w-7xl px-8 py-10">
       <ChapterHeader chapter={chapter} />
+      <DemoAbout slug="lec05" />
 
       <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_18rem]">
         <BeforeAfterPanel
@@ -42,7 +45,8 @@ export default function Lec05Voxelization() {
           }
         />
 
-        <aside className="flex flex-col gap-5 rounded-xl border border-slate-800/80 bg-slate-900/40 p-5">
+        <aside className="flex flex-col gap-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
+          <DemoParams slug="lec05" />
           <DataSourcePicker
             onCloudChange={(c, info) => {
               setSrc(c);

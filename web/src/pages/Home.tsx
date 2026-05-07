@@ -1,29 +1,37 @@
 import { Link } from "react-router-dom";
 import { chapters, statusColor } from "../chapters";
 import { useT } from "../i18n";
+import AuthorToggle from "../components/AuthorToggle";
+
+const PILLS = ["PCL", "LiDAR", "SLAM", "Perception", "Registration"];
 
 export default function Home() {
   const t = useT();
   return (
     <div className="mx-auto max-w-5xl px-8 pt-14 pb-16">
-      <header className="mb-12 text-center fade-up">
+      <header className="mb-10 text-center fade-up">
         <div className="lab-tag">{t.home.eyebrow}</div>
-        <h1 className="heading-mono mt-4 text-4xl font-extrabold leading-[1.1] sm:text-5xl">
+        <h1 className="heading-mono mt-4 text-4xl font-extrabold leading-[1.15] sm:text-5xl">
           <span className="gradient-text">
-            {t.home.headline1} {t.home.headlineEm} {t.home.headline2}
+            {t.home.headline1}
+            <br />
+            {t.home.headlineEm}
+            {t.home.headline2 ? ` ${t.home.headline2}` : ""}
           </span>
         </h1>
         <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-relaxed text-[var(--dim)]">
           {t.home.intro}
         </p>
-        <div className="pill mt-6">PCL · ROS · LiDAR · SLAM</div>
-      </header>
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          {PILLS.map((p) => (
+            <span key={p} className="pill">
+              {p}
+            </span>
+          ))}
+        </div>
 
-      <div className="mb-6 flex flex-wrap gap-x-4 gap-y-2 text-xs">
-        <Legend label={t.status.interactive} dot="#00d4aa" hint={t.legend.interactive} />
-        <Legend label={t.status.precomputed} dot="#4da6ff" hint={t.legend.precomputed} />
-        <Legend label={t.status.stub} dot="#475569" hint={t.legend.stub} />
-      </div>
+        <AuthorToggle />
+      </header>
 
       <div className="grid gap-3 sm:grid-cols-2">
         {chapters.map((c, i) => {
@@ -58,26 +66,5 @@ export default function Home() {
         })}
       </div>
     </div>
-  );
-}
-
-function Legend({
-  label,
-  hint,
-  dot,
-}: {
-  label: string;
-  hint: string;
-  dot: string;
-}) {
-  return (
-    <span className="inline-flex items-center gap-2 text-[var(--dim)]">
-      <span
-        className="inline-block h-1.5 w-1.5 rounded-full"
-        style={{ background: dot }}
-      />
-      <span className="text-[var(--text)]">{label}</span>
-      <span>· {hint}</span>
-    </span>
   );
 }

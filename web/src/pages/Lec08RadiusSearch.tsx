@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { findChapter } from "../chapters";
 import ChapterHeader from "../components/ChapterHeader";
+import DemoAbout from "../components/DemoAbout";
+import DemoParams from "../components/DemoParams";
 import PointCloudViewer from "../components/PointCloudViewer";
 import Slider from "../components/Slider";
 import DataSourcePicker from "../components/DataSourcePicker";
@@ -55,10 +57,11 @@ export default function Lec08RadiusSearch() {
   return (
     <div className="mx-auto max-w-7xl px-8 py-10">
       <ChapterHeader chapter={chapter} />
+      <DemoAbout slug="lec08" />
 
       <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_18rem]">
-        <div className="overflow-hidden rounded-xl border border-slate-800/80">
-          <div className="flex items-center justify-between border-b border-slate-800/80 bg-slate-950/60 px-4 py-2 text-xs">
+        <div className="overflow-hidden rounded-xl border border-[var(--border)]">
+          <div className="flex items-center justify-between border-b border-[var(--border)] bg-[color:rgba(10,15,26,0.6)] px-4 py-2 text-[11px]">
             <div className="flex items-center gap-3">
               <Dot color="#475569" /> base
               <Dot color="#34d399" /> {neighbors.count.toLocaleString()} {t.lec08.found}
@@ -72,11 +75,17 @@ export default function Lec08RadiusSearch() {
                 { cloud: neighbors, color: "#34d399", size: ptSize * 1.3 },
                 { cloud: queryCloud, color: "#facc15", size: ptSize * 6 },
               ]}
+              onPick={([x, y, z]) => {
+                setQx(round(x, 2));
+                setQy(round(y, 2));
+                setQz(round(z, 2));
+              }}
             />
           </div>
         </div>
 
-        <aside className="flex flex-col gap-5 rounded-xl border border-slate-800/80 bg-slate-900/40 p-5">
+        <aside className="flex flex-col gap-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
+          <DemoParams slug="lec08" />
           <DataSourcePicker
             onCloudChange={(c, info) => {
               setRaw(c);
@@ -118,10 +127,9 @@ export default function Lec08RadiusSearch() {
             step={0.1 * scale}
             value={radius}
             unit="m"
-            hint={t.lec08.radiusHint}
             onChange={setRadius}
           />
-          <pre className="code-font overflow-x-auto rounded-md bg-slate-950/60 p-3 text-[11px] leading-relaxed text-slate-300">
+          <pre className="code-font overflow-x-auto rounded-md bg-[var(--surface-2)] p-3 text-[10px] leading-relaxed text-[var(--text)]">
             {`pcl::KdTreeFLANN<pcl::PointXYZ> kd;
 kd.setInputCloud(src);
 pcl::PointXYZ q(${qx.toFixed(2)}, ${qy.toFixed(2)}, ${qz.toFixed(2)});
@@ -132,6 +140,11 @@ kd.radiusSearch(q, ${radius.toFixed(2)},
       </section>
     </div>
   );
+}
+
+function round(v: number, digits: number) {
+  const f = Math.pow(10, digits);
+  return Math.round(v * f) / f;
 }
 
 function Dot({ color }: { color: string }) {

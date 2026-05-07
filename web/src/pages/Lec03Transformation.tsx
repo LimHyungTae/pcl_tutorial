@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { findChapter } from "../chapters";
 import ChapterHeader from "../components/ChapterHeader";
+import DemoAbout from "../components/DemoAbout";
+import DemoParams from "../components/DemoParams";
 import PointCloudViewer from "../components/PointCloudViewer";
 import Slider from "../components/Slider";
 import DataSourcePicker from "../components/DataSourcePicker";
@@ -84,6 +86,7 @@ export default function Lec03Transformation() {
   return (
     <div className="mx-auto max-w-7xl px-8 py-10">
       <ChapterHeader chapter={chapter} />
+      <DemoAbout slug="lec03" />
 
       <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_18rem]">
         <div className="overflow-hidden rounded-xl border border-[var(--border)]">
@@ -107,6 +110,7 @@ export default function Lec03Transformation() {
         </div>
 
         <aside className="flex flex-col gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
+          <DemoParams slug="lec03" />
           <DataSourcePicker
             onCloudChange={(c, info) => {
               setRaw(c);
