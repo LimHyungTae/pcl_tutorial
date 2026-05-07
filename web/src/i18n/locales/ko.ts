@@ -156,13 +156,21 @@ export const ko: LocaleDict = {
     step3: "(R, t)를 src에 누적 적용. 수렴할 때까지 반복.",
   },
   extra01: {
+    modelLabel: "모델",
+    modelOptions: { plane: "Plane", cylinder: "Cylinder (수직축)" },
     threshold: "distance threshold",
-    thresholdHint: "한 점이 plane의 inlier로 판정되는 최대 거리.",
+    thresholdHint: "한 점이 모델 표면의 inlier로 판정되는 최대 거리.",
     iters: "RANSAC 반복",
-    itersHint: "3개 점을 무작위로 뽑아 plane을 만드는 반복 횟수. 클수록 정답 plane 찾을 확률 ↑.",
-    inliers: "plane inlier",
+    itersHint: "무작위 sample 시도 횟수. 클수록 정답 모델 찾을 확률 ↑.",
+    inliers: "inlier",
     outliers: "그 외",
     note: "SLAM/로보틱스에서 지면(ground) 또는 벽 제거에 흔히 쓰는 전처리.",
+    cylinderNote: "수직축 가정으로 fit이 xy 평면의 3-파라미터 원으로 단순화됩니다. 지면 위쪽으로 z를 자르면 RANSAC이 pole에 집중하게 됩니다.",
+    zMin: "z min (crop)",
+    zMinHint: "이 z 이하의 점들은 제거 — 지면 영향 차단.",
+    rMin: "min radius",
+    rMax: "max radius",
+    rRangeHint: "Pole 크기의 원기둥만 탐색하도록 제한.",
   },
   extra02: {
     tolerance: "cluster tolerance",
@@ -314,10 +322,10 @@ export const ko: LocaleDict = {
       ],
     },
     extra01: {
-      title: "RANSAC Plane Segmentation",
-      subtitle: "주된 plane(예: 지면)을 찾아 inlier/outlier로 분리.",
+      title: "RANSAC Segmentation",
+      subtitle: "Plane 또는 수직 cylinder(pole)을 cloud에 적합해 inlier/outlier로 분리.",
       about:
-        "RANSAC(Random Sample Consensus)을 활용해 무작위로 3점을 뽑아 plane을 만들고, 그 plane에서 threshold 이내에 들어오는 점을 inlier로 셉니다. 가장 많은 inlier를 갖는 plane을 채택하며, 지면 · 벽 · 테이블 추출에 널리 쓰이는 고전적인 방법입니다.",
+        "RANSAC(Random Sample Consensus)은 무작위로 적은 수의 점을 뽑아 모델 — plane(3점), cylinder 등 — 을 만들고, 그 모델에서 threshold 이내에 들어오는 점을 inlier로 셉니다. 가장 많은 inlier를 갖는 모델을 채택하는 방식으로, 지면 · 벽 · 테이블 추출(plane)이나 가로등 · 나무 둥치 검출(수직 cylinder)에 널리 쓰이는 고전적인 robust 추정 기법입니다.",
       params: [
         {
           name: "distance threshold",

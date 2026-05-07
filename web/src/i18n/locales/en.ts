@@ -154,13 +154,21 @@ export const en = {
     step3: "Apply (R, t) to src; repeat until convergence.",
   },
   extra01: {
+    modelLabel: "Model",
+    modelOptions: { plane: "Plane", cylinder: "Cylinder (vertical)" },
     threshold: "distance threshold",
-    thresholdHint: "Maximum distance from a point to the plane for it to count as inlier.",
+    thresholdHint: "Maximum distance from a point to the surface for it to count as inlier.",
     iters: "RANSAC iterations",
-    itersHint: "Number of random 3-point samples; more = better odds of finding the dominant plane.",
-    inliers: "plane inliers",
+    itersHint: "Number of random samples; more = better odds of finding the dominant model.",
+    inliers: "inliers",
     outliers: "rest",
     note: "Useful for ground-plane / wall removal in SLAM and robotics pipelines.",
+    cylinderNote: "Vertical-axis assumption simplifies the fit to a 3-param circle in xy. Pre-cropping above ground (z min) keeps RANSAC focused on poles.",
+    zMin: "z min (crop)",
+    zMinHint: "Drop points below this z to skip the ground plane.",
+    rMin: "min radius",
+    rMax: "max radius",
+    rRangeHint: "Constrains the search to pole-sized cylinders.",
   },
   extra02: {
     tolerance: "cluster tolerance",
@@ -320,10 +328,10 @@ export const en = {
       ],
     },
     extra01: {
-      title: "RANSAC Plane Segmentation",
-      subtitle: "Find the dominant plane (e.g. ground) and split inliers / outliers.",
+      title: "RANSAC Segmentation",
+      subtitle: "Fit a plane or a vertical cylinder (pole) to the cloud and split inliers / outliers.",
       about:
-        "RANSAC (Random Sample Consensus) repeatedly picks 3 random points to fit a plane, counts how many other points lie within `threshold` of that plane (inliers), and keeps the plane with the most inliers. The classic, robust extractor for ground, walls, and tabletops.",
+        "RANSAC (Random Sample Consensus) repeatedly samples a small set of random points to fit a model — a plane (3 points), a cylinder, etc. — counts how many other points lie within `threshold` of that model (inliers), and keeps the model with the most inliers. The classic, robust extractor for ground/walls/tabletops (plane) or streetlights/tree trunks (vertical cylinder).",
       params: [
         {
           name: "distance threshold",
