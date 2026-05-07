@@ -8,7 +8,7 @@ const PILLS = ["PCL", "LiDAR", "SLAM", "Perception", "Registration"];
 export default function Home() {
   const t = useT();
   return (
-    <div className="mx-auto max-w-5xl px-8 pt-14 pb-16">
+    <div className="mx-auto max-w-5xl px-4 pt-8 pb-12 sm:px-6 lg:px-8 lg:pt-14 lg:pb-16">
       <header className="mb-10 text-center fade-up">
         <div className="lab-tag">{t.home.eyebrow}</div>
         <h1 className="heading-mono mt-4 text-4xl font-extrabold leading-[1.15] sm:text-5xl">

@@ -84,7 +84,7 @@ export default function Lec03Transformation() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-8 py-10">
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
       <ChapterHeader chapter={chapter} />
       <DemoAbout slug="lec03" />
 
@@ -99,7 +99,7 @@ export default function Lec03Transformation() {
               {src.count.toLocaleString()} {t.viewer.pointsSuffix}
             </span>
           </div>
-          <div className="aspect-[16/10] w-full">
+          <div className="aspect-[4/3] md:aspect-[16/10] w-full">
             <PointCloudViewer
               layers={[
                 { cloud: src, color: "#f87171", size: ptSize, opacity: 0.65 },

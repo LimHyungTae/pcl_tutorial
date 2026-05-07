@@ -5,7 +5,7 @@ import { useT } from "../i18n";
 export default function StubPage({ chapter }: { chapter: ChapterMeta }) {
   const t = useT();
   return (
-    <div className="mx-auto max-w-5xl px-8 py-10">
+    <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
       <ChapterHeader chapter={chapter} />
 
       <div className="mt-8 rounded-xl border border-slate-800/80 bg-slate-900/30 p-8 text-center">

@@ -55,7 +55,7 @@ export default function Lec08RadiusSearch() {
   const ptSize = 0.25 * scale;
 
   return (
-    <div className="mx-auto max-w-7xl px-8 py-10">
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
       <ChapterHeader chapter={chapter} />
       <DemoAbout slug="lec08" />
 
@@ -68,7 +68,7 @@ export default function Lec08RadiusSearch() {
               <Dot color="#facc15" /> query
             </div>
           </div>
-          <div className="aspect-[16/10] w-full">
+          <div className="aspect-[4/3] md:aspect-[16/10] w-full">
             <PointCloudViewer
               layers={[
                 { cloud: src, color: "#475569", size: ptSize, opacity: 0.55 },
