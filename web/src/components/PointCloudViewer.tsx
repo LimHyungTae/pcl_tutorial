@@ -207,30 +207,47 @@ function CameraSyncBridge({ store }: { store: CameraSyncStore }) {
     tgt: THREE.Vector3;
   } | null>(null);
 
+  // Tracks whether the local user is actively dragging this viewer's
+  // OrbitControls. We only broadcast while userActive=true, so frame-rate
+  // damping ticks and remote-applied jumps don't echo back into the loop.
+  const userActiveRef = useRef(false);
+
   useEffect(() => {
     if (!camera || !controls) return;
     return store.subscribe((e) => {
       if (e.sourceId === idRef.current) return;
-      camera.position.copy(e.pos);
-      controls.target.copy(e.tgt);
-      controls.update?.();
+      // Set the guard *before* mutating the camera so the synchronous
+      // "change" event that controls.update() fires sees the right ref.
       lastAppliedRef.current = {
         pos: e.pos.clone(),
         tgt: e.tgt.clone(),
       };
+      camera.position.copy(e.pos);
+      controls.target.copy(e.tgt);
+      controls.update?.();
     });
   }, [store, camera, controls]);
 
   useEffect(() => {
     if (!camera || !controls) return;
-    const handler = () => {
+    const onStart = () => {
+      userActiveRef.current = true;
+    };
+    const onEnd = () => {
+      userActiveRef.current = false;
+    };
+    const onChange = () => {
+      // Only the viewer the user is currently dragging publishes — keeps
+      // the bus quiet during damping interpolation and remote-applied
+      // updates, which in turn prevents echo loops.
+      if (!userActiveRef.current) return;
       const last = lastAppliedRef.current;
       if (
         last &&
         camera.position.distanceTo(last.pos) < 1e-4 &&
         controls.target.distanceTo(last.tgt) < 1e-4
       ) {
-        return; // still echoing the remote state — don't re-broadcast
+        return;
       }
       store.publish({
         pos: camera.position.clone(),
@@ -242,8 +259,14 @@ function CameraSyncBridge({ store }: { store: CameraSyncStore }) {
         tgt: controls.target.clone(),
       };
     };
-    controls.addEventListener("change", handler);
-    return () => controls.removeEventListener("change", handler);
+    controls.addEventListener("start", onStart);
+    controls.addEventListener("end", onEnd);
+    controls.addEventListener("change", onChange);
+    return () => {
+      controls.removeEventListener("start", onStart);
+      controls.removeEventListener("end", onEnd);
+      controls.removeEventListener("change", onChange);
+    };
   }, [store, camera, controls]);
 
   return null;

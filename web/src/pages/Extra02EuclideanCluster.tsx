@@ -15,8 +15,6 @@ import { ransacPlane } from "../lib/filters/ransacPlane";
 import { voxelGrid } from "../lib/filters/voxelGrid";
 import { emptyCloud, type PointCloud } from "../lib/types";
 
-const TRAVEL = "https://github.com/url-kaist/TRAVEL";
-
 export default function Extra02EuclideanCluster() {
   const chapter = findChapter("extra02")!;
   const t = useT();
@@ -90,7 +88,6 @@ export default function Extra02EuclideanCluster() {
     <div className="mx-auto max-w-7xl px-8 py-10">
       <ChapterHeader chapter={chapter} />
       <DemoAbout slug="extra02" />
-      <TravelNote />
 
       <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_18rem]">
         <div className="overflow-hidden rounded-xl border border-[var(--border)]">
@@ -155,24 +152,6 @@ ec.extract(indices);`}
           </pre>
         </aside>
       </section>
-    </div>
-  );
-}
-
-function TravelNote() {
-  const t = useT();
-  return (
-    <div className="mt-5 rounded-lg border border-[color:rgba(0,212,170,0.25)] bg-[color:rgba(0,212,170,0.06)] px-4 py-3 text-[13px] leading-relaxed text-[var(--dim)]">
-      {t.extra02.travelPrefix}
-      <a
-        href={TRAVEL}
-        target="_blank"
-        rel="noreferrer"
-        className="code-font font-bold text-[var(--accent)] underline decoration-[color:rgba(0,212,170,0.35)] underline-offset-2 transition hover:text-[var(--accent-2)]"
-      >
-        TRAVEL
-      </a>
-      {t.extra02.travelSuffix}
     </div>
   );
 }

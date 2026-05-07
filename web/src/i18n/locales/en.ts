@@ -154,21 +154,13 @@ export const en = {
     step3: "Apply (R, t) to src; repeat until convergence.",
   },
   extra01: {
-    modelLabel: "Model",
-    modelOptions: { plane: "Plane", cylinder: "Cylinder (vertical)" },
     threshold: "distance threshold",
-    thresholdHint: "Maximum distance from a point to the surface for it to count as inlier.",
+    thresholdHint: "Maximum distance from a point to the plane for it to count as inlier.",
     iters: "RANSAC iterations",
-    itersHint: "Number of random samples; more = better odds of finding the dominant model.",
-    inliers: "inliers",
+    itersHint: "Number of random 3-point samples; more = better odds of finding the dominant plane.",
+    inliers: "plane inliers",
     outliers: "rest",
     note: "Useful for ground-plane / wall removal in SLAM and robotics pipelines.",
-    cylinderNote: "Vertical-axis assumption simplifies the fit to a 3-param circle in xy. Pre-cropping above ground (z min) keeps RANSAC focused on poles.",
-    zMin: "z min (crop)",
-    zMinHint: "Drop points below this z to skip the ground plane.",
-    rMin: "min radius",
-    rMax: "max radius",
-    rRangeHint: "Constrains the search to pole-sized cylinders.",
   },
   extra02: {
     tolerance: "cluster tolerance",
@@ -177,33 +169,6 @@ export const en = {
     minSizeHint: "Clusters smaller than this are dropped.",
     removeGround: "Remove dominant plane first (RANSAC)",
     found: "{n} clusters found",
-    travelPrefix:
-      "For omnidirectional LiDAR, ",
-    travelSuffix:
-      " can provide faster and more robust instance segmentation than plain Euclidean clustering.",
-  },
-  extra03: {
-    zMin: "z min",
-    zMax: "z max",
-    zHint: "PassThrough keeps only points inside this vertical interval.",
-    leaf: "voxel leaf",
-    leafHint: "Downsample before RANSAC so plane fitting stays fast and less noisy.",
-    threshold: "plane threshold",
-    thresholdHint: "Maximum distance from the fitted plane for a point to count as ground.",
-    iters: "RANSAC iterations",
-    itersHint: "More random samples improve stability, but cost more CPU time.",
-    rawStage: "raw",
-    passStage: "pass",
-    voxelStage: "voxel",
-    nonGroundStage: "non-ground",
-    inputPane: "Input cloud",
-    outputPane: "Ground removed",
-    groundLegend: "ground plane",
-    nonGroundLegend: "non-ground",
-    roughTerrainPrefix:
-      "This simple global-plane pipeline is useful as a scaffold. On rough terrain, production systems commonly use region-wise ground plane fitting; see",
-    roughTerrainSuffix:
-      " for stronger ground segmentation on uneven outdoor scenes.",
   },
   chapters: {
     lec03: {
@@ -328,10 +293,10 @@ export const en = {
       ],
     },
     extra01: {
-      title: "RANSAC Segmentation",
-      subtitle: "Fit a plane or a vertical cylinder (pole) to the cloud and split inliers / outliers.",
+      title: "RANSAC Plane Segmentation",
+      subtitle: "Find the dominant plane (e.g. ground) and split inliers / outliers.",
       about:
-        "RANSAC (Random Sample Consensus) repeatedly samples a small set of random points to fit a model — a plane (3 points), a cylinder, etc. — counts how many other points lie within `threshold` of that model (inliers), and keeps the model with the most inliers. The classic, robust extractor for ground/walls/tabletops (plane) or streetlights/tree trunks (vertical cylinder).",
+        "RANSAC (Random Sample Consensus) repeatedly picks 3 random points to fit a plane, counts how many other points lie within `threshold` of that plane (inliers), and keeps the plane with the most inliers. The classic, robust extractor for ground, walls, and tabletops.",
       params: [
         {
           name: "distance threshold",
@@ -362,34 +327,6 @@ export const en = {
           effect: "Larger → drop more noise.",
         },
         { name: "remove ground", desc: "Run RANSAC plane removal first as preprocessing.", effect: "" },
-      ],
-    },
-    extra03: {
-      title: "Ground Removal Pipeline",
-      subtitle: "A simple PassThrough → VoxelGrid → RANSAC plane scaffold.",
-      about:
-        "This page chains three common preprocessing blocks: crop the vertical range with PassThrough, reduce density with VoxelGrid, then fit the dominant plane with RANSAC and remove its inliers as ground.",
-      params: [
-        {
-          name: "z min / z max",
-          desc: "Vertical crop range before plane fitting.",
-          effect: "Tighter ranges remove irrelevant high/low points.",
-        },
-        {
-          name: "voxel leaf",
-          desc: "Voxel size used before RANSAC.",
-          effect: "Larger → faster, but less detail.",
-        },
-        {
-          name: "plane threshold",
-          desc: "Distance threshold for ground-plane inliers.",
-          effect: "Larger → accepts rougher/noisier ground.",
-        },
-        {
-          name: "iterations",
-          desc: "Number of random 3-point plane samples.",
-          effect: "Larger → more stable, slower.",
-        },
       ],
     },
   },
