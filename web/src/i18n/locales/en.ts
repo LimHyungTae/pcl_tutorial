@@ -35,7 +35,7 @@ export const en = {
     title: "Hyungtae Lim, Ph.D.",
     role: "Postdoctoral Associate · MIT SPARK Lab",
     focus: "Focuses on robust perception, simultaneous localization and mapping (SLAM), and state estimation.",
-    bio: "Hyungtae Lim is a Postdoctoral Associate at MIT's SPARK Lab, working with Prof. Luca Carlone. He received his Ph.D. in Electrical Engineering from KAIST in 2023, advised by Prof. Hyun Myung. His research focuses on robust perception, state estimation, and lifelong mapping for mobile robots and autonomous vehicles. He is a recipient of the RSS Pioneers 2024 award and the 2022 IEEE RA-L Best Paper Award, an Associate Editor for IEEE RA-L, and the author of widely used open-source LiDAR-based libraries.",
+    bio: "Hyungtae Lim is a Postdoctoral Associate at MIT's SPARK Lab, working with Prof. Luca Carlone. He earned his M.S. (2020) and Ph.D. (2023) in Electrical Engineering from KAIST under Prof. Hyun Myung, after receiving his B.S. in Mechanical Engineering from the same institution in 2018. His research focuses on robust robotic perception — robust state estimation and lifelong mapping for mobile robots and autonomous vehicles. He is a recipient of the RSS Pioneers 2024 and 2022 IEEE RA-L Best Paper awards, and an Associate Editor for IEEE RA-L. His team also won 1st place at IEEE ICRA's NSS 2024 Challenge and the 2023 HILTI SLAM Challenge — back-to-back top finishes in LiDAR point cloud-based competitions. He is the author of widely used open-source LiDAR libraries.",
     libsLabel: "Open-source libraries",
     libs: [
       { name: "GenZ-ICP", url: "https://github.com/cocel-postech/genz-icp" },

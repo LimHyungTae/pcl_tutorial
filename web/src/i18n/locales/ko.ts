@@ -37,7 +37,7 @@ export const ko: LocaleDict = {
     title: "임형태 (Hyungtae Lim, Ph.D.)",
     role: "Postdoctoral Associate · MIT SPARK Lab",
     focus: "Robust perception · simultaneous localization and mapping (SLAM) · state estimation 연구.",
-    bio: "임형태는 MIT SPARK Lab에서 Luca Carlone 교수와 함께 일하는 Postdoctoral Associate입니다. 2023년 KAIST에서 명현 교수의 지도 하에 전기 및 전자공학 박사 학위를 받았습니다. 모바일 로봇과 자율주행을 위한 robust perception, state estimation, lifelong mapping을 연구합니다. RSS Pioneers 2024와 2022 IEEE RA-L Best Paper Award 수상자이며, IEEE RA-L Associate Editor로 활동 중입니다. 또한 널리 사용되는 LiDAR 기반 오픈소스 라이브러리들의 저자이기도 합니다.",
+    bio: "임형태는 MIT SPARK Lab에서 Luca Carlone 교수 아래 Postdoctoral Associate으로 일하고 있으며, 2020·2023년 KAIST에서 명현 교수의 지도 하에 전기 및 전자공학 석사·박사 학위를 받았고, 2018년에는 KAIST 기계공학과를 졸업했습니다. 주로 로봇의 강인한 인지 기술에 관심이 많으며, 모바일 로봇과 자율주행을 위한 robust perception, state estimation, lifelong mapping 등을 연구합니다. 대외적으로는 RSS Pioneers 2024와 2022 IEEE RA-L Best Paper Award 수상자이며, LiDAR point cloud를 다루는 IEEE ICRA의 NSS 2024 Challenge와 2023 HILTI SLAM Challenge에서 2년 간 1등을 수상하기도 했습니다. 또한 널리 사용되는 LiDAR 기반 오픈소스 라이브러리들의 저자이기도 합니다.",
     libsLabel: "오픈소스 라이브러리",
     libs: [
       { name: "GenZ-ICP", url: "https://github.com/cocel-postech/genz-icp" },
