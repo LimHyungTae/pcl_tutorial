@@ -38,7 +38,31 @@ export default function Lec10Normal() {
     return out;
   }, [normals, src.count]);
 
-  const ptSize = 0.05 * scale;
+  // Build line segments for the normal vectors — each starts at a point and
+  // extends along its normal by a small fraction of the voxel scale so the
+  // arrows stay visible without overwhelming the cloud.
+  const normalLines = useMemo(() => {
+    if (src.count === 0) return new Float32Array(0);
+    const len = voxel * 2;
+    const out = new Float32Array(src.count * 6);
+    for (let i = 0; i < src.count; i++) {
+      const x = src.positions[i * 3];
+      const y = src.positions[i * 3 + 1];
+      const z = src.positions[i * 3 + 2];
+      const nx = normals[i * 3];
+      const ny = normals[i * 3 + 1];
+      const nz = normals[i * 3 + 2];
+      out[i * 6] = x;
+      out[i * 6 + 1] = y;
+      out[i * 6 + 2] = z;
+      out[i * 6 + 3] = x + nx * len;
+      out[i * 6 + 4] = y + ny * len;
+      out[i * 6 + 5] = z + nz * len;
+    }
+    return out;
+  }, [src, normals, voxel]);
+
+  const ptSize = 0.25 * scale;
 
   return (
     <div className="mx-auto max-w-7xl px-8 py-10">
@@ -55,7 +79,6 @@ export default function Lec10Normal() {
           </div>
           <div className="aspect-[16/10] w-full">
             <PointCloudViewer
-              defaultSizeMult={5}
               layers={[
                 {
                   cloud: src,
@@ -63,6 +86,11 @@ export default function Lec10Normal() {
                   size: ptSize,
                 },
               ]}
+              lines={
+                normalLines.length > 0
+                  ? [{ positions: normalLines, color: "#e2e8f0", opacity: 0.55 }]
+                  : undefined
+              }
             />
           </div>
         </div>

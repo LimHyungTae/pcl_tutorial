@@ -52,7 +52,7 @@ export default function Lec09Knn() {
     () => cloudFromPositions(new Float32Array([qx, qy, qz])),
     [qx, qy, qz],
   );
-  const ptSize = 0.05 * scale;
+  const ptSize = 0.25 * scale;
 
   return (
     <div className="mx-auto max-w-7xl px-8 py-10">
@@ -70,7 +70,6 @@ export default function Lec09Knn() {
           </div>
           <div className="aspect-[16/10] w-full">
             <PointCloudViewer
-              defaultSizeMult={5}
               layers={[
                 { cloud: src, color: "#475569", size: ptSize, opacity: 0.55 },
                 { cloud: neighbors, color: "#34d399", size: ptSize * 1.3 },

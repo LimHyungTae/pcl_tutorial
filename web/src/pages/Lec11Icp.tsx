@@ -111,7 +111,7 @@ export default function Lec11Icp() {
             <div className="flex items-center gap-3">
               <Dot color="#f87171" /> {t.lec11.legendSrc}
               <Dot color="#00d4aa" /> {t.lec11.legendTgt}
-              <Dot color="#facc15" /> pairs
+              <Dot color="#e2e8f0" /> pairs
             </div>
             <div className="code-font flex items-center gap-3 text-[var(--dim)]">
               <span>iter {iter}</span>
@@ -137,7 +137,7 @@ export default function Lec11Icp() {
               ]}
               lines={
                 pairCoords.length > 0
-                  ? [{ positions: pairCoords, color: "#facc15", opacity: 0.55 }]
+                  ? [{ positions: pairCoords, color: "#e2e8f0", opacity: 0.6 }]
                   : undefined
               }
             />

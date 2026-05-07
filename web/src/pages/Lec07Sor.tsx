@@ -37,7 +37,7 @@ export default function Lec07Sor() {
   }, [raw, scale]);
 
   const result = useMemo(() => sor(src, meanK, stddev), [src, meanK, stddev]);
-  const ptSize = 0.05 * scale;
+  const ptSize = 0.25 * scale;
 
   return (
     <div className="mx-auto max-w-7xl px-8 py-10">
@@ -57,7 +57,6 @@ export default function Lec07Sor() {
           </div>
           <div className="aspect-[16/10] w-full">
             <PointCloudViewer
-              defaultSizeMult={5}
               layers={[
                 { cloud: result.inliers, color: "#34d399", size: ptSize },
                 { cloud: result.outliers, color: "#f87171", size: ptSize * 1.4 },
