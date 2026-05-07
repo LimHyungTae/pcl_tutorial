@@ -83,10 +83,12 @@ export function euclideanCluster(
   return clusters;
 }
 
-/** Color drawn from the golden angle hue spiral — stable for any index. */
+/** Color drawn from the golden angle hue spiral — stable for any index.
+ *  Note: three.js's Color parser only accepts the legacy comma-separated
+ *  hsl() form, NOT the modern space-separated one. */
 export function clusterColor(i: number): string {
   const hue = (i * 137.508) % 360;
-  return `hsl(${hue.toFixed(0)} 78% 60%)`;
+  return `hsl(${hue.toFixed(0)}, 78%, 60%)`;
 }
 
 /**
