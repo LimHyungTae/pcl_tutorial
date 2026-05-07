@@ -32,7 +32,7 @@ export const en = {
   },
   author: {
     toggle: "How's Hyungtae Lim?",
-    title: "Hyungtae Lim",
+    title: "Hyungtae Lim, Ph.D.",
     role: "Postdoctoral Associate · MIT SPARK Lab",
     focus: "Focuses on robust perception, simultaneous localization and mapping (SLAM), and state estimation.",
     bio: "Hyungtae Lim is a Postdoctoral Associate at MIT's SPARK Lab, working with Prof. Luca Carlone. He received his Ph.D. in Electrical Engineering from KAIST in 2023, advised by Prof. Hyun Myung. His research focuses on robust perception, state estimation, and lifelong mapping for mobile robots and autonomous vehicles. He is a recipient of the RSS Pioneers 2024 award and the 2022 IEEE RA-L Best Paper Award, an Associate Editor for IEEE RA-L, and the author of widely used open-source LiDAR-based libraries.",
@@ -175,7 +175,7 @@ export const en = {
       title: "Transformation",
       subtitle: "Apply a 4×4 rigid transform — translate and rotate the cloud.",
       about:
-        "Apply a 4×4 rigid transform T = [R | t; 0 | 1] to every point. The same operation behind point-cloud registration, multi-sensor fusion and world ↔ body frame conversions.",
+        "Applying a 4×4 rigid transform T = [R | t; 0 | 1] to every point is called transformation; the 4×4 matrix itself is the transformation matrix. It's the foundational operation behind point-cloud registration, multi-sensor fusion, and world ↔ body frame conversions — found in essentially every SLAM pipeline.",
       params: [
         { name: "tx / ty / tz", desc: "Translation along each axis (meters).", effect: "" },
         { name: "rx / ry / rz", desc: "Euler rotation in degrees, applied as Rz · Ry · Rx.", effect: "" },
@@ -185,7 +185,7 @@ export const en = {
       title: "Voxelization",
       subtitle: "Voxel-grid downsampling — drag the leaf size slider.",
       about:
-        "Voxel-grid filtering discretizes 3D space into uniform cubic cells and replaces every cell's points with their centroid. A staple preprocessing step — fast, deterministic, and preserves overall shape.",
+        "Voxel-grid filtering (a.k.a. voxelization) discretizes 3D space into uniform cubic cells and replaces every cell's points with a single centroid. It's the most common first step in any point cloud pipeline — it strips redundant points so downstream algorithms run far faster while the overall shape stays intact.",
       params: [
         {
           name: "leaf size",
@@ -198,7 +198,7 @@ export const en = {
       title: "PassThrough",
       subtitle: "Crop the cloud with an axis-aligned interval filter.",
       about:
-        "PassThrough is the simplest spatial filter: keep points whose value along one axis falls inside an interval (or, with negative=true, drop them).",
+        "PassThrough keeps points whose value along one axis falls inside [min, max] (or, with negative=true, drops them). Common uses: stripping the floor in flat indoor scenes, or trimming away points sitting too high above an autonomous vehicle to matter for driving decisions.",
       params: [
         { name: "axis", desc: "Spatial axis the filter runs along.", effect: "" },
         {
@@ -231,7 +231,7 @@ export const en = {
       title: "Radius Search",
       subtitle: "All neighbors of a query point within a given radius (KdTree).",
       about:
-        "KdTree-accelerated query: return every point within a fixed radius of a query position. Click any point in the viewer to set the query.",
+        "Use a KdTree to return every point within a fixed radius of a query position. Click any point in the viewer to move the query there.",
       params: [
         {
           name: "query x / y / z",
@@ -281,7 +281,7 @@ export const en = {
       title: "Iterative Closest Point",
       subtitle: "Step through correspondences and pose updates one iteration at a time.",
       about:
-        "ICP alternates two steps: (1) for each src point find the nearest tgt point, (2) solve the rigid (R, t) that best aligns those pairs (Procrustes / SVD). Repeat until convergence.",
+        "Iterative Closest Point (ICP) is a local registration method that, on each iteration, treats the nearest tgt point of every src point as a valid correspondence and optimizes from there. The two-step loop: (1) for each src point find the nearest tgt point, (2) solve the rigid (R, t) that best aligns those pairs (Procrustes / SVD). Repeat until the pose update drops below a threshold.",
       params: [
         {
           name: "max correspondence distance",
@@ -296,7 +296,7 @@ export const en = {
       title: "RANSAC Plane Segmentation",
       subtitle: "Find the dominant plane (e.g. ground) and split inliers / outliers.",
       about:
-        "RANSAC samples 3 random points to fit a plane, scores it by the number of inliers (within `threshold`), and keeps the best across many trials. The classic ground / wall / table extractor.",
+        "RANSAC (Random Sample Consensus) repeatedly picks 3 random points to fit a plane, counts how many other points lie within `threshold` of that plane (inliers), and keeps the plane with the most inliers. The classic, robust extractor for ground, walls, and tabletops.",
       params: [
         {
           name: "distance threshold",
@@ -314,7 +314,7 @@ export const en = {
       title: "Euclidean Clustering",
       subtitle: "Connected-component grouping by spatial proximity.",
       about:
-        "Group points by spatial proximity: BFS that connects any two points within `tolerance`. Cluster colors stay stable across slider changes by matching centroids to the previous frame.",
+        "Grouping spatially adjacent points into a single object is called clustering. Here, a BFS connects any two points within `tolerance` and assigns them to the same cluster.",
       params: [
         {
           name: "tolerance",

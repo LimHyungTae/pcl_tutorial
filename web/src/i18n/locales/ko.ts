@@ -177,7 +177,7 @@ export const ko: LocaleDict = {
       title: "Transformation",
       subtitle: "4×4 강체 변환 — 평행이동과 회전을 슬라이더로 직접 적용.",
       about:
-        "모든 점에 4×4 강체 변환 T = [R | t; 0 | 1]을 적용. 정합·센서 fusion·world ↔ body 좌표계 변환 등 거의 모든 SLAM 파이프라인의 토대가 되는 연산.",
+        "모든 점에 4×4 강체 변환 T = [R | t; 0 | 1]을 적용하는 연산을 transformation이라고 부르며, 이 4×4 행렬을 transformation matrix라고 부릅니다. 정합 · 센서 fusion · world ↔ body 좌표계 변환 등 거의 모든 SLAM 파이프라인의 토대가 되는 기본 연산입니다.",
       params: [
         { name: "tx / ty / tz", desc: "각 축 방향 평행이동 (미터).", effect: "" },
         { name: "rx / ry / rz", desc: "Euler 회전각 (도). Rz · Ry · Rx 순으로 합성.", effect: "" },
@@ -187,7 +187,7 @@ export const ko: LocaleDict = {
       title: "Voxelization",
       subtitle: "Voxel grid 다운샘플링 — leaf size를 슬라이더로.",
       about:
-        "Voxel-grid 필터는 3차원 공간을 균일한 정육면체 셀로 나누고, 각 셀의 점들을 그 centroid 한 점으로 대체합니다. 빠르고 결정적이며 전체 형태를 잘 보존하는 가장 기본적인 전처리.",
+        "Voxel-grid 필터(voxelization)는 3차원 공간을 균일한 정육면체 셀로 나누고, 각 셀에 들어가는 점들을 그 centroid 한 점으로 대체합니다. 거의 모든 point cloud 처리 파이프라인의 첫 전처리 단계로 사용되며, redundant한 점 수를 줄여 뒤이은 알고리즘의 연산 효율을 크게 높여줍니다.",
       params: [
         {
           name: "leaf size",
@@ -200,7 +200,7 @@ export const ko: LocaleDict = {
       title: "PassThrough",
       subtitle: "축별 박스 필터로 cloud 잘라내기.",
       about:
-        "PassThrough는 가장 간단한 공간 필터: 한 축의 좌표가 [min, max] 구간 안에 들어가는 점만 남기거나(혹은 negative 옵션으로) 빼냅니다.",
+        "PassThrough 필터는 한 축의 좌표가 [min, max] 구간 안에 들어가는 점만 남기거나(또는 negative 옵션으로) 빼냅니다. 평평한 실내 환경에서 바닥을 빠르게 제거하거나, 야외 주행에서 도로 판단과 무관한 높이의 점들을 사전에 잘라낼 때 자주 사용됩니다.",
       params: [
         { name: "axis", desc: "필터를 적용할 공간 축.", effect: "" },
         { name: "min / max", desc: "구간 경계 (미터).", effect: "넓을수록 더 많이 남음." },
@@ -229,7 +229,7 @@ export const ko: LocaleDict = {
       title: "Radius Search",
       subtitle: "쿼리 점의 반경 내 이웃 (KdTree).",
       about:
-        "KdTree로 가속된 쿼리: 주어진 쿼리 점 주변 반경 내의 모든 이웃을 반환. 뷰어의 점을 클릭하면 쿼리 점이 그 위치로 옮겨집니다.",
+        "KdTree를 활용해 주어진 쿼리(query) 점 주변 반경 내의 모든 이웃을 반환합니다. 뷰어의 점을 클릭하면 쿼리 점이 그 위치로 옮겨집니다.",
       params: [
         {
           name: "query x / y / z",
@@ -275,7 +275,7 @@ export const ko: LocaleDict = {
       title: "Iterative Closest Point",
       subtitle: "Step / Play로 매 iteration의 짝 찾기 → pose update를 직접 관찰.",
       about:
-        "ICP는 두 단계를 반복: (1) 각 src 점의 nearest tgt 점 찾기, (2) 매칭된 pair들에 가장 잘 맞는 강체 (R, t)를 SVD로 추정 (Procrustes). 변화량이 임계값 아래로 떨어질 때까지 반복.",
+        "Iterative Closest Point(ICP)는 매 iteration마다 가장 인접한 점을 유효한 대응(correspondence)으로 보고 최적화하는 local registration 기법입니다. (1) 각 src 점의 nearest tgt 점 찾기, (2) 매칭된 pair들에 가장 잘 맞는 강체 (R, t)를 SVD로 추정(Procrustes)하는 두 단계로 구성되며, pose 변화량이 임계값 아래로 떨어질 때까지 반복합니다.",
       params: [
         {
           name: "max correspondence distance",
@@ -290,7 +290,7 @@ export const ko: LocaleDict = {
       title: "RANSAC Plane Segmentation",
       subtitle: "주된 plane(예: 지면)을 찾아 inlier/outlier로 분리.",
       about:
-        "RANSAC: 무작위로 3점을 뽑아 plane을 만들고, 그 plane에서 threshold 이내의 점을 inlier로 셉니다. 가장 많은 inlier를 가진 plane을 채택. 지면 · 벽 · 테이블 추출의 고전.",
+        "RANSAC(Random Sample Consensus)을 활용해 무작위로 3점을 뽑아 plane을 만들고, 그 plane에서 threshold 이내에 들어오는 점을 inlier로 셉니다. 가장 많은 inlier를 갖는 plane을 채택하며, 지면 · 벽 · 테이블 추출에 널리 쓰이는 고전적인 방법입니다.",
       params: [
         {
           name: "distance threshold",
@@ -308,7 +308,7 @@ export const ko: LocaleDict = {
       title: "Euclidean Clustering",
       subtitle: "공간 인접성으로 연결된 점들끼리 묶기.",
       about:
-        "공간 인접성으로 점을 묶기: tolerance 이내로 연결된 점들끼리 같은 cluster. 슬라이더 변경에도 cluster 색은 centroid 매칭으로 유지됩니다.",
+        "공간 상에 인접한 점들을 하나의 객체로 묶는 작업을 clustering이라고 부릅니다. 여기서는 BFS로 tolerance 이내로 연결된 점들을 같은 cluster로 묶습니다.",
       params: [
         {
           name: "tolerance",
