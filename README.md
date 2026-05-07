@@ -42,8 +42,9 @@ Every interactive demo runs **entirely in the browser**, with the algorithms rei
 | 6  | K-Nearest Neighbor                    | KdTree-based K-NN                                        |
 | 7  | Normal Estimation                     | KdTree + closed-form 3×3 symmetric eigendecomposition    |
 | 8  | RANSAC Plane Segmentation             | ground / wall detection (extra)                          |
-| 9  | Euclidean Clustering                  | colors stay stable as sliders change (extra)             |
-| 10 | Iterative Closest Point               | **Step / Play buttons to watch each iteration**          |
+| 9  | Ground Removal Pipeline               | PassThrough → VoxelGrid → RANSAC plane scaffold          |
+| 10 | Euclidean Clustering                  | colors stay stable as sliders change (extra)             |
+| 11 | Iterative Closest Point               | **Step / Play buttons to watch each iteration**          |
 
 ### Run the site locally
 

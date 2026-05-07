@@ -171,6 +171,33 @@ export const ko: LocaleDict = {
     minSizeHint: "이보다 작은 cluster는 버립니다.",
     removeGround: "전처리로 RANSAC 지면 제거",
     found: "{n}개 cluster 발견",
+    travelPrefix:
+      "Omnidirectional LiDAR에서는 ",
+    travelSuffix:
+      "을 쓰면 단순 Euclidean clustering보다 더 빠르고 강인하게 instance segmentation을 수행할 수 있습니다.",
+  },
+  extra03: {
+    zMin: "z min",
+    zMax: "z max",
+    zHint: "PassThrough가 이 수직 구간 안의 점만 남깁니다.",
+    leaf: "voxel leaf",
+    leafHint: "RANSAC 전에 다운샘플링해 plane fitting을 빠르고 덜 noisy하게 만듭니다.",
+    threshold: "plane threshold",
+    thresholdHint: "fitted plane에서 이 거리 이내인 점을 ground로 봅니다.",
+    iters: "RANSAC 반복",
+    itersHint: "무작위 sample이 많을수록 안정적이지만 CPU 시간이 늘어납니다.",
+    rawStage: "raw",
+    passStage: "pass",
+    voxelStage: "voxel",
+    nonGroundStage: "non-ground",
+    inputPane: "입력 cloud",
+    outputPane: "지면 제거 후",
+    groundLegend: "ground plane",
+    nonGroundLegend: "non-ground",
+    roughTerrainPrefix:
+      "이 단순 global-plane pipeline은 scaffold로 유용합니다. Rough terrain에서는 보통 region-wise ground plane fitting을 사용하며, uneven outdoor scene에서 더 강한 ground segmentation이 필요하면",
+    roughTerrainSuffix:
+      "를 참고하면 좋습니다.",
   },
   chapters: {
     lec03: {
@@ -321,6 +348,34 @@ export const ko: LocaleDict = {
           effect: "클수록 노이즈 cluster를 더 많이 제거.",
         },
         { name: "remove ground", desc: "전처리로 RANSAC plane 제거 적용.", effect: "" },
+      ],
+    },
+    extra03: {
+      title: "Ground Removal Pipeline",
+      subtitle: "PassThrough → VoxelGrid → RANSAC plane으로 만드는 간단한 scaffold.",
+      about:
+        "이 페이지는 세 가지 전처리 블록을 순서대로 연결합니다. PassThrough로 수직 범위를 자르고, VoxelGrid로 밀도를 줄인 뒤, RANSAC으로 dominant plane을 찾아 그 inlier를 ground로 제거합니다.",
+      params: [
+        {
+          name: "z min / z max",
+          desc: "plane fitting 전에 적용할 수직 crop 범위.",
+          effect: "범위를 좁히면 너무 높거나 낮은 불필요한 점을 먼저 제거.",
+        },
+        {
+          name: "voxel leaf",
+          desc: "RANSAC 전에 사용할 voxel 크기.",
+          effect: "클수록 빠르지만 디테일이 줄어듦.",
+        },
+        {
+          name: "plane threshold",
+          desc: "ground-plane inlier로 인정할 거리 임계값.",
+          effect: "클수록 거칠거나 noisy한 지면도 받아들임.",
+        },
+        {
+          name: "iterations",
+          desc: "무작위 3점 plane sample 횟수.",
+          effect: "클수록 안정적이고 느려짐.",
+        },
       ],
     },
   },

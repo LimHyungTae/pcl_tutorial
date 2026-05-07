@@ -42,8 +42,9 @@ ______________________________________________________________________
 | 6  | K-Nearest Neighbor                    | KdTree 기반 K-NN                                    |
 | 7  | Normal Estimation                     | KdTree + 닫힌형 3×3 sym eig                         |
 | 8  | RANSAC Plane Segmentation             | 지면/벽 검출 (extra)                                |
-| 9  | Euclidean Clustering                  | 색상이 슬라이더 변화에도 안정적으로 유지 (extra)    |
-| 10 | Iterative Closest Point               | **Step / Play 버튼으로 매 iteration 관찰**          |
+| 9  | Ground Removal Pipeline               | PassThrough → VoxelGrid → RANSAC plane scaffold     |
+| 10 | Euclidean Clustering                  | 색상이 슬라이더 변화에도 안정적으로 유지 (extra)    |
+| 11 | Iterative Closest Point               | **Step / Play 버튼으로 매 iteration 관찰**          |
 
 ### 로컬에서 사이트 띄우기
 

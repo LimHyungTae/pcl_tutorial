@@ -169,6 +169,33 @@ export const en = {
     minSizeHint: "Clusters smaller than this are dropped.",
     removeGround: "Remove dominant plane first (RANSAC)",
     found: "{n} clusters found",
+    travelPrefix:
+      "For omnidirectional LiDAR, ",
+    travelSuffix:
+      " can provide faster and more robust instance segmentation than plain Euclidean clustering.",
+  },
+  extra03: {
+    zMin: "z min",
+    zMax: "z max",
+    zHint: "PassThrough keeps only points inside this vertical interval.",
+    leaf: "voxel leaf",
+    leafHint: "Downsample before RANSAC so plane fitting stays fast and less noisy.",
+    threshold: "plane threshold",
+    thresholdHint: "Maximum distance from the fitted plane for a point to count as ground.",
+    iters: "RANSAC iterations",
+    itersHint: "More random samples improve stability, but cost more CPU time.",
+    rawStage: "raw",
+    passStage: "pass",
+    voxelStage: "voxel",
+    nonGroundStage: "non-ground",
+    inputPane: "Input cloud",
+    outputPane: "Ground removed",
+    groundLegend: "ground plane",
+    nonGroundLegend: "non-ground",
+    roughTerrainPrefix:
+      "This simple global-plane pipeline is useful as a scaffold. On rough terrain, production systems commonly use region-wise ground plane fitting; see",
+    roughTerrainSuffix:
+      " for stronger ground segmentation on uneven outdoor scenes.",
   },
   chapters: {
     lec03: {
@@ -327,6 +354,34 @@ export const en = {
           effect: "Larger → drop more noise.",
         },
         { name: "remove ground", desc: "Run RANSAC plane removal first as preprocessing.", effect: "" },
+      ],
+    },
+    extra03: {
+      title: "Ground Removal Pipeline",
+      subtitle: "A simple PassThrough → VoxelGrid → RANSAC plane scaffold.",
+      about:
+        "This page chains three common preprocessing blocks: crop the vertical range with PassThrough, reduce density with VoxelGrid, then fit the dominant plane with RANSAC and remove its inliers as ground.",
+      params: [
+        {
+          name: "z min / z max",
+          desc: "Vertical crop range before plane fitting.",
+          effect: "Tighter ranges remove irrelevant high/low points.",
+        },
+        {
+          name: "voxel leaf",
+          desc: "Voxel size used before RANSAC.",
+          effect: "Larger → faster, but less detail.",
+        },
+        {
+          name: "plane threshold",
+          desc: "Distance threshold for ground-plane inliers.",
+          effect: "Larger → accepts rougher/noisier ground.",
+        },
+        {
+          name: "iterations",
+          desc: "Number of random 3-point plane samples.",
+          effect: "Larger → more stable, slower.",
+        },
       ],
     },
   },
