@@ -2,6 +2,7 @@
 <h1>PCL Tutorial</h1>
 
 <a href="https://limhyungtae.github.io/pcl_tutorial/"><img src="https://img.shields.io/badge/Live%20Demo-limhyungtae.github.io%2Fpcl__tutorial-10b981.svg" alt="Live Demo"></a>
+<img src="https://img.shields.io/badge/WebGL-via%20three.js-990000.svg" alt="WebGL">
 <img src="https://img.shields.io/badge/Language-C%2B%2B17-blue.svg" alt="C++17">
 <img src="https://img.shields.io/badge/PCL-%E2%89%A51.8-brightgreen.svg" alt="PCL">
 <img src="https://img.shields.io/badge/CMake-%E2%89%A53.10-064F8C.svg" alt="CMake">
