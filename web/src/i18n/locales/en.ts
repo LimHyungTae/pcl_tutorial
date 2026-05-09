@@ -343,11 +343,11 @@ export const en = {
       title: "Patchwork — Ground Segmentation",
       subtitle: "Concentric Zone Model + region-wise plane fitting for LiDAR ground extraction.",
       about:
-        "Patchwork (Lim et al., 2021) tackles ground segmentation by splitting the radial space into 4 concentric zones, each subdivided into ring × sector bins. Per bin we run R-GPF: lowest-point-representative seeding, iterative PCA-based plane fit, and validation via uprightness, elevation, and flatness gates. Ground points are then colored by their (zone, ring) so adjacent CZM bins are visible.",
+        "Patchwork (Lim et al., RA-L 2021) tackles ground segmentation by splitting the radial space into 4 concentric zones, each subdivided into ring × sector bins so the algorithm operates region-wise. For each bin we run region-wise ground plane fitting (R-GPF); ground likelihood estimation (GLE) then validates the fitted plane through uprightness, elevation, and flatness gates. Ground points are colored by their (zone, ring, sector) so each CZM patch is visually distinct.",
       params: [
-        { name: "sensor", desc: "VLP-16 or HDL-64 only — params are baked in.", effect: "" },
+        { name: "sensor", desc: "VLP-16 or HDL-64 only (params are baked in).", effect: "" },
         { name: "CZM", desc: "Concentric Zone Model: 4 zones × rings × sectors.", effect: "" },
-        { name: "R-GPF", desc: "Region-wise plane fit per bin.", effect: "" },
+        { name: "R-GPF + GLE", desc: "Per-bin plane fit, then validate via uprightness, elevation, flatness.", effect: "" },
       ],
     },
     extra04: {
