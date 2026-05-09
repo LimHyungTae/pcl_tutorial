@@ -334,7 +334,7 @@ export const ko: LocaleDict = {
       ],
     },
     extra03: {
-      title: "Patchwork — 지면 분할",
+      title: "Patchwork - \"Ground Segmentation\"",
       subtitle: "Concentric Zone Model + region-wise plane fitting으로 LiDAR 지면 추출.",
       about:
         "Patchwork (Lim et al., RA-L, 2021)는 중심에서 멀어질수록 sparse해지는 LiDAR 점들에도 강인하게 ground segmentation을 수행하기 위해, 반경 공간을 4개의 동심 zone으로 나누고 각 zone을 ring × sector bin으로 세분화합니다. 그 후 각 bin마다 region-wise ground plane fitting (R-GPF)을 수행하고, uprightness · elevation · flatness 세 게이트로 검증하는 ground likelihood estimation (GLE)을 거쳐 추정된 평면이 실제 ground인지 판정합니다. 각 patch는 (zone, ring, sector)에 따라 다른 색으로 시각화되어 CZM 분할이 그대로 드러납니다.",
