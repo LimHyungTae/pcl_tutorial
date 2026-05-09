@@ -343,7 +343,7 @@ export const en = {
       title: "Patchwork — Ground Segmentation",
       subtitle: "Concentric Zone Model + region-wise plane fitting for LiDAR ground extraction.",
       about:
-        "Patchwork (Lim et al., RA-L 2021) tackles ground segmentation by splitting the radial space into 4 concentric zones, each subdivided into ring × sector bins so the algorithm operates region-wise. For each bin we run region-wise ground plane fitting (R-GPF); ground likelihood estimation (GLE) then validates the fitted plane through uprightness, elevation, and flatness gates. Ground points are colored by their (zone, ring, sector) so each CZM patch is visually distinct.",
+        "Patchwork (Lim et al., RA-L, 2021) tackles ground segmentation by splitting the radial space into 4 concentric zones, each subdivided into ring × sector bins so the algorithm operates region-wise. For each bin we run region-wise ground plane fitting (R-GPF); ground likelihood estimation (GLE) then validates the fitted plane through uprightness, elevation, and flatness gates. Ground points are colored by their (zone, ring, sector) so each CZM patch is visually distinct.",
       params: [
         { name: "sensor", desc: "VLP-16 or HDL-64 only (params are baked in).", effect: "" },
         { name: "CZM", desc: "Concentric Zone Model: 4 zones × rings × sectors.", effect: "" },
@@ -354,7 +354,7 @@ export const en = {
       title: "TRAVEL — Range Image Clustering",
       subtitle: "Project to a range image and flood-fill above-ground objects with the same color in 3D and 2D.",
       about:
-        "TRAVEL (Oh et al., RA-L 2022) performs ground-aware object clustering by exploiting the 2D grid structure of the LiDAR range image. The pipeline runs in two stages: Traversable Ground Segmentation (TGS) removes ground, and Above-ground Object Segmentation (AOS) clusters the remaining points directly on the range image. In this demo Patchwork stands in for TGS; AOS is then ported faithfully, projecting each non-ground point onto one (row, col) pixel of the (rows × cols) range image and merging 4-connected pixels whose depth gap is below sensor-specific horizontal and vertical thresholds. Cluster colors are shared between the 3D viewer and the 2D range image, so any blob in one view maps directly to the other.",
+        "TRAVEL (Oh et al., RA-L, 2022) performs ground-aware object clustering by exploiting the 2D grid structure of the LiDAR range image. The pipeline runs in two stages: Traversable Ground Segmentation (TGS) removes ground, and Above-ground Object Segmentation (AOS) clusters the remaining points directly on the range image. In this demo, Patchwork is reused instead of TGS; AOS is then ported faithfully, projecting each non-ground point onto one (row, col) pixel of the (rows × cols) range image and merging 4-connected pixels whose depth gap is below sensor-specific horizontal and vertical thresholds. Cluster colors are shared between the 3D viewer and the 2D range image, so any blob in one view maps directly to the other.",
       params: [
         { name: "sensor", desc: "VLP-16 or HDL-64 only (params are baked in).", effect: "" },
         { name: "TGS", desc: "Substituted with Patchwork (upstream uses Travelable Ground Segmentation).", effect: "" },

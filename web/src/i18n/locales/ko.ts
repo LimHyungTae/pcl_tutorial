@@ -337,7 +337,7 @@ export const ko: LocaleDict = {
       title: "Patchwork — 지면 분할",
       subtitle: "Concentric Zone Model + region-wise plane fitting으로 LiDAR 지면 추출.",
       about:
-        "Patchwork (Lim et al., RA-L 2021)는 중심에서 멀어질수록 sparse해지는 LiDAR 점들에도 강인하게 ground segmentation을 수행하기 위해, 반경 공간을 4개의 동심 zone으로 나누고 각 zone을 ring × sector bin으로 세분화합니다. 그 후 각 bin마다 region-wise ground plane fitting (R-GPF)을 수행하고, uprightness · elevation · flatness 세 게이트로 검증하는 ground likelihood estimation (GLE)을 거쳐 추정된 평면이 실제 ground인지 판정합니다. 각 patch는 (zone, ring, sector)에 따라 다른 색으로 시각화되어 CZM 분할이 그대로 드러납니다.",
+        "Patchwork (Lim et al., RA-L, 2021)는 중심에서 멀어질수록 sparse해지는 LiDAR 점들에도 강인하게 ground segmentation을 수행하기 위해, 반경 공간을 4개의 동심 zone으로 나누고 각 zone을 ring × sector bin으로 세분화합니다. 그 후 각 bin마다 region-wise ground plane fitting (R-GPF)을 수행하고, uprightness · elevation · flatness 세 게이트로 검증하는 ground likelihood estimation (GLE)을 거쳐 추정된 평면이 실제 ground인지 판정합니다. 각 patch는 (zone, ring, sector)에 따라 다른 색으로 시각화되어 CZM 분할이 그대로 드러납니다.",
       params: [
         { name: "sensor", desc: "VLP-16 / HDL-64만 지원 (파라미터 고정).", effect: "" },
         { name: "CZM", desc: "Concentric Zone Model: 4 zone × ring × sector.", effect: "" },
@@ -348,7 +348,7 @@ export const ko: LocaleDict = {
       title: "TRAVEL — Range Image Clustering",
       subtitle: "Range image에 투영해 above-ground 객체를 flood-fill, 3D와 2D에 동일 색으로.",
       about:
-        "TRAVEL (Oh et al., RA-L 2022)은 LiDAR range image의 2D 격자 구조를 활용해 효율적으로 ground-aware 객체 clustering을 수행합니다. 파이프라인은 두 단계로 구성됩니다. 먼저 Traversable Ground Segmentation (TGS)이 지면을 제거하고, Above-ground Object Segmentation (AOS)이 남은 점들을 range image 위에서 직접 cluster로 묶습니다. 본 데모에서는 TGS를 Patchwork로 대체하고 AOS는 충실히 포팅했습니다. 각 non-ground 점이 (rows × cols) range image의 (row, col) 픽셀 한 곳에 투영되고, 4-인접 픽셀의 깊이차가 센서별 수평·수직 임계값 이하이면 같은 cluster로 병합합니다. 3D 뷰어와 2D range image는 동일한 cluster 색을 공유하므로 한 쪽의 덩어리를 다른 쪽에서 즉시 추적할 수 있습니다.",
+        "TRAVEL (Oh et al., RA-L, 2022)은 LiDAR range image의 2D 격자 구조를 활용해 효율적으로 ground-aware 객체 clustering을 수행합니다. 파이프라인은 두 단계로 구성됩니다. 먼저 Traversable Ground Segmentation (TGS)이 지면을 제거하고, Above-ground Object Segmentation (AOS)이 남은 점들을 range image 위에서 직접 cluster로 묶습니다. 본 데모에서는 TGS를 Patchwork로 대체하고 AOS는 원 코드의 pipeline을 따랐습니다. 각 non-ground 점이 (rows × cols) range image의 (row, col) 픽셀 한 곳에 투영되고, 4-인접 픽셀의 깊이차가 센서별 수평·수직 임계값 이하이면 같은 cluster로 병합합니다. 3D 뷰어와 2D range image는 동일한 cluster 색을 공유하고 있습니다.",
       params: [
         { name: "sensor", desc: "VLP-16 / HDL-64만 지원 (파라미터 고정).", effect: "" },
         { name: "TGS", desc: "Patchwork로 대체 (원본은 Travelable Ground Segmentation).", effect: "" },
