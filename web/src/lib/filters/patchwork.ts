@@ -115,7 +115,7 @@ export function runPatchwork(
     pointZone[i] = zone;
     pointRing[i] = ring;
     pointSector[i] = sector;
-    regionId[i] = zone * 100 + ring;
+    regionId[i] = packPatch(zone, ring, sector);
 
     // Pack bin key as zone × 1e6 + ring × 1e3 + sector — fits in 32 bits.
     const key = zone * 1_000_000 + ring * 1_000 + sector;
@@ -267,6 +267,15 @@ export function runPatchwork(
       acceptAsGround = !(c.useGlobalElevation && centroidZ > c.globalElevationThr);
     }
 
+    // Defensive hard cap: when useGlobalElevation is on (e.g. indoor
+    // sensors like VLP-16), reject anything above the global threshold even
+    // if it slipped through the inner-ring FLAT_ENOUGH override. This is
+    // what reliably keeps ceilings and high horizontal surfaces out on
+    // indoor scans.
+    if (acceptAsGround && c.useGlobalElevation && centroidZ > c.globalElevationThr) {
+      acceptAsGround = false;
+    }
+
     if (!acceptAsGround) continue;
 
     for (const i of curSeeds) isGround[i] = 1;
@@ -312,16 +321,54 @@ export function runPatchwork(
   };
 }
 
-/** Pack (zone, ring) → stable color via the golden-angle hue spiral.
- *  Note: three.js's Color parser needs the comma-separated hsl() form. */
-export function regionColor(zone: number, ring: number, czm: CzmConfig): string {
-  const totalRingsBefore = czm.numRingsPerZone
-    .slice(0, zone)
-    .reduce((a, b) => a + b, 0);
-  const idx = totalRingsBefore + ring;
+/** Pack (zone, ring, sector) into a single 32-bit-safe integer:
+ *    zone × 1_000_000 + ring × 1_000 + sector.
+ *  Sectors max out at 56 (HDL-64 zone 2), rings at 5 (HDL-64 zone 3),
+ *  zones at 4 — all fit comfortably. */
+export function packPatch(zone: number, ring: number, sector: number): number {
+  return zone * 1_000_000 + ring * 1_000 + sector;
+}
+
+export function unpackPatch(rid: number): { zone: number; ring: number; sector: number } {
+  if (rid < 0) return { zone: -1, ring: -1, sector: -1 };
+  const zone = Math.floor(rid / 1_000_000);
+  const r2 = rid - zone * 1_000_000;
+  const ring = Math.floor(r2 / 1_000);
+  const sector = r2 - ring * 1_000;
+  return { zone, ring, sector };
+}
+
+/** Compute the global patch index — i.e. how many patches come before this
+ *  one when iterating zones × rings × sectors in order. Used to assign a
+ *  golden-angle hue to every (zone, ring, sector) bin so each Patchwork
+ *  region is visibly distinct in the viewer. */
+export function globalPatchIndex(
+  zone: number,
+  ring: number,
+  sector: number,
+  czm: CzmConfig,
+): number {
+  let idx = 0;
+  for (let z = 0; z < zone; z++) {
+    idx += czm.numRingsPerZone[z] * czm.numSectorsPerZone[z];
+  }
+  idx += ring * czm.numSectorsPerZone[zone] + sector;
+  return idx;
+}
+
+/** Stable per-region color via the golden-angle hue spiral.
+ *  Note: three.js's Color parser only matches the comma-separated hsl() form. */
+export function regionColor(
+  zone: number,
+  ring: number,
+  sector: number,
+  czm: CzmConfig,
+): string {
+  const idx = globalPatchIndex(zone, ring, sector, czm);
   const hue = (idx * 137.508) % 360;
-  // Outer zones get slightly desaturated to keep the palette cohesive.
-  const sat = 78 - zone * 4;
+  // Tiny zone-driven shading so the four CZM zones still read at a glance
+  // even amid the per-patch hue scatter.
+  const sat = 78 - zone * 3;
   const lit = 60 - zone * 2;
   return `hsl(${hue.toFixed(0)}, ${sat}%, ${lit}%)`;
 }

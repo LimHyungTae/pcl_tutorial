@@ -10,6 +10,7 @@ import RangeImageView from "../components/RangeImageView";
 import { useT } from "../i18n";
 import { ClusterColorMatcher, type Cluster } from "../lib/filters/euclideanCluster";
 import { runTravel, travelClusterColor } from "../lib/filters/travel";
+import { ensureZUp } from "../lib/axisTransform";
 import { SENSOR_BY_PRESET, type SensorConfig } from "../lib/sensorConfig";
 import { emptyCloud, type PointCloud } from "../lib/types";
 
@@ -23,10 +24,14 @@ export default function Extra04Travel() {
   const [presetId, setPresetId] = useState<PresetId>("kitti");
   const sensor: SensorConfig | null = SENSOR_BY_PRESET[presetId] ?? null;
 
+  // TRAVEL inherits the Z-up assumption from its Patchwork-based ground
+  // pre-pass; normalize per-preset before passing to runTravel.
+  const zUpCloud = useMemo(() => ensureZUp(raw, presetId), [raw, presetId]);
+
   const result = useMemo(() => {
-    if (!sensor || raw.count === 0) return null;
-    return runTravel(raw, sensor);
-  }, [raw, sensor]);
+    if (!sensor || zUpCloud.count === 0) return null;
+    return runTravel(zUpCloud, sensor);
+  }, [zUpCloud, sensor]);
 
   // Persistent color matcher so cluster colors stay stable when the user
   // re-selects the same preset (avoids flicker on remount).

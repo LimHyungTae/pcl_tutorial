@@ -8,7 +8,8 @@ import DemoAbout from "../components/DemoAbout";
 import DemoParams from "../components/DemoParams";
 import PointCloudViewer from "../components/PointCloudViewer";
 import { useT } from "../i18n";
-import { regionColor, runPatchwork } from "../lib/filters/patchwork";
+import { regionColor, runPatchwork, unpackPatch } from "../lib/filters/patchwork";
+import { ensureZUp } from "../lib/axisTransform";
 import { SENSOR_BY_PRESET, type SensorConfig } from "../lib/sensorConfig";
 import { emptyCloud, type PointCloud } from "../lib/types";
 
@@ -22,22 +23,25 @@ export default function Extra03Patchwork() {
   const [presetId, setPresetId] = useState<PresetId>("kitti");
   const sensor: SensorConfig | null = SENSOR_BY_PRESET[presetId] ?? null;
 
-  const result = useMemo(() => {
-    if (!sensor || raw.count === 0) return null;
-    return runPatchwork(raw, sensor);
-  }, [raw, sensor]);
+  // Patchwork assumes Z-up; some presets (NaverLabs) ship Z-down.
+  // ensureZUp normalizes per-preset before we run the algorithm.
+  const zUpCloud = useMemo(() => ensureZUp(raw, presetId), [raw, presetId]);
 
-  // Per-vertex color buffer for the ground cloud — every point gets its
-  // (zone, ring) region color so adjacent CZM bins are clearly visible.
+  const result = useMemo(() => {
+    if (!sensor || zUpCloud.count === 0) return null;
+    return runPatchwork(zUpCloud, sensor);
+  }, [zUpCloud, sensor]);
+
+  // Per-vertex color buffer for the ground cloud — every point gets a
+  // unique (zone, ring, sector) patch color so individual CZM patches are
+  // distinguishable, not just rings.
   const groundColors = useMemo(() => {
     if (!result || !sensor) return new Float32Array(0);
     const tmp = new THREE.Color();
     const out = new Float32Array(result.groundCloud.count * 3);
     for (let i = 0; i < result.groundCloud.count; i++) {
-      const rid = result.groundRegionIds[i];
-      const zone = Math.floor(rid / 100);
-      const ring = rid - zone * 100;
-      tmp.setStyle(regionColor(zone, ring, sensor.czm));
+      const { zone, ring, sector } = unpackPatch(result.groundRegionIds[i]);
+      tmp.setStyle(regionColor(zone, ring, sector, sensor.czm));
       out[i * 3] = tmp.r;
       out[i * 3 + 1] = tmp.g;
       out[i * 3 + 2] = tmp.b;
@@ -47,7 +51,7 @@ export default function Extra03Patchwork() {
 
   const groundCount = result?.groundCloud.count ?? 0;
   const nonGroundCount = result?.nonGroundCloud.count ?? 0;
-  const numRegions = result?.uniqueRegions.length ?? 0;
+  const numPatches = result?.uniqueRegions.length ?? 0;
 
   const layers = useMemo(() => {
     if (!result || !sensor) return [];
@@ -80,7 +84,7 @@ export default function Extra03Patchwork() {
               </span>
               <span className="text-[var(--mut)]">·</span>
               <span>
-                <span className="text-[var(--text-strong)]">{numRegions}</span> regions
+                <span className="text-[var(--text-strong)]">{numPatches}</span> patches
               </span>
             </div>
             <span className="code-font text-[var(--dim)]">
