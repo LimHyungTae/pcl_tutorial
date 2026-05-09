@@ -348,11 +348,11 @@ export const ko: LocaleDict = {
       title: "TRAVEL — Range Image Clustering",
       subtitle: "Range image에 투영해 above-ground 객체를 flood-fill, 3D와 2D에 동일 색으로.",
       about:
-        "TRAVEL (Oh et al., 2022)은 (rows × cols) range image에서 above-ground 객체를 직접 클러스터링합니다. Patchwork로 지면을 제거한 뒤 각 non-ground 점이 range image의 한 픽셀에 떨어지고, 4-인접 픽셀끼리 깊이차가 임계값 이하면 동일 cluster로 묶습니다. 2D range image와 3D point cloud는 cluster 색상을 공유하므로 한 쪽의 덩어리를 다른 쪽에서 바로 찾을 수 있습니다.",
+        "TRAVEL (Oh et al., RA-L 2022)은 LiDAR range image의 2D 격자 구조를 활용해 효율적으로 ground-aware 객체 clustering을 수행합니다. 파이프라인은 두 단계로 구성됩니다. 먼저 Traversable Ground Segmentation (TGS)이 지면을 제거하고, Above-ground Object Segmentation (AOS)이 남은 점들을 range image 위에서 직접 cluster로 묶습니다. 본 데모에서는 TGS를 Patchwork로 대체하고 AOS는 충실히 포팅했습니다. 각 non-ground 점이 (rows × cols) range image의 (row, col) 픽셀 한 곳에 투영되고, 4-인접 픽셀의 깊이차가 센서별 수평·수직 임계값 이하이면 같은 cluster로 병합합니다. 3D 뷰어와 2D range image는 동일한 cluster 색을 공유하므로 한 쪽의 덩어리를 다른 쪽에서 즉시 추적할 수 있습니다.",
       params: [
         { name: "sensor", desc: "VLP-16 / HDL-64만 지원 (파라미터 고정).", effect: "" },
-        { name: "range image", desc: "구면 투영: row = 고도(elevation) bin, col = 방위(azimuth) bin.", effect: "" },
-        { name: "depth Δ threshold", desc: "인접 픽셀 깊이차가 Δ 이상이면 다른 cluster로 분리.", effect: "" },
+        { name: "TGS", desc: "Patchwork로 대체 (원본은 Travelable Ground Segmentation).", effect: "" },
+        { name: "AOS", desc: "range image 위 4-인접 BFS, 깊이차 임계값으로 분리.", effect: "" },
       ],
     },
   },

@@ -354,11 +354,11 @@ export const en = {
       title: "TRAVEL — Range Image Clustering",
       subtitle: "Project to a range image and flood-fill above-ground objects with the same color in 3D and 2D.",
       about:
-        "TRAVEL (Oh et al., 2022) clusters above-ground objects directly on a (rows × cols) range image. After Patchwork removes the ground, each non-ground point lands in a range-image pixel; 4-connected pixels whose depth difference is below a threshold join the same cluster. The 2D range image and the 3D point cloud share cluster colors so you can map a blob in one back to the other at a glance.",
+        "TRAVEL (Oh et al., RA-L 2022) performs ground-aware object clustering by exploiting the 2D grid structure of the LiDAR range image. The pipeline runs in two stages: Traversable Ground Segmentation (TGS) removes ground, and Above-ground Object Segmentation (AOS) clusters the remaining points directly on the range image. In this demo Patchwork stands in for TGS; AOS is then ported faithfully, projecting each non-ground point onto one (row, col) pixel of the (rows × cols) range image and merging 4-connected pixels whose depth gap is below sensor-specific horizontal and vertical thresholds. Cluster colors are shared between the 3D viewer and the 2D range image, so any blob in one view maps directly to the other.",
       params: [
-        { name: "sensor", desc: "VLP-16 or HDL-64 only — params are baked in.", effect: "" },
-        { name: "range image", desc: "Spherical projection: row = elevation bin, col = azimuth bin.", effect: "" },
-        { name: "depth Δ threshold", desc: "Pixels with adjacent depth difference > Δ split into separate clusters.", effect: "" },
+        { name: "sensor", desc: "VLP-16 or HDL-64 only (params are baked in).", effect: "" },
+        { name: "TGS", desc: "Substituted with Patchwork (upstream uses Travelable Ground Segmentation).", effect: "" },
+        { name: "AOS", desc: "4-connected BFS on the range image, split by depth gap.", effect: "" },
       ],
     },
   },
