@@ -45,22 +45,30 @@ export type TravelResult = {
 };
 
 export type TravelOptions = {
-  /** Discontinuity threshold in meters between adjacent range pixels. */
-  depthDiffThresh: number;
+  /** Discontinuity threshold in meters between horizontally-adjacent range
+   *  pixels (azimuth direction). */
+  horzMerge: number;
+  /** Discontinuity threshold in meters between vertically-adjacent range
+   *  pixels (elevation direction). */
+  vertMerge: number;
   /** Minimum pixels for a cluster to be kept. */
   minClusterSize: number;
 };
 
-export const DEFAULT_TRAVEL_OPTS: TravelOptions = {
-  depthDiffThresh: 0.5,
-  minClusterSize: 10,
-};
+export function defaultTravelOptions(sensor: SensorConfig): TravelOptions {
+  return {
+    horzMerge: sensor.rangeImage.travelHorzMerge,
+    vertMerge: sensor.rangeImage.travelVertMerge,
+    minClusterSize: sensor.rangeImage.travelMinClusterSize,
+  };
+}
 
 export function runTravel(
   input: PointCloud,
   sensor: SensorConfig,
-  opts: TravelOptions = DEFAULT_TRAVEL_OPTS,
+  opts?: TravelOptions,
 ): TravelResult {
+  const o = opts ?? defaultTravelOptions(sensor);
   const ri = sensor.rangeImage;
   const rows = ri.rows;
   const cols = ri.cols;
@@ -144,18 +152,24 @@ export function runTravel(
       const curD = depths[cur];
 
       // 4-connected neighbors. Wrap horizontally — azimuth is periodic.
-      const neighbors = [
-        r > 0 ? (r - 1) * cols + c : -1,
-        r < rows - 1 ? (r + 1) * cols + c : -1,
-        r * cols + (c === 0 ? cols - 1 : c - 1),
-        r * cols + (c === cols - 1 ? 0 : c + 1),
-      ];
-      for (const np of neighbors) {
-        if (np < 0) continue;
+      // Vertical (row ±1) uses vertMerge; horizontal (col ±1) uses horzMerge.
+      const neighbors: { idx: number; thresh: number }[] = [];
+      if (r > 0) neighbors.push({ idx: (r - 1) * cols + c, thresh: o.vertMerge });
+      if (r < rows - 1) neighbors.push({ idx: (r + 1) * cols + c, thresh: o.vertMerge });
+      neighbors.push({
+        idx: r * cols + (c === 0 ? cols - 1 : c - 1),
+        thresh: o.horzMerge,
+      });
+      neighbors.push({
+        idx: r * cols + (c === cols - 1 ? 0 : c + 1),
+        thresh: o.horzMerge,
+      });
+
+      for (const { idx: np, thresh } of neighbors) {
         if (imagePointIdx[np] === -1) continue;
         if (imageClusterIds[np] !== 0) continue;
         const nd = depths[np];
-        if (Math.abs(nd - curD) > opts.depthDiffThresh) continue;
+        if (Math.abs(nd - curD) > thresh) continue;
         imageClusterIds[np] = id;
         queue[tail++] = np;
         members.push(np);
@@ -169,7 +183,7 @@ export function runTravel(
   const idRemap = new Int32Array(nextClusterId + 1); // 1-based
   for (let id = 1; id <= nextClusterId; id++) {
     const pixels = clusterPixels[id - 1];
-    if (pixels.length >= opts.minClusterSize) {
+    if (pixels.length >= o.minClusterSize) {
       survivors.push(pixels);
       idRemap[id] = survivors.length;
     } else {

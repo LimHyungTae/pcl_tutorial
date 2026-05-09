@@ -127,10 +127,33 @@ export function runPatchwork(
     arr.push(i);
   }
 
+  // Pre-compute global ring index per (zone, ring) — used for indexing into
+  // elevation_thresholds / flatness_thresholds (whose length is the number
+  // of "rings of interest", not the total ring count).
+  const ringOffsetByZone: number[] = [];
+  {
+    let acc = 0;
+    for (let z = 0; z < c.numRingsPerZone.length; z++) {
+      ringOffsetByZone.push(acc);
+      acc += c.numRingsPerZone[z];
+    }
+  }
+  const numRingsOfInterest = c.elevationThresholds.length;
+
   // R-GPF per bin.
   for (const [, idxs] of bins) {
-    if (idxs.length < c.numMinPts) continue;
     const sampleZone = pointZone[idxs[0]];
+    const sampleRing = pointRing[idxs[0]];
+
+    // FEW_POINTS branch (line 601-610 of upstream patchwork.hpp): when a bin
+    // has too few points, the original treats the entire bin as ground. The
+    // rationale (per the upstream comment): these sparse points are usually
+    // noise, and dumping them into ground keeps them out of downstream
+    // clustering / object detection.
+    if (idxs.length <= c.numMinPts) {
+      for (const i of idxs) isGround[i] = 1;
+      continue;
+    }
 
     // Sort by z ascending to find lowest-point representatives.
     const sorted = idxs.slice().sort(
@@ -214,14 +237,37 @@ export function runPatchwork(
     if (curSeeds.length < 3) continue;
 
     const upright = Math.abs(normal[2]) > c.uprightnessThr;
-    const elevThr = c.elevationThresholds[Math.min(sampleZone, c.elevationThresholds.length - 1)];
-    const flatThr = c.flatnessThresholds[Math.min(sampleZone, c.flatnessThresholds.length - 1)];
-    // Patchwork applies the elevation gate strictly only on the outer two zones.
-    const elevOk = sampleZone < 2 || centroidZ < -c.sensorHeight + elevThr;
-    const flatness = smallestEig / sumEig;
-    const flatOk = flatness < flatThr;
+    if (!upright) continue; // TOO_TILTED — reject
 
-    if (!(upright && elevOk && flatOk)) continue;
+    const flatness = smallestEig / sumEig;
+    const globalRing = ringOffsetByZone[sampleZone] + sampleRing;
+
+    // Mirror upstream determine_ground_likelihood_estimation_status:
+    //   inner rings (globalRing < numRingsOfInterest):
+    //     elevation > -h + elev_thr[ring]?
+    //       no  → UPRIGHT_ENOUGH (ground)
+    //       yes → flatness < flat_thr[ring]?
+    //               yes → FLAT_ENOUGH (ground — flat patches at unusual
+    //                     elevation are kept; e.g. ramps, curbs)
+    //               no  → TOO_HIGH_ELEVATION (reject, e.g. car roofs)
+    //   outer rings:
+    //     useGlobalElevation && z_centroid > global_thr → reject
+    //     else → UPRIGHT_ENOUGH (ground)
+    let acceptAsGround: boolean;
+    if (globalRing < numRingsOfInterest) {
+      const elevThr = c.elevationThresholds[globalRing];
+      const flatThr = c.flatnessThresholds[globalRing];
+      const tooHigh = centroidZ > -c.sensorHeight + elevThr;
+      if (!tooHigh) {
+        acceptAsGround = true;
+      } else {
+        acceptAsGround = flatness < flatThr;
+      }
+    } else {
+      acceptAsGround = !(c.useGlobalElevation && centroidZ > c.globalElevationThr);
+    }
+
+    if (!acceptAsGround) continue;
 
     for (const i of curSeeds) isGround[i] = 1;
   }

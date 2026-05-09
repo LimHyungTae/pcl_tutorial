@@ -21,10 +21,19 @@ export type CzmConfig = {
   numRingsPerZone: number[];
   /** Length numZones — number of angular sectors within each zone. */
   numSectorsPerZone: number[];
-  /** Per-zone elevation thresholds (m, w.r.t. ground frame). */
+  /** Per-ring elevation thresholds (length = "rings of interest", typically 4).
+   *  Indexed by *global* ring index across all zones. Bins with global ring
+   *  beyond this length fall back to the global elevation gate. */
   elevationThresholds: number[];
-  /** Per-zone flatness thresholds (eigenvalue ratio). */
+  /** Per-ring flatness thresholds (eigenvalue ratio). Same indexing as
+   *  elevationThresholds. */
   flatnessThresholds: number[];
+  /** Whether outer rings use the global-elevation veto. Enable for indoor
+   *  sensors (VLP-16) where ceilings would otherwise pass as ground. */
+  useGlobalElevation: boolean;
+  /** Global elevation threshold (sensor frame). Plane centroid Z above this
+   *  is rejected as ground when useGlobalElevation = true. */
+  globalElevationThr: number;
   /** Sensor mount height above ground (positive). */
   sensorHeight: number;
   /** R-GPF: lowest-point-representative count (seed initialization). */
@@ -48,6 +57,14 @@ export type RangeImageConfig = {
   maxRange: number;
   /** Vertical FOV bounds in degrees (lower, upper). */
   vertFovDeg: [number, number];
+  /** TRAVEL AOS: depth-difference threshold (m) for horizontally-adjacent
+   *  range-image pixels to join the same cluster. */
+  travelHorzMerge: number;
+  /** TRAVEL AOS: depth-difference threshold (m) for vertically-adjacent
+   *  range-image pixels to join the same cluster. */
+  travelVertMerge: number;
+  /** TRAVEL AOS: minimum cluster size (pixels). */
+  travelMinClusterSize: number;
 };
 
 export type SensorConfig = {
@@ -69,6 +86,8 @@ export const SENSOR_VLP16: SensorConfig = {
     numSectorsPerZone: [16, 32, 56, 32],
     elevationThresholds: [0.523, 0.746, 0.879, 1.125],
     flatnessThresholds: [0.0005, 0.000725, 0.001, 0.001],
+    useGlobalElevation: true,
+    globalElevationThr: 0.0,
     sensorHeight: 0.6,
     numLpr: 20,
     numIter: 3,
@@ -83,6 +102,10 @@ export const SENSOR_VLP16: SensorConfig = {
     minRange: 0.6,
     maxRange: 60.0,
     vertFovDeg: [-15.0, 15.0],
+    // Indoor scenes have tighter depth structure than outdoor.
+    travelHorzMerge: 0.3,
+    travelVertMerge: 0.4,
+    travelMinClusterSize: 10,
   },
 };
 
@@ -98,6 +121,8 @@ export const SENSOR_HDL64: SensorConfig = {
     numSectorsPerZone: [16, 32, 56, 32],
     elevationThresholds: [0.523, 0.746, 0.879, 1.125],
     flatnessThresholds: [0.0005, 0.000725, 0.001, 0.001],
+    useGlobalElevation: false,
+    globalElevationThr: -0.5,
     sensorHeight: 1.723,
     numLpr: 20,
     numIter: 3,
@@ -112,6 +137,10 @@ export const SENSOR_HDL64: SensorConfig = {
     minRange: 1.0,
     maxRange: 80.0,
     vertFovDeg: [-24.8, 2.0],
+    // From kitti_params.yaml in the upstream TRAVEL repo.
+    travelHorzMerge: 0.4,
+    travelVertMerge: 0.5,
+    travelMinClusterSize: 10,
   },
 };
 
