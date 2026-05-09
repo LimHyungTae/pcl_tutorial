@@ -71,6 +71,13 @@ export const en = {
   demo: {
     parameters: "Parameters",
   },
+  caution: {
+    title: "Sensor-specific demo",
+    patchworkBody:
+      "Patchwork's CZM and R-GPF parameters are tuned per LiDAR. This demo only ships configs for VLP-16 and HDL-64. To run on your own data, build the official C++ implementation and tune the YAML for your sensor:",
+    travelBody:
+      "TRAVEL's range image dimensions and clustering thresholds are sensor-specific. This demo only ships configs for VLP-16 and HDL-64. For your own LiDAR, build the official C++/ROS package and tune the YAML config:",
+  },
   viewer: {
     pointsSuffix: "pts",
     before: "Before",
@@ -168,6 +175,9 @@ export const en = {
     minSize: "min cluster size",
     minSizeHint: "Clusters smaller than this are dropped.",
     removeGround: "Remove dominant plane first (RANSAC)",
+    found: "{n} clusters found",
+  },
+  extra04: {
     found: "{n} clusters found",
   },
   chapters: {
@@ -327,6 +337,28 @@ export const en = {
           effect: "Larger → drop more noise.",
         },
         { name: "remove ground", desc: "Run RANSAC plane removal first as preprocessing.", effect: "" },
+      ],
+    },
+    extra03: {
+      title: "Patchwork — Ground Segmentation",
+      subtitle: "Concentric Zone Model + region-wise plane fitting for LiDAR ground extraction.",
+      about:
+        "Patchwork (Lim et al., 2021) tackles ground segmentation by splitting the radial space into 4 concentric zones, each subdivided into ring × sector bins. Per bin we run R-GPF: lowest-point-representative seeding, iterative PCA-based plane fit, and validation via uprightness, elevation, and flatness gates. Ground points are then colored by their (zone, ring) so adjacent CZM bins are visible.",
+      params: [
+        { name: "sensor", desc: "VLP-16 or HDL-64 only — params are baked in.", effect: "" },
+        { name: "CZM", desc: "Concentric Zone Model: 4 zones × rings × sectors.", effect: "" },
+        { name: "R-GPF", desc: "Region-wise plane fit per bin.", effect: "" },
+      ],
+    },
+    extra04: {
+      title: "TRAVEL — Range Image Clustering",
+      subtitle: "Project to a range image and flood-fill above-ground objects with the same color in 3D and 2D.",
+      about:
+        "TRAVEL (Oh et al., 2022) clusters above-ground objects directly on a (rows × cols) range image. After Patchwork removes the ground, each non-ground point lands in a range-image pixel; 4-connected pixels whose depth difference is below a threshold join the same cluster. The 2D range image and the 3D point cloud share cluster colors so you can map a blob in one back to the other at a glance.",
+      params: [
+        { name: "sensor", desc: "VLP-16 or HDL-64 only — params are baked in.", effect: "" },
+        { name: "range image", desc: "Spherical projection: row = elevation bin, col = azimuth bin.", effect: "" },
+        { name: "depth Δ threshold", desc: "Pixels with adjacent depth difference > Δ split into separate clusters.", effect: "" },
       ],
     },
   },

@@ -42,8 +42,12 @@ ______________________________________________________________________
 | 6  | K-Nearest Neighbor                    | KdTree 기반 K-NN; 점 클릭으로 쿼리 설정              |
 | 7  | Normal Estimation                     | KdTree + SVD; normal을 흰색 선으로 시각화            |
 | 8  | RANSAC Plane Segmentation             | 지면/벽 검출 (extra)                                |
-| 9  | Euclidean Clustering                  | 슬라이더 변화에도 cluster별 색이 유지됨 (extra)      |
-| 10 | Iterative Closest Point               | **Step / Play로 매 iteration의 짝과 pose update 관찰** |
+| 9  | **Patchwork** — 지면 분할             | CZM zone × ring 별로 색을 달리해 시각화 (VLP-16/HDL-64) |
+| 10 | Euclidean Clustering                  | 슬라이더 변화에도 cluster별 색이 유지됨 (extra)      |
+| 11 | **TRAVEL** — Range Image Clustering   | 3D + 2D range image, 동일 cluster 색 (VLP-16/HDL-64) |
+| 12 | Iterative Closest Point               | **Step / Play로 매 iteration의 짝과 pose update 관찰** |
+
+> 9번과 11번 챕터는 센서 의존적 데모입니다: VLP-16 (NaverLabs 프리셋)과 HDL-64 (KITTI 프리셋)에 대한 파라미터만 내장되어 있습니다. 자체 데이터로 돌리려면 각 페이지의 caution box에 링크된 원본 [Patchwork](https://github.com/LimHyungTae/patchwork) / [TRAVEL](https://github.com/url-kaist/TRAVEL) 레포를 참고하세요.
 
 ### 로컬에서 사이트 띄우기
 

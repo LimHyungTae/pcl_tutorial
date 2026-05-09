@@ -35,11 +35,18 @@ const PRESETS: Record<PresetId, { url: string; suggestedScale: number }> = {
 
 type Props = {
   defaultPreset?: PresetId;
+  /** If provided, restricts the on-screen presets to this subset (and order).
+   *  Used by chapters whose params only support specific sensors. */
+  enabledPresets?: PresetId[];
+  /** When false, hides the drag-and-drop / file-pick area entirely. */
+  allowCustom?: boolean;
   onCloudChange: (cloud: PointCloud, info: { name: string; isPreset: boolean; suggestedScale: number }) => void;
 };
 
 export default function DataSourcePicker({
   defaultPreset = "kitti",
+  enabledPresets,
+  allowCustom = true,
   onCloudChange,
 }: Props) {
   const t = useT();
@@ -98,14 +105,23 @@ export default function DataSourcePicker({
     }
   };
 
-  const presetIds = useMemo(() => PRESET_ORDER, []);
+  const presetIds = useMemo(
+    () => (enabledPresets && enabledPresets.length > 0 ? enabledPresets : PRESET_ORDER),
+    [enabledPresets],
+  );
+  const gridColsClass =
+    presetIds.length === 1
+      ? "grid-cols-1"
+      : presetIds.length === 2
+        ? "grid-cols-2"
+        : "grid-cols-3";
 
   return (
     <div>
       <div className="mb-1.5 flex items-baseline justify-between">
         <span className="text-sm text-slate-200">{t.source.label}</span>
       </div>
-      <div className="grid grid-cols-3 gap-1.5 pt-2">
+      <div className={`grid ${gridColsClass} gap-1.5 pt-2`}>
         {presetIds.map((id) => {
           const isActive = active === id;
           const sceneTone = SCENE_TONES[id];
@@ -141,6 +157,7 @@ export default function DataSourcePicker({
         })}
       </div>
 
+      {allowCustom && (
       <div
         onDragOver={(e) => {
           e.preventDefault();
@@ -180,6 +197,7 @@ export default function DataSourcePicker({
           />
         </label>
       </div>
+      )}
 
       {error && (
         <div className="mt-2 text-xs text-rose-400">⚠️ {error}</div>

@@ -73,6 +73,13 @@ export const ko: LocaleDict = {
   demo: {
     parameters: "파라미터",
   },
+  caution: {
+    title: "센서 의존적 데모",
+    patchworkBody:
+      "Patchwork의 CZM·R-GPF 파라미터는 LiDAR마다 달라집니다. 이 데모는 VLP-16과 HDL-64 설정만 포함되어 있습니다. 자체 데이터에 적용하려면 원본 C++ 구현을 빌드해 YAML을 센서에 맞게 튜닝하세요:",
+    travelBody:
+      "TRAVEL의 range image 크기와 클러스터링 임계값은 센서마다 다릅니다. 이 데모는 VLP-16과 HDL-64 설정만 포함합니다. 자체 LiDAR라면 원본 C++/ROS 패키지를 빌드해 YAML을 튜닝하세요:",
+  },
   viewer: {
     pointsSuffix: "pts",
     before: "Before",
@@ -170,6 +177,9 @@ export const ko: LocaleDict = {
     minSize: "최소 cluster 크기",
     minSizeHint: "이보다 작은 cluster는 버립니다.",
     removeGround: "전처리로 RANSAC 지면 제거",
+    found: "{n}개 cluster 발견",
+  },
+  extra04: {
     found: "{n}개 cluster 발견",
   },
   chapters: {
@@ -321,6 +331,28 @@ export const ko: LocaleDict = {
           effect: "클수록 노이즈 cluster를 더 많이 제거.",
         },
         { name: "remove ground", desc: "전처리로 RANSAC plane 제거 적용.", effect: "" },
+      ],
+    },
+    extra03: {
+      title: "Patchwork — 지면 분할",
+      subtitle: "Concentric Zone Model + 영역별 plane fit으로 LiDAR 지면 추출.",
+      about:
+        "Patchwork (Lim et al., 2021)는 반경 공간을 4개의 동심 zone으로 나누고, 각 zone을 ring × sector bin으로 세분화합니다. bin마다 R-GPF를 수행: 최저점 기반 seed 선택 → PCA로 plane을 반복 fit → uprightness · elevation · flatness 세 게이트로 검증. 지면 점들은 (zone, ring) 인덱스 별로 다른 색으로 시각화되어 인접 CZM bin이 한눈에 구분됩니다.",
+      params: [
+        { name: "sensor", desc: "VLP-16 / HDL-64만 지원 (파라미터 고정).", effect: "" },
+        { name: "CZM", desc: "Concentric Zone Model: 4 zone × ring × sector.", effect: "" },
+        { name: "R-GPF", desc: "각 bin 별 plane fit.", effect: "" },
+      ],
+    },
+    extra04: {
+      title: "TRAVEL — Range Image Clustering",
+      subtitle: "Range image에 투영해 above-ground 객체를 flood-fill, 3D와 2D에 동일 색으로.",
+      about:
+        "TRAVEL (Oh et al., 2022)은 (rows × cols) range image에서 above-ground 객체를 직접 클러스터링합니다. Patchwork로 지면을 제거한 뒤 각 non-ground 점이 range image의 한 픽셀에 떨어지고, 4-인접 픽셀끼리 깊이차가 임계값 이하면 동일 cluster로 묶습니다. 2D range image와 3D point cloud는 cluster 색상을 공유하므로 한 쪽의 덩어리를 다른 쪽에서 바로 찾을 수 있습니다.",
+      params: [
+        { name: "sensor", desc: "VLP-16 / HDL-64만 지원 (파라미터 고정).", effect: "" },
+        { name: "range image", desc: "구면 투영: row = 고도(elevation) bin, col = 방위(azimuth) bin.", effect: "" },
+        { name: "depth Δ threshold", desc: "인접 픽셀 깊이차가 Δ 이상이면 다른 cluster로 분리.", effect: "" },
       ],
     },
   },

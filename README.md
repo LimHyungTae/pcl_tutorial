@@ -42,8 +42,12 @@ Every interactive demo runs **entirely in the browser**, with the algorithms rei
 | 6  | K-Nearest Neighbor                    | KdTree-based K-NN; click any point to set the query      |
 | 7  | Normal Estimation                     | KdTree + SVD; normals overlaid as white line segments    |
 | 8  | RANSAC Plane Segmentation             | ground / wall detection (extra)                          |
-| 9  | Euclidean Clustering                  | stable per-cluster colors across slider changes (extra)  |
-| 10 | Iterative Closest Point               | **Step / Play to watch each iteration's correspondences** |
+| 9  | **Patchwork** — Ground Segmentation   | CZM zones × rings colored per region (VLP-16 / HDL-64)   |
+| 10 | Euclidean Clustering                  | stable per-cluster colors across slider changes (extra)  |
+| 11 | **TRAVEL** — Range Image Clustering   | 3D + 2D range image, same cluster colors (VLP-16 / HDL-64) |
+| 12 | Iterative Closest Point               | **Step / Play to watch each iteration's correspondences** |
+
+> Chapters 9 and 11 are sensor-specific demos: parameters are baked in for VLP-16 (NaverLabs preset) and HDL-64 (KITTI preset) only. Each page links out to the upstream [Patchwork](https://github.com/LimHyungTae/patchwork) and [TRAVEL](https://github.com/url-kaist/TRAVEL) repos for running on your own data.
 
 ### Run the site locally
 
