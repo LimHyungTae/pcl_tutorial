@@ -13,6 +13,7 @@ import Extra01RansacPlane from "./pages/Extra01RansacPlane";
 import Extra02EuclideanCluster from "./pages/Extra02EuclideanCluster";
 import Extra03Patchwork from "./pages/Extra03Patchwork";
 import Extra04Travel from "./pages/Extra04Travel";
+import Extra05GenzIcp from "./pages/Extra05GenzIcp";
 
 // Hash routing keeps GH Pages happy: no 404 on deep-linked refresh.
 export const router = createHashRouter([
@@ -33,6 +34,7 @@ export const router = createHashRouter([
       { path: "extra02", element: <Extra02EuclideanCluster /> },
       { path: "extra03", element: <Extra03Patchwork /> },
       { path: "extra04", element: <Extra04Travel /> },
+      { path: "extra05", element: <Extra05GenzIcp /> },
       { path: "*", element: <Navigate to="/" replace /> },
     ],
   },

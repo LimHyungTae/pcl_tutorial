@@ -47,6 +47,7 @@ Every interactive demo runs **entirely in the browser**, with the algorithms rei
 | 10 | Euclidean Clustering                  | stable per-cluster colors across slider changes (extra)  |
 | 11 | **TRAVEL** — Range Image Clustering   | 3D + 2D range image, same cluster colors (VLP-16 / HDL-64) |
 | 12 | Iterative Closest Point               | **Step / Play to watch each iteration's correspondences** |
+| 13 | **GenZ-ICP** — adaptive ICP            | per-iteration α-blend of point-to-plane / point-to-point  |
 
 > Chapters 9 and 11 are sensor-specific demos: parameters are baked in for VLP-16 (NaverLabs preset) and HDL-64 (KITTI preset) only. Each page links out to the upstream [Patchwork](https://github.com/LimHyungTae/patchwork) and [TRAVEL](https://github.com/url-kaist/TRAVEL) repos for running on your own data.
 

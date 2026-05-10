@@ -98,6 +98,13 @@ export const chapters: ChapterMeta[] = [
     blog: `${BLOG}/2021-09-14-ROS-Point-Cloud-Library-(PCL)-11.-Iterative-Closest-Point-(ICP)/`,
     status: "interactive",
   },
+  {
+    slug: "extra05",
+    number: "13",
+    source: "",
+    blog: "",
+    status: "interactive",
+  },
 ];
 
 export const findChapter = (slug: string) =>

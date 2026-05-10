@@ -184,6 +184,10 @@ export const en = {
   extra04: {
     found: "{n} clusters found",
   },
+  extra05: {
+    planar: "planar (point-to-plane)",
+    nonPlanar: "non-planar (point-to-point)",
+  },
   chapters: {
     lec03: {
       title: "Transformation",
@@ -352,6 +356,17 @@ export const en = {
         { name: "sensor", desc: "VLP-16 or HDL-64 only (params are baked in).", effect: "" },
         { name: "CZM", desc: "Concentric Zone Model: 4 zones × rings × sectors.", effect: "" },
         { name: "R-GPF + GLE", desc: "Per-bin plane fit, then validate via uprightness, elevation, flatness.", effect: "" },
+      ],
+    },
+    extra05: {
+      title: "GenZ-ICP — Adaptive Point-to-Plane / Point-to-Point",
+      subtitle: "Per-iteration α-blend of point-to-plane and point-to-point residuals.",
+      about:
+        "GenZ-ICP (Lee et al., RA-L, 2024) registers a frame against a local map by classifying every correspondence as either planar (point-to-plane) or non-planar (point-to-point) based on the local planarity of the target neighborhood, and solving a single 6-DoF Gauss-Newton step that blends both residuals with an adaptive weight α = #planar / (#planar + #non_planar). Planar pair lines are drawn in blue (RGB 0, 119, 187) and non-planar in magenta (RGB 238, 51, 119), matching the upstream rviz config. Same Step / Play skeleton as Lec11 ICP.",
+      params: [
+        { name: "max correspondence distance", desc: "Pairs farther apart are dropped each iteration.", effect: "Smaller → robust to outliers, but stalls when far from convergence." },
+        { name: "α (adaptive)", desc: "Computed each iteration as #planar / total pairs.", effect: "1 → all planar surfaces, 0 → all unstructured." },
+        { name: "Step / Play", desc: "Watch the α and the two pair streams as they balance.", effect: "" },
       ],
     },
     extra04: {
