@@ -44,7 +44,17 @@ const GENZ_BIBTEX: BibEntry[] = [
   author={Lee, Daehan and Lim, Hyungtae and Han, Soohee},
   journal={IEEE Robotics and Automation Letters},
   year={2024},
+  pages={152--159},
   doi={10.1109/LRA.2024.3498779}
+}`,
+  },
+  {
+    key: "lee2026genz",
+    bibtex: `@article{lee2026genz,
+  title={GenZ-LIO: Generalizable LiDAR-Inertial Odometry Beyond Indoor--Outdoor Boundaries},
+  author={Lee, Daehan and Lim, Hyungtae and Kim, Seongjun and Rho, Soonbin and Lee, Changhyeon and Park, Sanghyun and Hong, Junwoo and Choi, Eunseon and Jo, Hyunyoung and Han, Soohee},
+  journal={arXiv preprint arXiv:2603.16273},
+  year={2026}
 }`,
   },
 ];

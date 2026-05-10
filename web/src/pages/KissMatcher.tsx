@@ -37,8 +37,9 @@ const KISS_BIBTEX: BibEntry[] = [
     bibtex: `@inproceedings{lim2025icra-KISSMatcher,
   title={KISS-Matcher: Fast and Robust Point Cloud Registration Revisited},
   author={Lim, Hyungtae and Kim, Daebeom and Shin, Gunhee and Shi, Jingnan and Vizzo, Ignacio and Myung, Hyun and Park, Jaesik and Carlone, Luca},
-  booktitle={Proc. IEEE Int. Conf. Robot. Automat.},
-  year={2025}
+  booktitle={Proc. IEEE Int. Conf. Robot. Automat.~(ICRA)},
+  year={2025},
+  pages={11104--11111},
 }`,
   },
 ];
