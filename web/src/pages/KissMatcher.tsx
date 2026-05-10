@@ -370,7 +370,7 @@ export default function KissMatcher() {
           />
 
           <CautionBox
-            title={t.caution.title}
+            title={t.kissMatcher.precomputedTitle}
             body={t.kissMatcher.precomputedNote}
             links={[
               { label: "KISS-Matcher (GitHub)", url: "https://github.com/MIT-SPARK/KISS-Matcher" },

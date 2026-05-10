@@ -75,9 +75,9 @@ export const ko: LocaleDict = {
   caution: {
     title: "센서 의존적 데모",
     patchworkBody:
-      "Patchwork의 CZM·R-GPF 파라미터는 LiDAR마다 달라집니다. 이 데모는 VLP-16과 HDL-64 설정만 포함되어 있습니다. 자체 데이터에 적용하려면 원본 C++ 구현을 빌드해 YAML을 센서에 맞게 튜닝하세요:",
+      "Patchwork의 CZM·R-GPF 파라미터는 LiDAR마다 달라집니다. 이 데모는 VLP-16과 HDL-64 설정만 포함되어 있습니다. 자체 데이터에 적용하려면 Python wrapper(`pip3 install patchwork-plusplus`)를 설치하거나 원본 C++ 구현을 빌드하세요:",
     travelBody:
-      "TRAVEL의 range image 크기와 클러스터링 임계값은 센서마다 다릅니다. 이 데모는 VLP-16과 HDL-64 설정만 포함합니다. 자체 LiDAR라면 원본 C++/ROS 패키지를 빌드해 YAML을 튜닝하세요:",
+      "TRAVEL의 range image 크기와 클러스터링 임계값은 센서마다 다릅니다. 이 데모는 VLP-16과 HDL-64 설정만 포함합니다. 자체 LiDAR라면 Python wrapper(`pip3 install travel-seg`)를 설치하거나 원본 C++/ROS 패키지를 빌드하세요:",
   },
   viewer: {
     pointsSuffix: "pts",
@@ -200,8 +200,9 @@ export const ko: LocaleDict = {
     toggleFinal: "최종 inlier 표시",
     statusOk: "정합 성공 · {n}개 final inliers (rotation {rot}, translation {trans})",
     statusFail: "정합 실패로 추정 · final inlier가 {n}개 (< 5).",
+    precomputedTitle: "Pre-computed 데모",
     precomputedNote:
-      "KITTI 스캔에 알려진 yaw + translation을 적용한 src/tgt 쌍에 KISS-Matcher Python wrapper를 한 번 돌려서 결과를 pre-compute했습니다. 뷰어는 correspondence와 추정된 transform을 보여주기만 하며, 슬라이더는 그릴 line 개수를 client-side에서 다시 필터링합니다.",
+      "결과는 KISS-Matcher를 Python에서 미리 실행해 얻은 것입니다 (`pip3 install kiss-matcher`로 설치 가능). 뷰어는 correspondence와 추정된 transform을 그대로 보여줄 뿐입니다.",
     missingDataTitle: "데모 데이터가 아직 없습니다",
     missingDataBody:
       "web/public/data/precomputed/kiss_matcher.json이 없습니다. 헬퍼 스크립트로 생성해 주세요 (최근 노트북에서 ~5 초):",

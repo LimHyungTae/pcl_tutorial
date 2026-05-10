@@ -17,6 +17,7 @@ import numpy as np
 
 
 def read_pcd(path: Path) -> np.ndarray:
+    """Reads either binary or ASCII XYZ PCD."""
     with open(path, "rb") as f:
         data = f.read()
     header_end = data.find(b"DATA")
@@ -25,8 +26,6 @@ def read_pcd(path: Path) -> np.ndarray:
     body_start = rest.find(b"\n") + 1
     encoding_line = rest[:body_start].decode("ascii", errors="replace")
     body = rest[body_start:]
-    if "binary" not in encoding_line:
-        raise SystemExit(f"only binary PCD supported, got: {encoding_line.strip()}")
 
     num_points = None
     for line in header.splitlines():
@@ -35,7 +34,19 @@ def read_pcd(path: Path) -> np.ndarray:
     if num_points is None:
         raise SystemExit("POINTS header field missing")
 
-    arr = np.frombuffer(body, dtype=np.float32, count=num_points * 3).reshape(-1, 3).copy()
+    if "binary" in encoding_line:
+        arr = np.frombuffer(body, dtype=np.float32, count=num_points * 3).reshape(-1, 3).copy()
+    elif "ascii" in encoding_line:
+        # Three whitespace-separated floats per line.
+        arr = np.fromstring(body.decode("ascii", errors="replace"), sep=" ", dtype=np.float32)
+        if arr.size != num_points * 3:
+            # Some PCDs have additional fields (intensity, rgb). Reparse line by line.
+            rows = body.decode("ascii", errors="replace").splitlines()
+            arr = np.array([list(map(float, r.split()[:3])) for r in rows if r.strip()], dtype=np.float32)
+        else:
+            arr = arr.reshape(-1, 3)
+    else:
+        raise SystemExit(f"unsupported PCD encoding: {encoding_line.strip()}")
     return arr
 
 

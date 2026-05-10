@@ -43,7 +43,7 @@ OUT_DIR = MATERIALS / "precomputed"
 PRESETS = [
     {
         "id": "vel16",
-        "label": "Velodyne VLP-16 (indoor)",
+        "label": "Velodyne VLP-16 (outdoor)",
         "src": MATERIALS / "kiss_vel16_src.pcd",
         "tgt": MATERIALS / "kiss_vel16_tgt.pcd",
         "voxel": 0.3,
@@ -61,6 +61,13 @@ PRESETS = [
         "src": MATERIALS / "kiss_kitti0007_src.pcd",
         "tgt": MATERIALS / "kiss_kitti0007_tgt.pcd",
         "voxel": 1.5,
+    },
+    {
+        "id": "vbr",
+        "label": "VBR Colosseum (handheld submaps)",
+        "src": MATERIALS / "kiss_vbr_src.pcd",
+        "tgt": MATERIALS / "kiss_vbr_tgt.pcd",
+        "voxel": 0.4,
     },
 ]
 

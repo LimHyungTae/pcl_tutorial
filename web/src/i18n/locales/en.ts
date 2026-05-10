@@ -73,9 +73,9 @@ export const en = {
   caution: {
     title: "Sensor-specific demo",
     patchworkBody:
-      "Patchwork's CZM and R-GPF parameters are tuned per LiDAR. This demo only ships configs for VLP-16 and HDL-64. To run on your own data, build the official C++ implementation and tune the YAML for your sensor:",
+      "Patchwork's CZM and R-GPF parameters are tuned per LiDAR. This demo only ships configs for VLP-16 and HDL-64. For your own data, install the Python wrapper (`pip3 install patchwork-plusplus`) or build the official C++ implementation:",
     travelBody:
-      "TRAVEL's range image dimensions and clustering thresholds are sensor-specific. This demo only ships configs for VLP-16 and HDL-64. For your own LiDAR, build the official C++/ROS package and tune the YAML config:",
+      "TRAVEL's range image dimensions and clustering thresholds are sensor-specific. This demo only ships configs for VLP-16 and HDL-64. For your own LiDAR, install the Python wrapper (`pip3 install travel-seg`) or build the official C++/ROS package:",
   },
   viewer: {
     pointsSuffix: "pts",
@@ -198,8 +198,9 @@ export const en = {
     toggleFinal: "Show final inliers",
     statusOk: "Registration succeeded · {n} final inliers (rotation {rot}, translation {trans})",
     statusFail: "Registration likely failed · only {n} final inliers (< 5).",
+    precomputedTitle: "Pre-computed demo",
     precomputedNote:
-      "Result was pre-computed by running the KISS-Matcher Python wrapper on the KITTI scan with a known yaw + translation offset. The viewer just renders correspondences and the recovered transform; the slider re-filters how many lines are drawn.",
+      "Result was pre-computed by running the KISS-Matcher on Python (it supports `pip3 install kiss-matcher`). The viewer just renders correspondences and the recovered transform.",
     missingDataTitle: "Demo data not generated yet",
     missingDataBody:
       "web/public/data/precomputed/kiss_matcher.json is missing. Generate it with the helper script (~5 s on a recent laptop):",

@@ -2,14 +2,14 @@
   "presets": [
     {
       "id": "vel16",
-      "label": "Velodyne VLP-16 (indoor)",
+      "label": "Velodyne VLP-16 (outdoor)",
       "url": "data/precomputed/kiss_matcher_vel16.json",
       "stats": {
         "numSrcPoints": 25370,
         "numTgtPoints": 25049,
-        "numInitialMatches": 544,
-        "numFinalInliers": 112,
-        "numRotationInliers": 55
+        "numInitialMatches": 545,
+        "numFinalInliers": 114,
+        "numRotationInliers": 59
       }
     },
     {
@@ -19,8 +19,8 @@
       "stats": {
         "numSrcPoints": 122303,
         "numTgtPoints": 127032,
-        "numInitialMatches": 409,
-        "numFinalInliers": 26,
+        "numInitialMatches": 407,
+        "numFinalInliers": 34,
         "numRotationInliers": 19
       }
     },
@@ -31,9 +31,21 @@
       "stats": {
         "numSrcPoints": 456163,
         "numTgtPoints": 103821,
-        "numInitialMatches": 4986,
-        "numFinalInliers": 36,
-        "numRotationInliers": 20
+        "numInitialMatches": 4994,
+        "numFinalInliers": 27,
+        "numRotationInliers": 18
+      }
+    },
+    {
+      "id": "vbr",
+      "label": "VBR Colosseum (handheld submaps)",
+      "url": "data/precomputed/kiss_matcher_vbr.json",
+      "stats": {
+        "numSrcPoints": 212870,
+        "numTgtPoints": 124759,
+        "numInitialMatches": 5000,
+        "numFinalInliers": 132,
+        "numRotationInliers": 49
       }
     }
   ]
