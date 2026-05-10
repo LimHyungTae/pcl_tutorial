@@ -356,7 +356,7 @@ export const ko: LocaleDict = {
       title: "GenZ-ICP — Generalizable and Degeneracy-Robust ICP",
       subtitle: "필요한 건 적응적인 point-to-plane / point-to-point correspondence.",
       about:
-        "GenZ-ICP (Lee et al., RA-L, 2024)은 src의 각 점을 가장 가까운 tgt 점에 대응시킨 뒤, tgt 주변의 local planarity로 그 대응이 planar인지 non-planar인지 판정합니다. 이후 한 번의 6-DoF Gauss-Newton step에서 planar쪽은 point-to-plane, non-planar쪽은 point-to-point residual을 사용하고, α = #planar / (#planar + #non_planar)로 두 residual을 적응적으로 섞습니다. Planar pair는 blue(RGB 0, 119, 187), non-planar pair는 magenta(RGB 238, 51, 119)로 그려집니다.",
+        "GenZ-ICP (Lee et al., RA-L, 2024)은 모든 correspondence를 target 주변의 local planarity 기준으로 planar (point-to-plane) 또는 non-planar (point-to-point)로 분류하고, 한 번의 6-DoF Gauss-Newton step에서 두 residual을 적응적 가중치 α = #planar / (#planar + #non_planar)로 결합하여 frame을 local map에 정합합니다. Planar pair는 blue (RGB 0, 119, 187), non-planar pair는 magenta (RGB 238, 51, 119)로 그려집니다.",
       params: [
         { name: "max correspondence distance", desc: "이 거리보다 먼 pair는 매 iteration마다 버립니다.", effect: "작을수록 outlier에 강건하지만 정합 초반에 정체될 수 있음." },
         { name: "α (적응적)", desc: "매 iteration마다 #planar / 전체 pair로 자동 계산.", effect: "1 → 평면 우세, 0 → 비구조 우세." },
