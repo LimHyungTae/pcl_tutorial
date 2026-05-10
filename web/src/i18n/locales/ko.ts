@@ -191,8 +191,6 @@ export const ko: LocaleDict = {
     finalInliers: "final inliers (GNC 후)",
     original: "원래 위치",
     applyT: "Apply T",
-    maxLines: "표시할 match 선",
-    maxLinesHint: "그릴 correspondence 선의 최대 개수.",
     toggleInitial: "pruning 전 match 표시",
     toggleFinal: "최종 inlier 표시",
     precomputedNote:
@@ -378,10 +376,10 @@ export const ko: LocaleDict = {
       title: "KISS-Matcher — Global Registration",
       subtitle: "초기 추정값 없이도 동작: FasterPFH 디스크립터 → ROBIN matching → GNC solver.",
       about:
-        "KISS-Matcher (Lim et al., ICRA, 2025)는 빠르고 강건한 글로벌 point cloud registration 파이프라인입니다. FasterPFH(빠른 Point Feature Histogram 디스크립터), ROBIN graph 기반 outlier matching, Graduated Non-Convexity (GNC) solver를 차례로 적용해 어떠한 초기 pose 추정값 없이도 SE(3)을 복원합니다. 본 데모는 KITTI 스캔에 알려진 yaw + translation을 적용한 src/tgt 쌍에 대해 KISS-Matcher를 미리 돌린 결과를 그대로 보여줍니다. slate 색 선은 cross-check 직후의 초기 correspondence, amber 색 선은 ROBIN + GNC를 거쳐 살아남은 최종 inlier이며, \"Apply T\"는 KISS-Matcher가 추정한 transform을 src에 적용합니다.",
+        "KISS-Matcher (Lim et al., ICRA, 2025)는 빠르고 강건한 글로벌 point cloud registration 파이프라인입니다. FasterPFH(빠른 Point Feature Histogram 디스크립터), ROBIN graph 기반 outlier matching, Graduated Non-Convexity (GNC) solver를 차례로 적용해 어떠한 초기 pose 추정값 없이도 SE(3)을 복원합니다. 본 데모는 KISS-Matcher 공식 저장소에 포함된 Vel64 샘플(KITTI HDL-64 540 / 1319 프레임) 쌍에 미리 돌린 결과를 그대로 보여줍니다. slate 색 선은 cross-check 직후의 초기 correspondence, amber 색 선은 ROBIN + GNC를 거쳐 살아남은 최종 inlier이며, \"Apply T\"는 KISS-Matcher가 추정한 transform을 src에 적용합니다.",
       params: [
-        { name: "Original / Apply T", desc: "오프셋 위치의 src와 KISS-Matcher가 정렬한 src 사이를 토글.", effect: "" },
-        { name: "max match lines", desc: "그릴 correspondence 선의 최대 개수 (final inlier 우선).", effect: "" },
+        { name: "voxel_size", desc: "tools/gen_kiss_matcher_data.py에서 설정하고 precomputed JSON에 그대로 박힙니다. KISS-Matcher의 유일한 knob, keypoint 밀도와 correspondence 개수가 모두 여기서 결정됩니다.", effect: "" },
+        { name: "Original / Apply T", desc: "정렬되지 않은 src와 KISS-Matcher가 정렬한 src 사이를 토글.", effect: "" },
         { name: "Show pre-pruning / final", desc: "slate (initial) / amber (final) 두 선 레이어를 각각 켜고 끄기.", effect: "" },
       ],
     },

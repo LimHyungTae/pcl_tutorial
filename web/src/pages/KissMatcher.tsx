@@ -6,7 +6,6 @@ import ChapterHeader from "../components/ChapterHeader";
 import DemoAbout from "../components/DemoAbout";
 import DemoParams from "../components/DemoParams";
 import PointCloudViewer from "../components/PointCloudViewer";
-import Slider from "../components/Slider";
 import { useT } from "../i18n";
 import { asset, useCloudFromUrl } from "../lib/useCloud";
 import {
@@ -41,7 +40,6 @@ export default function KissMatcher() {
   const [data, setData] = useState<KissMatcherData | null>(null);
   const [dataError, setDataError] = useState<string | null>(null);
   const [aligned, setAligned] = useState(false);
-  const [maxLines, setMaxLines] = useState(150);
   const [showInitial, setShowInitial] = useState(true);
   const [showFinal, setShowFinal] = useState(true);
 
@@ -75,17 +73,19 @@ export default function KissMatcher() {
 
   const displayedSrc = aligned ? srcAligned : srcCloud;
 
-  // Match-line buffers depend on whether src is aligned (after Apply T the
-  // src endpoints have moved too).
+  // Match-line buffers. Everything KISS-Matcher produced at this voxel_size
+  // is rendered — no client-side throttling, since `voxel_size` (set in
+  // tools/gen_kiss_matcher_data.py) already determines the correspondence
+  // count.
   const initialLines = useMemo(() => {
     if (!data) return new Float32Array(0);
-    return packMatchSegments(data.matches, (m) => !m.isFinal, maxLines);
-  }, [data, maxLines]);
+    return packMatchSegments(data.matches, (m) => !m.isFinal, Number.POSITIVE_INFINITY);
+  }, [data]);
 
   const finalLines = useMemo(() => {
     if (!data) return new Float32Array(0);
-    return packMatchSegments(data.matches, (m) => m.isFinal, maxLines);
-  }, [data, maxLines]);
+    return packMatchSegments(data.matches, (m) => m.isFinal, Number.POSITIVE_INFINITY);
+  }, [data]);
 
   const lines = useMemo(() => {
     // Suppress lines after Apply T — they would no longer connect to the
@@ -185,16 +185,6 @@ export default function KissMatcher() {
               {t.kissMatcher.applyT}
             </button>
           </div>
-
-          <Slider
-            label={t.kissMatcher.maxLines}
-            min={10}
-            max={Math.max(500, data?.matches.length ?? 500)}
-            step={10}
-            value={maxLines}
-            onChange={(v) => setMaxLines(Math.round(v))}
-            hint={t.kissMatcher.maxLinesHint}
-          />
 
           <div className="flex flex-col gap-1.5 text-[12px] text-[var(--text)]">
             <label className="flex items-center gap-2">
