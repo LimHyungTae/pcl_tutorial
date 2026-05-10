@@ -191,7 +191,7 @@ export const ko: LocaleDict = {
     nonPlanar: "non-planar (point-to-point)",
   },
   chapters: {
-    lec03: {
+    transformation: {
       title: "Transformation",
       subtitle: "3D motion을 위한 4×4 강체 변환.",
       about:
@@ -201,7 +201,7 @@ export const ko: LocaleDict = {
         { name: "rx / ry / rz", desc: "Euler 회전각 (도). Rz · Ry · Rx 순으로 합성.", effect: "" },
       ],
     },
-    lec05: {
+    voxelization: {
       title: "Voxelization",
       subtitle: "Voxel grid 다운샘플링.",
       about:
@@ -214,7 +214,7 @@ export const ko: LocaleDict = {
         },
       ],
     },
-    lec06: {
+    "pass-through": {
       title: "PassThrough",
       subtitle: "축별 박스 필터로 cloud 잘라내기.",
       about:
@@ -225,7 +225,7 @@ export const ko: LocaleDict = {
         { name: "negative", desc: "필터 반전 — 구간 바깥의 점을 남김.", effect: "" },
       ],
     },
-    lec07: {
+    "statistical-outlier-removal": {
       title: "Statistical Outlier Removal",
       subtitle: "이웃 거리 분포 기반 outlier 제거.",
       about:
@@ -243,7 +243,7 @@ export const ko: LocaleDict = {
         },
       ],
     },
-    lec08: {
+    "radius-search": {
       title: "Radius Search",
       subtitle: "KdTree 기반 쿼리 점의 반경 내 이웃 찾기.",
       about:
@@ -257,7 +257,7 @@ export const ko: LocaleDict = {
         { name: "radius", desc: "검색 반경 (미터).", effect: "클수록 더 많은 이웃." },
       ],
     },
-    lec09: {
+    "k-nearest-neighbor": {
       title: "K-Nearest Neighbor",
       subtitle: "KdTree 기반 쿼리 점의 K개 최근접 이웃 찾기.",
       about:
@@ -271,7 +271,7 @@ export const ko: LocaleDict = {
         { name: "K", desc: "가져올 최근접 이웃 수.", effect: "클수록 더 넓은 영역이 강조됨." },
       ],
     },
-    lec10: {
+    "normal-estimation": {
       title: "Normal Estimation",
       subtitle: "KdTree + SVD로 point 별 normal 추정.",
       about:
@@ -289,7 +289,7 @@ export const ko: LocaleDict = {
         },
       ],
     },
-    lec11: {
+    "iterative-closest-point": {
       title: "Iterative Closest Point",
       subtitle: "Step / Play로 ICP 매 iteration의 짝 찾기 → pose update 관찰해보기.",
       about:
@@ -304,7 +304,7 @@ export const ko: LocaleDict = {
         { name: "Play", desc: "약 180 ms마다 자동 반복.", effect: "" },
       ],
     },
-    extra01: {
+    "ransac-plane-segmentation": {
       title: "RANSAC Plane Segmentation",
       subtitle: "주된 plane(예: 지면)을 찾아 inlier/outlier로 분리.",
       about:
@@ -322,7 +322,7 @@ export const ko: LocaleDict = {
         },
       ],
     },
-    extra02: {
+    "euclidean-clustering": {
       title: "Euclidean Clustering",
       subtitle: "공간 인접성으로 연결된 점들끼리 cluster로 묶기.",
       about:
@@ -341,7 +341,7 @@ export const ko: LocaleDict = {
         { name: "remove ground", desc: "전처리로 RANSAC plane 제거 적용.", effect: "" },
       ],
     },
-    extra03: {
+    patchwork: {
       title: "Patchwork - \"Ground Segmentation\"",
       subtitle: "Concentric Zone Model + region-wise plane fitting으로 LiDAR 지면 추출.",
       about:
@@ -352,7 +352,7 @@ export const ko: LocaleDict = {
         { name: "R-GPF + GLE", desc: "각 bin 별 plane fit 후 uprightness · elevation · flatness 검증.", effect: "" },
       ],
     },
-    extra05: {
+    "genz-icp": {
       title: "GenZ-ICP — Generalizable and Degeneracy-Robust ICP",
       subtitle: "필요한 건 적응적인 point-to-plane / point-to-point correspondence.",
       about:
@@ -363,7 +363,7 @@ export const ko: LocaleDict = {
         { name: "Step / Play", desc: "두 pair 스트림이 균형을 잡아가는 과정을 관찰.", effect: "" },
       ],
     },
-    extra04: {
+    travel: {
       title: "TRAVEL — Range Image Clustering",
       subtitle: "Range image에 투영해 above-ground 객체를 효율적으로 segmentation하기.",
       about:

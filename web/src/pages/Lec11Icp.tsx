@@ -21,7 +21,7 @@ import { voxelGrid } from "../lib/filters/voxelGrid";
 import { emptyCloud, type PointCloud } from "../lib/types";
 
 export default function Lec11Icp() {
-  const chapter = findChapter("lec11")!;
+  const chapter = findChapter("iterative-closest-point")!;
   const t = useT();
 
   const [raw, setRaw] = useState<PointCloud>(emptyCloud());
@@ -123,7 +123,7 @@ export default function Lec11Icp() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
       <ChapterHeader chapter={chapter} />
-      <DemoAbout slug="lec11" />
+      <DemoAbout slug="iterative-closest-point" />
 
       <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_18rem]">
         <div className="overflow-hidden rounded-xl border border-[var(--border)]">
@@ -167,7 +167,7 @@ export default function Lec11Icp() {
         </div>
 
         <aside className="flex flex-col gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
-          <DemoParams slug="lec11" />
+          <DemoParams slug="iterative-closest-point" />
           <DataSourcePicker
             defaultPreset="naverlabs"
             onCloudChange={(c, info) => {

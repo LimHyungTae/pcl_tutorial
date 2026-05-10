@@ -189,7 +189,7 @@ export const en = {
     nonPlanar: "non-planar (point-to-point)",
   },
   chapters: {
-    lec03: {
+    transformation: {
       title: "Transformation",
       subtitle: "4×4 rigid transform for 3D motion.",
       about:
@@ -199,7 +199,7 @@ export const en = {
         { name: "rx / ry / rz", desc: "Euler rotation in degrees, applied as Rz · Ry · Rx.", effect: "" },
       ],
     },
-    lec05: {
+    voxelization: {
       title: "Voxelization",
       subtitle: "Voxel-grid downsampling.",
       about:
@@ -212,7 +212,7 @@ export const en = {
         },
       ],
     },
-    lec06: {
+    "pass-through": {
       title: "PassThrough",
       subtitle: "Crop the cloud with an axis-aligned interval filter.",
       about:
@@ -227,7 +227,7 @@ export const en = {
         { name: "negative", desc: "Flips the filter to keep points outside the interval.", effect: "" },
       ],
     },
-    lec07: {
+    "statistical-outlier-removal": {
       title: "Statistical Outlier Removal",
       subtitle: "Outlier removal via neighbor-distance statistics.",
       about:
@@ -245,7 +245,7 @@ export const en = {
         },
       ],
     },
-    lec08: {
+    "radius-search": {
       title: "Radius Search",
       subtitle: "KdTree-based search for neighbors of a query point within a given radius.",
       about:
@@ -259,7 +259,7 @@ export const en = {
         { name: "radius", desc: "Search distance (meters).", effect: "Larger → more neighbors." },
       ],
     },
-    lec09: {
+    "k-nearest-neighbor": {
       title: "K-Nearest Neighbor",
       subtitle: "KdTree-based search for the K closest neighbors of a query point.",
       about:
@@ -277,7 +277,7 @@ export const en = {
         },
       ],
     },
-    lec10: {
+    "normal-estimation": {
       title: "Normal Estimation",
       subtitle: "Per-point normal estimation via KdTree + SVD.",
       about:
@@ -295,7 +295,7 @@ export const en = {
         },
       ],
     },
-    lec11: {
+    "iterative-closest-point": {
       title: "Iterative Closest Point",
       subtitle: "Watch ICP find correspondences → update pose each iteration with Step / Play.",
       about:
@@ -310,7 +310,7 @@ export const en = {
         { name: "Play", desc: "Auto-iterate every ~180 ms.", effect: "" },
       ],
     },
-    extra01: {
+    "ransac-plane-segmentation": {
       title: "RANSAC Plane Segmentation",
       subtitle: "Find the dominant plane (e.g. ground) and split inliers / outliers.",
       about:
@@ -328,7 +328,7 @@ export const en = {
         },
       ],
     },
-    extra02: {
+    "euclidean-clustering": {
       title: "Euclidean Clustering",
       subtitle: "Group spatially adjacent points into clusters.",
       about:
@@ -347,7 +347,7 @@ export const en = {
         { name: "remove ground", desc: "Run RANSAC plane removal first as preprocessing.", effect: "" },
       ],
     },
-    extra03: {
+    patchwork: {
       title: "Patchwork — Ground Segmentation",
       subtitle: "Concentric Zone Model + region-wise plane fitting for LiDAR ground extraction.",
       about:
@@ -358,7 +358,7 @@ export const en = {
         { name: "R-GPF + GLE", desc: "Per-bin plane fit, then validate via uprightness, elevation, flatness.", effect: "" },
       ],
     },
-    extra05: {
+    "genz-icp": {
       title: "GenZ-ICP — Generalizable and Degeneracy-Robust ICP",
       subtitle: "Adaptive point-to-plane / point-to-point correspondences are what we need.",
       about:
@@ -369,7 +369,7 @@ export const en = {
         { name: "Step / Play", desc: "Watch the α and the two pair streams as they balance.", effect: "" },
       ],
     },
-    extra04: {
+    travel: {
       title: "TRAVEL — Range Image Clustering",
       subtitle: "Project to a range image and flood-fill above-ground objects with the same color in 3D and 2D.",
       about:

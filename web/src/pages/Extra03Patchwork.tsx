@@ -42,7 +42,7 @@ const PATCHWORK_BIBTEX: BibEntry[] = [
 ];
 
 export default function Extra03Patchwork() {
-  const chapter = findChapter("extra03")!;
+  const chapter = findChapter("patchwork")!;
   const t = useT();
 
   const [raw, setRaw] = useState<PointCloud>(emptyCloud());
@@ -95,7 +95,7 @@ export default function Extra03Patchwork() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
       <ChapterHeader chapter={chapter} />
-      <DemoAbout slug="extra03" />
+      <DemoAbout slug="patchwork" />
 
       <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_18rem]">
         <div className="overflow-hidden rounded-xl border border-[var(--border)]">
@@ -123,7 +123,7 @@ export default function Extra03Patchwork() {
         </div>
 
         <aside className="flex flex-col gap-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
-          <DemoParams slug="extra03" />
+          <DemoParams slug="patchwork" />
           <DataSourcePicker
             defaultPreset="kitti"
             enabledPresets={ENABLED_PRESETS}

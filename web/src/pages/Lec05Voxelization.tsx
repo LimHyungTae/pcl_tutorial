@@ -13,7 +13,7 @@ import { voxelGrid } from "../lib/filters/voxelGrid";
 import { emptyCloud, type PointCloud } from "../lib/types";
 
 export default function Lec05Voxelization() {
-  const chapter = findChapter("lec05")!;
+  const chapter = findChapter("voxelization")!;
   const t = useT();
 
   const [src, setSrc] = useState<PointCloud>(emptyCloud());
@@ -29,7 +29,7 @@ export default function Lec05Voxelization() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
       <ChapterHeader chapter={chapter} />
-      <DemoAbout slug="lec05" />
+      <DemoAbout slug="voxelization" />
 
       <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_18rem]">
         <BeforeAfterPanel
@@ -57,7 +57,7 @@ export default function Lec05Voxelization() {
         />
 
         <aside className="flex flex-col gap-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
-          <DemoParams slug="lec05" />
+          <DemoParams slug="voxelization" />
           <DataSourcePicker
             onCloudChange={(c, info) => {
               setSrc(c);

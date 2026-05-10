@@ -33,7 +33,7 @@ const TRAVEL_BIBTEX: BibEntry[] = [
 ];
 
 export default function Extra04Travel() {
-  const chapter = findChapter("extra04")!;
+  const chapter = findChapter("travel")!;
   const t = useT();
 
   const [raw, setRaw] = useState<PointCloud>(emptyCloud());
@@ -98,7 +98,7 @@ export default function Extra04Travel() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
       <ChapterHeader chapter={chapter} />
-      <DemoAbout slug="extra04" />
+      <DemoAbout slug="travel" />
 
       <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_18rem]">
         <div className="flex flex-col gap-4">
@@ -131,7 +131,7 @@ export default function Extra04Travel() {
         </div>
 
         <aside className="flex flex-col gap-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
-          <DemoParams slug="extra04" />
+          <DemoParams slug="travel" />
           <DataSourcePicker
             defaultPreset="kitti"
             enabledPresets={ENABLED_PRESETS}

@@ -16,7 +16,7 @@ import { emptyCloud, type PointCloud } from "../lib/types";
  * first to keep things responsive but still informative.
  */
 export default function Lec07Sor() {
-  const chapter = findChapter("lec07")!;
+  const chapter = findChapter("statistical-outlier-removal")!;
   const t = useT();
 
   const [raw, setRaw] = useState<PointCloud>(emptyCloud());
@@ -42,7 +42,7 @@ export default function Lec07Sor() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
       <ChapterHeader chapter={chapter} />
-      <DemoAbout slug="lec07" />
+      <DemoAbout slug="statistical-outlier-removal" />
 
       <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_18rem]">
         <div className="overflow-hidden rounded-xl border border-slate-800/80">
@@ -66,7 +66,7 @@ export default function Lec07Sor() {
         </div>
 
         <aside className="flex flex-col gap-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
-          <DemoParams slug="lec07" />
+          <DemoParams slug="statistical-outlier-removal" />
           <DataSourcePicker
             defaultPreset="naverlabs"
             onCloudChange={(c, info) => {

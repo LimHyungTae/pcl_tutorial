@@ -13,7 +13,7 @@ import { passThrough, type Axis } from "../lib/filters/passThrough";
 import { emptyCloud, type PointCloud } from "../lib/types";
 
 export default function Lec06PassThrough() {
-  const chapter = findChapter("lec06")!;
+  const chapter = findChapter("pass-through")!;
   const t = useT();
 
   const [src, setSrc] = useState<PointCloud>(emptyCloud());
@@ -33,7 +33,7 @@ export default function Lec06PassThrough() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
       <ChapterHeader chapter={chapter} />
-      <DemoAbout slug="lec06" />
+      <DemoAbout slug="pass-through" />
 
       <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_18rem]">
         <BeforeAfterPanel
@@ -60,7 +60,7 @@ export default function Lec06PassThrough() {
         />
 
         <aside className="flex flex-col gap-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
-          <DemoParams slug="lec06" />
+          <DemoParams slug="pass-through" />
           <DataSourcePicker
             onCloudChange={(c, info) => {
               setSrc(c);

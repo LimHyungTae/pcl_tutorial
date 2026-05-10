@@ -12,7 +12,7 @@ import { voxelGrid } from "../lib/filters/voxelGrid";
 import { emptyCloud, type PointCloud } from "../lib/types";
 
 export default function Lec10Normal() {
-  const chapter = findChapter("lec10")!;
+  const chapter = findChapter("normal-estimation")!;
   const t = useT();
 
   const [raw, setRaw] = useState<PointCloud>(emptyCloud());
@@ -67,7 +67,7 @@ export default function Lec10Normal() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
       <ChapterHeader chapter={chapter} />
-      <DemoAbout slug="lec10" />
+      <DemoAbout slug="normal-estimation" />
 
       <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_18rem]">
         <div className="overflow-hidden rounded-xl border border-slate-800/80">
@@ -96,7 +96,7 @@ export default function Lec10Normal() {
         </div>
 
         <aside className="flex flex-col gap-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
-          <DemoParams slug="lec10" />
+          <DemoParams slug="normal-estimation" />
           <DataSourcePicker
             defaultPreset="bunny"
             onCloudChange={(c, info) => {

@@ -12,7 +12,7 @@ import { voxelGrid } from "../lib/filters/voxelGrid";
 import { emptyCloud, type PointCloud } from "../lib/types";
 
 export default function Extra01RansacPlane() {
-  const chapter = findChapter("extra01")!;
+  const chapter = findChapter("ransac-plane-segmentation")!;
   const t = useT();
 
   const [raw, setRaw] = useState<PointCloud>(emptyCloud());
@@ -41,7 +41,7 @@ export default function Extra01RansacPlane() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
       <ChapterHeader chapter={chapter} />
-      <DemoAbout slug="extra01" />
+      <DemoAbout slug="ransac-plane-segmentation" />
 
       <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_18rem]">
         <div className="overflow-hidden rounded-xl border border-[var(--border)]">
@@ -68,7 +68,7 @@ export default function Extra01RansacPlane() {
         </div>
 
         <aside className="flex flex-col gap-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
-          <DemoParams slug="extra01" />
+          <DemoParams slug="ransac-plane-segmentation" />
           <DataSourcePicker
             onCloudChange={(c, info) => {
               setRaw(c);
