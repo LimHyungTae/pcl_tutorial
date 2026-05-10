@@ -369,6 +369,10 @@ export default function KissMatcher() {
             }}
           />
 
+          <p className="-mt-2 text-[11px] leading-snug text-[var(--mut)]">
+            {t.kissMatcher.poseInvarianceNote}
+          </p>
+
           <CautionBox
             title={t.kissMatcher.precomputedTitle}
             body={t.kissMatcher.precomputedNote}

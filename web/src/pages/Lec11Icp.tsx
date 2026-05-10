@@ -203,7 +203,10 @@ export default function Lec11Icp() {
             onCloudChange={(c, info) => {
               setRaw(c);
               setScale(info.suggestedScale);
-              setMaxDist(1 * info.suggestedScale);
+              // KITTI Vel64 scenes have wider scan-to-scan motion; 5 m is a
+              // saner default than 1 m for that preset.
+              const baseDist = info.name === "kitti" ? 5 : 1;
+              setMaxDist(baseDist * info.suggestedScale);
             }}
           />
 
@@ -231,7 +234,7 @@ export default function Lec11Icp() {
           <Slider
             label={t.lec11.maxDist}
             min={0.05 * scale}
-            max={5 * scale}
+            max={10 * scale}
             step={0.05 * scale}
             value={maxDist}
             unit="m"

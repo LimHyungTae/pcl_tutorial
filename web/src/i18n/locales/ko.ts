@@ -203,6 +203,8 @@ export const ko: LocaleDict = {
     precomputedTitle: "Pre-computed 데모",
     precomputedNote:
       "결과는 KISS-Matcher를 Python에서 미리 실행해 얻은 것입니다 (`pip3 install kiss-matcher`로 설치 가능). 뷰어는 correspondence와 추정된 transform을 그대로 보여줄 뿐입니다.",
+    poseInvarianceNote:
+      "참고: global registration의 성능은 주어진 pose 차이에 영향을 받지 않습니다.",
     missingDataTitle: "데모 데이터가 아직 없습니다",
     missingDataBody:
       "web/public/data/precomputed/kiss_matcher.json이 없습니다. 헬퍼 스크립트로 생성해 주세요 (최근 노트북에서 ~5 초):",

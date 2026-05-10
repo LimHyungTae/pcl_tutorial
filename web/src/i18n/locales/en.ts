@@ -201,6 +201,8 @@ export const en = {
     precomputedTitle: "Pre-computed demo",
     precomputedNote:
       "Result was pre-computed by running the KISS-Matcher on Python (it supports `pip3 install kiss-matcher`). The viewer just renders correspondences and the recovered transform.",
+    poseInvarianceNote:
+      "Note that the performance of global registration is not affected by the given pose discrepancy.",
     missingDataTitle: "Demo data not generated yet",
     missingDataBody:
       "web/public/data/precomputed/kiss_matcher.json is missing. Generate it with the helper script (~5 s on a recent laptop):",
