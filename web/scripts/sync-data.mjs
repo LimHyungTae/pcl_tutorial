@@ -1,5 +1,5 @@
-// Copies materials/* → web/public/data/*
-// Run automatically before `vite dev` and `vite build` (see package.json scripts).
+// Mirrors materials/ → web/public/data/, recursively. Runs as a prebuild /
+// predev hook (see package.json scripts).
 import { mkdirSync, copyFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -14,13 +14,21 @@ if (!existsSync(src)) {
   process.exit(1);
 }
 
-mkdirSync(dst, { recursive: true });
-
 let copied = 0;
-for (const name of readdirSync(src)) {
-  const s = join(src, name);
-  if (!statSync(s).isFile()) continue;
-  copyFileSync(s, join(dst, name));
-  copied++;
+function copyRecursive(srcDir, dstDir) {
+  mkdirSync(dstDir, { recursive: true });
+  for (const name of readdirSync(srcDir)) {
+    const s = join(srcDir, name);
+    const d = join(dstDir, name);
+    const st = statSync(s);
+    if (st.isDirectory()) {
+      copyRecursive(s, d);
+    } else if (st.isFile()) {
+      copyFileSync(s, d);
+      copied++;
+    }
+  }
 }
+
+copyRecursive(src, dst);
 console.log(`[sync-data] copied ${copied} file(s) → ${dst}`);

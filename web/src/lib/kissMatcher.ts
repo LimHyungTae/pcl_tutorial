@@ -6,14 +6,11 @@ import { cloudFromPositions, type PointCloud } from "./types";
  * file says.
  */
 export type KissMatcherData = {
-  /** Public URL of the target point cloud (loaded via the existing PCD/BIN
-   *  parser). Relative to web/public/. */
+  /** Public URL of the source point cloud — relative to web/public/. */
+  srcUrl: string;
+  /** Public URL of the target point cloud — relative to web/public/. */
   tgtUrl: string;
   voxelSize: number;
-  /** Ground-truth rigid offset applied to the original cloud to fabricate
-   *  the "src" view. Web applies it client-side so the displayed src is
-   *  rotated relative to tgt. */
-  srcOffset: { yawDeg: number; tx: number; ty: number; tz: number };
   /** KISS-Matcher's estimate. R is row-major 3×3, length 9. */
   estimatedRotation: number[];
   estimatedTranslation: number[];
@@ -21,12 +18,11 @@ export type KissMatcherData = {
    *  in their respective frames. `isFinal` flags inliers surviving GNC. */
   matches: Array<{ src: [number, number, number]; tgt: [number, number, number]; isFinal: boolean }>;
   stats: {
+    numSrcPoints: number;
     numTgtPoints: number;
     numInitialMatches: number;
     numFinalInliers: number;
     numRotationInliers: number;
-    rotErrorDeg: number;
-    transErrorM: number;
   };
 };
 
@@ -34,30 +30,6 @@ export async function loadKissMatcherData(url: string): Promise<KissMatcherData>
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to load ${url}: ${res.status}`);
   return await res.json();
-}
-
-/** Apply the ground-truth yaw + translation that fabricated the src view.
- *  Used to derive the displayed src cloud from the unmodified target cloud. */
-export function applyYawOffset(
-  positions: Float32Array,
-  yawDeg: number,
-  tx: number,
-  ty: number,
-  tz: number,
-): PointCloud {
-  const yaw = (yawDeg * Math.PI) / 180;
-  const c = Math.cos(yaw);
-  const s = Math.sin(yaw);
-  const out = new Float32Array(positions.length);
-  for (let i = 0; i < positions.length; i += 3) {
-    const x = positions[i];
-    const y = positions[i + 1];
-    const z = positions[i + 2];
-    out[i] = c * x - s * y + tx;
-    out[i + 1] = s * x + c * y + ty;
-    out[i + 2] = z + tz;
-  }
-  return cloudFromPositions(out);
 }
 
 /** Apply a rigid 3×3 rotation + translation to a packed XYZ buffer. */

@@ -11,7 +11,6 @@ import { useT } from "../i18n";
 import { asset, useCloudFromUrl } from "../lib/useCloud";
 import {
   applyRigid,
-  applyYawOffset,
   loadKissMatcherData,
   packMatchSegments,
   type KissMatcherData,
@@ -60,29 +59,21 @@ export default function KissMatcher() {
     };
   }, []);
 
-  // tgt cloud is whatever URL the JSON points at (lets us swap to other
-  // scans by just regenerating the JSON).
+  // src and tgt URLs come from the JSON, so swapping scans is a JSON-only
+  // change.
+  const srcUrl = data ? asset(data.srcUrl) : "";
   const tgtUrl = data ? asset(data.tgtUrl) : "";
+  const { cloud: srcCloud, loading: srcLoading, error: srcError } =
+    useCloudFromUrl(srcUrl);
   const { cloud: tgtCloud, loading: tgtLoading, error: tgtError } =
     useCloudFromUrl(tgtUrl);
 
-  const srcAtOffset = useMemo(() => {
-    if (!data || tgtCloud.count === 0) return emptyCloud();
-    return applyYawOffset(
-      tgtCloud.positions,
-      data.srcOffset.yawDeg,
-      data.srcOffset.tx,
-      data.srcOffset.ty,
-      data.srcOffset.tz,
-    );
-  }, [data, tgtCloud]);
-
   const srcAligned = useMemo(() => {
-    if (!data || srcAtOffset.count === 0) return emptyCloud();
-    return applyRigid(srcAtOffset.positions, data.estimatedRotation, data.estimatedTranslation);
-  }, [data, srcAtOffset]);
+    if (!data || srcCloud.count === 0) return emptyCloud();
+    return applyRigid(srcCloud.positions, data.estimatedRotation, data.estimatedTranslation);
+  }, [data, srcCloud]);
 
-  const displayedSrc = aligned ? srcAligned : srcAtOffset;
+  const displayedSrc = aligned ? srcAligned : srcCloud;
 
   // Match-line buffers depend on whether src is aligned (after Apply T the
   // src endpoints have moved too).
@@ -120,7 +111,9 @@ export default function KissMatcher() {
   );
 
   const stats = data?.stats;
-  const dataMissing = !data && (dataError || (!tgtLoading && !data));
+  const dataMissing = !data && !!dataError;
+  void srcLoading;
+  void tgtLoading;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
@@ -146,12 +139,10 @@ export default function KissMatcher() {
                     final <span className="text-[var(--text)]">{stats.numFinalInliers}</span>
                   </span>
                   <span>
-                    rot err{" "}
-                    <span className="text-[var(--text)]">{stats.rotErrorDeg.toFixed(2)}°</span>
-                  </span>
-                  <span>
-                    trans err{" "}
-                    <span className="text-[var(--text)]">{stats.transErrorM.toFixed(2)} m</span>
+                    src/tgt{" "}
+                    <span className="text-[var(--text)]">
+                      {(stats.numSrcPoints / 1000).toFixed(0)}k / {(stats.numTgtPoints / 1000).toFixed(0)}k
+                    </span>
                   </span>
                 </>
               )}
@@ -160,9 +151,9 @@ export default function KissMatcher() {
           <div className="aspect-[4/3] md:aspect-[16/10] w-full">
             <PointCloudViewer layers={layers} lines={lines} framingZoom={0.85} />
           </div>
-          {(dataError || tgtError) && (
+          {(dataError || srcError || tgtError) && (
             <div className="border-t border-[var(--border)] bg-[color:rgba(248,113,113,0.06)] px-4 py-2 text-[12px] text-rose-300">
-              {dataError ?? tgtError}
+              {dataError ?? srcError ?? tgtError}
             </div>
           )}
         </div>
