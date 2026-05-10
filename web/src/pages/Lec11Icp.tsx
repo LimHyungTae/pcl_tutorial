@@ -97,7 +97,7 @@ export default function Lec11Icp() {
     setTransform(result.transform);
     setFitness(result.fitness);
     setPairs(result.pairs);
-    setPairCoords(samplePairCoords(result.pairCoords, 250));
+    setPairCoords(samplePairCoords(result.pairCoords, 400));
     setIter((i) => i + 1);
     if (result.fitness === 0 || delta < CONVERGE_EPS) {
       setConverged(true);
@@ -131,7 +131,7 @@ export default function Lec11Icp() {
             <div className="flex items-center gap-3">
               <Dot color="#f87171" /> {t.lec11.legendSrc}
               <Dot color="#00d4aa" /> {t.lec11.legendTgt}
-              <Dot color="#e2e8f0" /> pairs
+              <Dot color="#facc15" /> pairs
             </div>
             <div className="code-font flex items-center gap-3 text-[var(--dim)]">
               <span>iter {iter}</span>
@@ -157,7 +157,7 @@ export default function Lec11Icp() {
               ]}
               lines={
                 pairCoords.length > 0
-                  ? [{ positions: pairCoords, color: "#e2e8f0", opacity: 0.6 }]
+                  ? [{ positions: pairCoords, color: "#facc15", opacity: 0.95, width: 2 }]
                   : undefined
               }
               framingKey={framingEpoch}

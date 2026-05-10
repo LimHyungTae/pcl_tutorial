@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
-import { OrbitControls, GizmoHelper, GizmoViewport } from "@react-three/drei";
+import { OrbitControls, GizmoHelper, GizmoViewport, Line as FatLine } from "@react-three/drei";
 import * as THREE from "three";
 import { CameraSyncStore, nextSyncId } from "../lib/cameraSync";
 import type { PointCloud } from "../lib/types";
@@ -17,9 +17,14 @@ type Layer = {
 };
 
 type LineLayer = {
+  /** Endpoint stream packed [x0,y0,z0, x1,y1,z1, ...]. Every consecutive
+   *  pair of points is rendered as one segment. */
   positions: Float32Array;
   color: string;
   opacity?: number;
+  /** Pixel width of the rendered line. Default 1. Implemented via drei's
+   *  fat-line so it actually honors widths above 1 on WebGL. */
+  width?: number;
 };
 
 type Props = {
@@ -385,23 +390,35 @@ function PointsLayer({
 }
 
 function LinesLayer({ layer }: { layer: LineLayer }) {
-  const geom = useMemo(() => {
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.BufferAttribute(layer.positions, 3));
-    return g;
+  // The width default of 1 falls back to native WebGL lines (the only width
+  // they support); anything > 1 needs drei's fat-line shader. We render
+  // every pair of consecutive endpoints as a separate segment via the
+  // `segments` flag.
+  const points = useMemo(() => {
+    const total = (layer.positions.length / 3) | 0;
+    const out: [number, number, number][] = new Array(total);
+    for (let i = 0; i < total; i++) {
+      out[i] = [
+        layer.positions[i * 3],
+        layer.positions[i * 3 + 1],
+        layer.positions[i * 3 + 2],
+      ];
+    }
+    return out;
   }, [layer.positions]);
 
-  const mat = useMemo(
-    () =>
-      new THREE.LineBasicMaterial({
-        color: new THREE.Color(layer.color),
-        transparent: (layer.opacity ?? 1) < 1,
-        opacity: layer.opacity ?? 1,
-      }),
-    [layer.color, layer.opacity],
-  );
+  if (points.length === 0) return null;
 
-  return <lineSegments geometry={geom} material={mat} />;
+  return (
+    <FatLine
+      points={points}
+      color={layer.color}
+      lineWidth={layer.width ?? 1}
+      segments
+      transparent={(layer.opacity ?? 1) < 1}
+      opacity={layer.opacity ?? 1}
+    />
+  );
 }
 
 function unionBounds(layers: Layer[]) {
