@@ -10,16 +10,12 @@ export const en = {
     blogPost: "Blog post",
   },
   status: {
-    interactive: "Interactive",
-    precomputed: "Pre-computed",
-    code: "Code only",
-    stub: "Coming soon",
+    pcl: "PCL",
+    notInPcl: "Not in PCL",
   },
   legend: {
-    interactive: "Live sliders",
-    precomputed: "Toggle C++ result",
-    code: "Concept only",
-    stub: "Will be added",
+    pcl: "Standard PCL technique",
+    notInPcl: "Open-source addition (not part of PCL)",
   },
   home: {
     eyebrow: "PCL Tutorial",

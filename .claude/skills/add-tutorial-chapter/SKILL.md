@@ -79,9 +79,11 @@ Append:
   number: "<N>",            // 1-based, shown in the UI
   source: "<lecXX_xxx.cpp>", // path under repo root, or "" for web-only extras
   blog: `${BLOG}/...`,        // blog post URL, or ""
-  status: "interactive",
+  status: "pcl",              // or "notInPcl" — see below
 }
 ```
+
+Status semantics: the badge on the homepage card communicates whether the algorithm ships with PCL itself or not. Set `"pcl"` for anything PCL has out of the box (filters, KdTree, normal estimation, RANSAC plane, Euclidean cluster, ICP, ...). Set `"notInPcl"` for ports of separate open-source libraries (Patchwork, TRAVEL, GenZ-ICP, etc.). The visual style is wired in `statusColor` in the same file.
 
 Order in this array determines the homepage card order.
 

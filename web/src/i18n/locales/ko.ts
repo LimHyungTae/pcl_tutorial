@@ -12,16 +12,12 @@ export const ko: LocaleDict = {
     blogPost: "블로그 글",
   },
   status: {
-    interactive: "인터랙티브",
-    precomputed: "Pre-computed",
-    code: "코드 설명",
-    stub: "준비중",
+    pcl: "PCL",
+    notInPcl: "Not in PCL",
   },
   legend: {
-    interactive: "슬라이더로 실시간",
-    precomputed: "C++ 결과 토글",
-    code: "개념·소스 해설",
-    stub: "추후 추가",
+    pcl: "PCL 표준 기법",
+    notInPcl: "PCL 외부 오픈소스 라이브러리",
   },
   home: {
     eyebrow: "PCL Tutorial · 한글",
