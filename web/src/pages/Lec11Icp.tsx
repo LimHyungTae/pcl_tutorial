@@ -156,13 +156,13 @@ export default function Lec11Icp() {
 
       <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_18rem]">
         <div className="overflow-hidden rounded-xl border border-[var(--border)]">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border)] bg-[color:rgba(10,15,26,0.6)] px-4 py-2 text-[11px]">
-            <div className="flex items-center gap-3">
-              <Dot color="#f87171" /> {t.lec11.legendSrc}
-              <Dot color="#00d4aa" /> {t.lec11.legendTgt}
-              <Dot color="#facc15" /> pairs
+          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-[var(--border)] bg-[color:rgba(10,15,26,0.6)] px-3 py-2 text-[11px] sm:px-4">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+              <Legend color="#f87171" label={t.lec11.legendSrc} />
+              <Legend color="#00d4aa" label={t.lec11.legendTgt} />
+              <Legend color="#facc15" label="pairs" />
             </div>
-            <div className="code-font flex items-center gap-3 text-[var(--dim)]">
+            <div className="code-font flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[var(--dim)]">
               <span>iter {iter}</span>
               <span>
                 {t.lec11.fitness}{" "}
@@ -266,6 +266,15 @@ function Dot({ color }: { color: string }) {
       className="inline-block h-2 w-2 rounded-full"
       style={{ background: color }}
     />
+  );
+}
+
+function Legend({ color, label }: { color: string; label: string }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+      <Dot color={color} />
+      {label}
+    </span>
   );
 }
 

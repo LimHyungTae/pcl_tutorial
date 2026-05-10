@@ -27,9 +27,9 @@ const ICON: Record<Kind, string> = {
  *  KISS-Matcher) can all reuse it. */
 export default function RegistrationStatus({ kind, text, detail }: Props) {
   return (
-    <div className={`flex items-start gap-2 border-t px-4 py-2 text-[12px] ${PALETTE[kind]}`}>
-      <span aria-hidden="true" className="leading-tight">{ICON[kind]}</span>
-      <div className="min-w-0 flex-1">
+    <div className={`flex items-start gap-2 border-t px-3 py-2 text-[12px] leading-snug sm:px-4 ${PALETTE[kind]}`}>
+      <span aria-hidden="true" className="shrink-0">{ICON[kind]}</span>
+      <div className="min-w-0 flex-1 break-words">
         <span className="code-font">{text}</span>
         {detail && <div className="code-font mt-0.5 text-[11px] opacity-75">{detail}</div>}
       </div>
