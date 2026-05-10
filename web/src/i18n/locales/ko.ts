@@ -349,7 +349,7 @@ export const ko: LocaleDict = {
     },
     extra04: {
       title: "TRAVEL — Range Image Clustering",
-      subtitle: "Range image에 투영해 above-ground 객체를 flood-fill, 3D와 2D에 동일 색으로.",
+      subtitle: "Range image에 투영해 above-ground 객체를 효율적으로 segmentation하기.",
       about:
         "TRAVEL (Oh et al., RA-L, 2022)은 LiDAR range image의 2D 격자 구조를 활용해 효율적으로 ground-aware 객체 clustering을 수행합니다. 파이프라인은 두 단계로 구성됩니다. 먼저 Traversable Ground Segmentation (TGS)이 지면을 제거하고, Above-ground Object Segmentation (AOS)이 남은 점들을 range image 위에서 직접 cluster로 묶습니다. 본 데모에서는 TGS를 Patchwork로 대체하고 AOS는 원 코드의 pipeline을 따랐습니다. 각 non-ground 점이 (rows × cols) range image의 (row, col) 픽셀 한 곳에 투영되고, 4-인접 픽셀의 깊이차가 센서별 수평·수직 임계값 이하이면 같은 cluster로 병합합니다. 3D 뷰어와 2D range image는 동일한 cluster 색을 공유하고 있습니다.",
       params: [
