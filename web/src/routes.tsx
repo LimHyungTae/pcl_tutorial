@@ -14,6 +14,7 @@ import Extra02EuclideanCluster from "./pages/Extra02EuclideanCluster";
 import Extra03Patchwork from "./pages/Extra03Patchwork";
 import Extra04Travel from "./pages/Extra04Travel";
 import Extra05GenzIcp from "./pages/Extra05GenzIcp";
+import KissMatcher from "./pages/KissMatcher";
 
 // Hash routing keeps GH Pages happy: no 404 on deep-linked refresh.
 //
@@ -41,6 +42,7 @@ export const router = createHashRouter([
       { path: "patchwork", element: <Extra03Patchwork /> },
       { path: "travel", element: <Extra04Travel /> },
       { path: "genz-icp", element: <Extra05GenzIcp /> },
+      { path: "kiss-matcher", element: <KissMatcher /> },
 
       // Legacy redirects — keep old links working.
       { path: "lec03", element: <Navigate to="/transformation" replace /> },

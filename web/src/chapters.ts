@@ -107,6 +107,13 @@ export const chapters: ChapterMeta[] = [
     blog: "",
     status: "notInPcl",
   },
+  {
+    slug: "kiss-matcher",
+    number: "14",
+    source: "",
+    blog: "",
+    status: "notInPcl",
+  },
 ];
 
 export const findChapter = (slug: string) =>

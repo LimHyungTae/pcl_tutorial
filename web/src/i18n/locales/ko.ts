@@ -186,6 +186,21 @@ export const ko: LocaleDict = {
     planar: "planar (point-to-plane)",
     nonPlanar: "non-planar (point-to-point)",
   },
+  kissMatcher: {
+    initialMatches: "initial matches",
+    finalInliers: "final inliers (GNC 후)",
+    original: "원래 위치",
+    applyT: "Apply T",
+    maxLines: "표시할 match 선",
+    maxLinesHint: "그릴 correspondence 선의 최대 개수.",
+    toggleInitial: "pruning 전 match 표시",
+    toggleFinal: "최종 inlier 표시",
+    precomputedNote:
+      "KITTI 스캔에 알려진 yaw + translation을 적용한 src/tgt 쌍에 KISS-Matcher Python wrapper를 한 번 돌려서 결과를 pre-compute했습니다. 뷰어는 correspondence와 추정된 transform을 보여주기만 하며, 슬라이더는 그릴 line 개수를 client-side에서 다시 필터링합니다.",
+    missingDataTitle: "데모 데이터가 아직 없습니다",
+    missingDataBody:
+      "web/public/data/precomputed/kiss_matcher.json이 없습니다. 헬퍼 스크립트로 생성해 주세요 (최근 노트북에서 ~5 초):",
+  },
   chapters: {
     transformation: {
       title: "Transformation",
@@ -357,6 +372,17 @@ export const ko: LocaleDict = {
         { name: "max correspondence distance", desc: "이 거리보다 먼 pair는 매 iteration마다 버립니다.", effect: "작을수록 outlier에 강건하지만 정합 초반에 정체될 수 있음." },
         { name: "α (적응적)", desc: "매 iteration마다 #planar / 전체 pair로 자동 계산.", effect: "1 → 평면 우세, 0 → 비구조 우세." },
         { name: "Step / Play", desc: "두 pair 스트림이 균형을 잡아가는 과정을 관찰.", effect: "" },
+      ],
+    },
+    "kiss-matcher": {
+      title: "KISS-Matcher — Global Registration",
+      subtitle: "초기 추정값 없이도 동작: FasterPFH 디스크립터 → ROBIN matching → GNC solver.",
+      about:
+        "KISS-Matcher (Lim et al., ICRA, 2025)는 빠르고 강건한 글로벌 point cloud registration 파이프라인입니다. FasterPFH(빠른 Point Feature Histogram 디스크립터), ROBIN graph 기반 outlier matching, Graduated Non-Convexity (GNC) solver를 차례로 적용해 어떠한 초기 pose 추정값 없이도 SE(3)을 복원합니다. 본 데모는 KITTI 스캔에 알려진 yaw + translation을 적용한 src/tgt 쌍에 대해 KISS-Matcher를 미리 돌린 결과를 그대로 보여줍니다. slate 색 선은 cross-check 직후의 초기 correspondence, amber 색 선은 ROBIN + GNC를 거쳐 살아남은 최종 inlier이며, \"Apply T\"는 KISS-Matcher가 추정한 transform을 src에 적용합니다.",
+      params: [
+        { name: "Original / Apply T", desc: "오프셋 위치의 src와 KISS-Matcher가 정렬한 src 사이를 토글.", effect: "" },
+        { name: "max match lines", desc: "그릴 correspondence 선의 최대 개수 (final inlier 우선).", effect: "" },
+        { name: "Show pre-pruning / final", desc: "slate (initial) / amber (final) 두 선 레이어를 각각 켜고 끄기.", effect: "" },
       ],
     },
     travel: {

@@ -184,6 +184,21 @@ export const en = {
     planar: "planar (point-to-plane)",
     nonPlanar: "non-planar (point-to-point)",
   },
+  kissMatcher: {
+    initialMatches: "initial matches",
+    finalInliers: "final inliers (after GNC)",
+    original: "Original",
+    applyT: "Apply T",
+    maxLines: "max match lines",
+    maxLinesHint: "Cap on the number of correspondence segments rendered.",
+    toggleInitial: "Show pre-pruning matches",
+    toggleFinal: "Show final inliers",
+    precomputedNote:
+      "Result was pre-computed by running the KISS-Matcher Python wrapper on the KITTI scan with a known yaw + translation offset. The viewer just renders correspondences and the recovered transform; the slider re-filters how many lines are drawn.",
+    missingDataTitle: "Demo data not generated yet",
+    missingDataBody:
+      "web/public/data/precomputed/kiss_matcher.json is missing. Generate it with the helper script (~5 s on a recent laptop):",
+  },
   chapters: {
     transformation: {
       title: "Transformation",
@@ -363,6 +378,17 @@ export const en = {
         { name: "max correspondence distance", desc: "Pairs farther apart are dropped each iteration.", effect: "Smaller → robust to outliers, but stalls when far from convergence." },
         { name: "α (adaptive)", desc: "Computed each iteration as #planar / total pairs.", effect: "1 → all planar surfaces, 0 → all unstructured." },
         { name: "Step / Play", desc: "Watch the α and the two pair streams as they balance.", effect: "" },
+      ],
+    },
+    "kiss-matcher": {
+      title: "KISS-Matcher — Global Registration",
+      subtitle: "No initial guess needed: FasterPFH descriptors → ROBIN matching → GNC solver.",
+      about:
+        "KISS-Matcher (Lim et al., ICRA, 2025) is a fast and robust global point cloud registration pipeline. It chains FasterPFH (a faster Point Feature Histogram descriptor), ROBIN graph-based outlier matching, and a Graduated Non-Convexity (GNC) solver to recover SE(3) without any initial pose guess. This demo replays a precomputed run on the KITTI scan with a known yaw + translation offset; slate lines are the raw initial correspondences after cross-checking, amber lines are the final inliers that survived ROBIN + GNC, and \"Apply T\" applies KISS-Matcher's recovered transform to the source cloud.",
+      params: [
+        { name: "Original / Apply T", desc: "Toggle between the offset src and KISS-Matcher's recovered alignment.", effect: "" },
+        { name: "max match lines", desc: "Cap on how many correspondence segments are drawn (final inliers prioritized).", effect: "" },
+        { name: "Show pre-pruning / final", desc: "Independently toggle the slate (initial) and amber (final) line layers.", effect: "" },
       ],
     },
     travel: {
