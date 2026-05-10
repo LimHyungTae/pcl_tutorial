@@ -1,0 +1,40 @@
+{
+  "presets": [
+    {
+      "id": "vel16",
+      "label": "Velodyne VLP-16 (indoor)",
+      "url": "data/precomputed/kiss_matcher_vel16.json",
+      "stats": {
+        "numSrcPoints": 25370,
+        "numTgtPoints": 25049,
+        "numInitialMatches": 544,
+        "numFinalInliers": 112,
+        "numRotationInliers": 55
+      }
+    },
+    {
+      "id": "vel64",
+      "label": "Velodyne HDL-64 (KITTI scan-to-scan)",
+      "url": "data/precomputed/kiss_matcher_vel64.json",
+      "stats": {
+        "numSrcPoints": 122303,
+        "numTgtPoints": 127032,
+        "numInitialMatches": 409,
+        "numFinalInliers": 26,
+        "numRotationInliers": 19
+      }
+    },
+    {
+      "id": "kitti0007",
+      "label": "KITTI seq 00 \u2194 seq 07 (cross-trajectory submaps)",
+      "url": "data/precomputed/kiss_matcher_kitti0007.json",
+      "stats": {
+        "numSrcPoints": 456163,
+        "numTgtPoints": 103821,
+        "numInitialMatches": 4986,
+        "numFinalInliers": 36,
+        "numRotationInliers": 20
+      }
+    }
+  ]
+}

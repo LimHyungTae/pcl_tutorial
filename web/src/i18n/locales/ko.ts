@@ -193,6 +193,7 @@ export const ko: LocaleDict = {
   kissMatcher: {
     initialMatches: "initial matches",
     finalInliers: "final inliers (GNC 후)",
+    preset: "데이터셋",
     original: "원래 위치",
     applyT: "Apply T",
     toggleInitial: "pruning 전 match 표시",

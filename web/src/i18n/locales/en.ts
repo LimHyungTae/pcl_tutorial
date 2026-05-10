@@ -191,6 +191,7 @@ export const en = {
   kissMatcher: {
     initialMatches: "initial matches",
     finalInliers: "final inliers (after GNC)",
+    preset: "Dataset",
     original: "Original",
     applyT: "Apply T",
     toggleInitial: "Show pre-pruning matches",

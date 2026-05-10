@@ -19,15 +19,17 @@ import { asset, useCloudFromUrl } from "../lib/useCloud";
 import {
   applyRigid,
   loadKissMatcherData,
+  loadKissMatcherIndex,
   packMatchSegments,
   type KissMatcherData,
+  type KissMatcherPresetSummary,
 } from "../lib/kissMatcher";
 import { emptyCloud } from "../lib/types";
 
 const SRC_COLOR = "#f87171";   // red — matches Lec11 ICP convention
 const TGT_COLOR = "#00d4aa";   // teal — matches Lec11 ICP convention
 const FINAL_COLOR = "#facc15"; // amber — survived ROBIN + GNC
-const INITIAL_COLOR = "#475569"; // slate — pre-pruning
+const INITIAL_COLOR = "#cbd5e1"; // slate-300 — pre-pruning, kept dim but visible
 
 const KISS_BIBTEX: BibEntry[] = [
   {
@@ -45,6 +47,8 @@ export default function KissMatcher() {
   const chapter = findChapter("kiss-matcher")!;
   const t = useT();
 
+  const [presets, setPresets] = useState<KissMatcherPresetSummary[]>([]);
+  const [activeId, setActiveId] = useState<string>("vel64");
   const [data, setData] = useState<KissMatcherData | null>(null);
   const [dataError, setDataError] = useState<string | null>(null);
   const [aligned, setAligned] = useState(false);
@@ -57,9 +61,36 @@ export default function KissMatcher() {
   const [poseOffset, setPoseOffset] = useState<PoseOffset>(ZERO_POSE);
   const [framingEpoch, setFramingEpoch] = useState(0);
 
+  // Load the preset index once. Defaults activeId to vel64 if present, else
+  // first available.
   useEffect(() => {
     let cancelled = false;
-    loadKissMatcherData(asset("data/precomputed/kiss_matcher.json"))
+    loadKissMatcherIndex(asset("data/precomputed/kiss_matcher_index.json"))
+      .then((idx) => {
+        if (cancelled) return;
+        setPresets(idx.presets);
+        if (idx.presets.length > 0 && !idx.presets.some((p) => p.id === "vel64")) {
+          setActiveId(idx.presets[0].id);
+        }
+      })
+      .catch((e) => {
+        if (!cancelled) setDataError(e instanceof Error ? e.message : String(e));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Load the active preset's full JSON whenever the user switches.
+  useEffect(() => {
+    if (!activeId) return;
+    let cancelled = false;
+    setData(null);
+    setDataError(null);
+    setAligned(false);
+    setPoseOffset(ZERO_POSE);
+    setFramingEpoch((e) => e + 1);
+    loadKissMatcherData(asset(`data/precomputed/kiss_matcher_${activeId}.json`))
       .then((d) => {
         if (!cancelled) setData(d);
       })
@@ -69,7 +100,7 @@ export default function KissMatcher() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [activeId]);
 
   // src and tgt URLs come from the JSON, so swapping scans is a JSON-only
   // change.
@@ -244,6 +275,34 @@ export default function KissMatcher() {
 
         <aside className="flex flex-col gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
           <DemoParams slug="kiss-matcher" />
+
+          {presets.length > 0 && (
+            <div>
+              <div className="mb-1.5 text-sm text-slate-200">{t.kissMatcher.preset}</div>
+              <div className="grid grid-cols-1 gap-1.5">
+                {presets.map((p) => {
+                  const active = p.id === activeId;
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => setActiveId(p.id)}
+                      className={`code-font rounded-md border px-2.5 py-1.5 text-left text-[11px] transition ${
+                        active
+                          ? "border-[color:rgba(0,212,170,0.5)] bg-[color:rgba(0,212,170,0.08)] text-[var(--text-strong)]"
+                          : "border-[var(--border-strong)] bg-[var(--surface-2)] text-[var(--dim)] hover:text-[var(--text)]"
+                      }`}
+                    >
+                      <div className="truncate font-bold">{p.label}</div>
+                      <div className="mt-0.5 text-[9px] text-[var(--mut)]">
+                        {(p.stats.numSrcPoints / 1000).toFixed(0)}k / {(p.stats.numTgtPoints / 1000).toFixed(0)}k pts ·{" "}
+                        {p.stats.numFinalInliers} final inliers
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-1.5">
             <button

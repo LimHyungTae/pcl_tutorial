@@ -2,12 +2,9 @@
 """
 Generate KISS-Matcher demo data for the web tutorial.
 
-Loads materials/kiss_matcher_src.pcd + materials/kiss_matcher_tgt.pcd
-(KITTI HDL-64 frames 540 / 1319 from the official Vel64 sample bundled
-with KISS-Matcher), runs KISS-Matcher (`pip install kiss-matcher`) to
-recover the rigid transform that aligns src to tgt, and writes a small
-JSON to web/public/data/precomputed/kiss_matcher.json that the web page
-reads at runtime.
+For each preset listed in PRESETS, loads the bundled src / tgt PCDs from
+materials/, runs KISS-Matcher (`pip install kiss-matcher`) once, and
+writes a small JSON the web page reads at runtime.
 
 The web page never re-runs KISS-Matcher; the slider on the page just
 re-renders the precomputed correspondences.
@@ -17,7 +14,8 @@ Usage
     pip install kiss-matcher numpy
     python tools/gen_kiss_matcher_data.py
 
-Re-run this whenever you swap the input scans or re-tune voxel size.
+Re-run this whenever you swap input scans, add a preset, or re-tune the
+voxel size for an existing one.
 """
 import json
 import sys
@@ -33,59 +31,67 @@ except ImportError:
 try:
     from kiss_matcher.io_utils import read_pcd
 except ImportError:
-    # Older kiss_matcher releases shipped read_pcd at the top level. Fall
-    # back to a tiny ascii/binary reader if neither path is available.
     read_pcd = None
 
 # ---------------------------------------------------------------------------
 
 REPO = Path(__file__).resolve().parent.parent
-SRC_PCD = REPO / "materials" / "kiss_matcher_src.pcd"
-TGT_PCD = REPO / "materials" / "kiss_matcher_tgt.pcd"
-# Lives under materials/ so it gets picked up by web/scripts/sync-data.mjs
-# at prebuild time and copied into web/public/data/precomputed/.
-OUT_JSON = REPO / "materials" / "precomputed" / "kiss_matcher.json"
+MATERIALS = REPO / "materials"
+OUT_DIR = MATERIALS / "precomputed"
 
-VOXEL_SIZE = 0.6  # tune to KITTI's typical point spacing
-MAX_MATCHES_IN_JSON = 4000  # cap to keep the bundle small
+# id            label                   sensor      src                          tgt                          voxel
+PRESETS = [
+    {
+        "id": "vel16",
+        "label": "Velodyne VLP-16 (indoor)",
+        "src": MATERIALS / "kiss_vel16_src.pcd",
+        "tgt": MATERIALS / "kiss_vel16_tgt.pcd",
+        "voxel": 0.3,
+    },
+    {
+        "id": "vel64",
+        "label": "Velodyne HDL-64 (KITTI scan-to-scan)",
+        "src": MATERIALS / "kiss_vel64_src.pcd",
+        "tgt": MATERIALS / "kiss_vel64_tgt.pcd",
+        "voxel": 0.6,
+    },
+    {
+        "id": "kitti0007",
+        "label": "KITTI seq 00 ↔ seq 07 (cross-trajectory submaps)",
+        "src": MATERIALS / "kiss_kitti0007_src.pcd",
+        "tgt": MATERIALS / "kiss_kitti0007_tgt.pcd",
+        "voxel": 1.5,
+    },
+]
+
+MAX_MATCHES_IN_JSON = 4000
 
 # ---------------------------------------------------------------------------
 
 
 def load_pcd_xyz(path: Path) -> np.ndarray:
-    if read_pcd is not None:
-        return np.asarray(read_pcd(str(path)), dtype=np.float32)
-    # Minimal fallback (header-only inspection). Most KISS-Matcher releases
-    # include io_utils so this branch should rarely run.
-    raise SystemExit(
-        "kiss_matcher.io_utils.read_pcd not found — please install a newer kiss-matcher"
-    )
+    if read_pcd is None:
+        raise SystemExit(
+            "kiss_matcher.io_utils.read_pcd not found — please install a newer kiss-matcher"
+        )
+    return np.asarray(read_pcd(str(path)), dtype=np.float32)
 
 
-def main() -> None:
-    print(f"Loading src: {SRC_PCD}")
-    src_xyz = load_pcd_xyz(SRC_PCD)
-    print(f"  src points: {len(src_xyz):,}")
+def run_one(preset: dict) -> dict:
+    print(f"\n=== {preset['id']} ({preset['label']}) ===")
+    src_xyz = load_pcd_xyz(preset["src"])
+    tgt_xyz = load_pcd_xyz(preset["tgt"])
+    print(f"  src / tgt: {len(src_xyz):,} / {len(tgt_xyz):,} points")
+    print(f"  voxel_size: {preset['voxel']}")
 
-    print(f"Loading tgt: {TGT_PCD}")
-    tgt_xyz = load_pcd_xyz(TGT_PCD)
-    print(f"  tgt points: {len(tgt_xyz):,}")
-
-    print(f"\nRunning KISS-Matcher (voxel_size={VOXEL_SIZE})...")
-    config = km.KISSMatcherConfig(VOXEL_SIZE)
+    config = km.KISSMatcherConfig(preset["voxel"])
     matcher = km.KISSMatcher(config)
-    result = matcher.estimate(
-        src_xyz.astype(np.float32),
-        tgt_xyz.astype(np.float32),
-    )
+    result = matcher.estimate(src_xyz, tgt_xyz)
     matcher.print()
 
     R_est = np.asarray(result.rotation, dtype=np.float32)
     t_est = np.asarray(result.translation, dtype=np.float32)
 
-    # FasterPFH keypoints — initial / final correspondences index into
-    # these. Going via the keypoint sets keeps things consistent regardless
-    # of how many pairs survive each pruning stage.
     src_kpts, tgt_kpts = matcher.get_keypoints_from_faster_pfh()
     src_kpts = np.asarray(src_kpts, dtype=np.float32)
     tgt_kpts = np.asarray(tgt_kpts, dtype=np.float32)
@@ -112,7 +118,6 @@ def main() -> None:
             }
         )
 
-    # Sort: final inliers first so the slider's first-K naturally surfaces them.
     matches.sort(key=lambda m: 0 if m["isFinal"] else 1)
     if len(matches) > MAX_MATCHES_IN_JSON:
         finals = [m for m in matches if m["isFinal"]]
@@ -124,9 +129,11 @@ def main() -> None:
         matches = finals + non_finals
 
     payload = {
-        "srcUrl": "data/kiss_matcher_src.pcd",
-        "tgtUrl": "data/kiss_matcher_tgt.pcd",
-        "voxelSize": VOXEL_SIZE,
+        "id": preset["id"],
+        "label": preset["label"],
+        "srcUrl": f"data/{preset['src'].name}",
+        "tgtUrl": f"data/{preset['tgt'].name}",
+        "voxelSize": preset["voxel"],
         "estimatedRotation": [float(v) for v in R_est.flatten()],
         "estimatedTranslation": [float(v) for v in t_est],
         "matches": matches,
@@ -138,14 +145,30 @@ def main() -> None:
             "numRotationInliers": int(matcher.get_num_rotation_inliers()),
         },
     }
+    return payload
 
-    OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUT_JSON, "w") as f:
-        json.dump(payload, f)
-    size_kb = OUT_JSON.stat().st_size / 1024
-    print(f"\nWrote: {OUT_JSON} ({size_kb:.1f} KB)")
-    print(f"  initial matches in JSON : {len(matches):,} (capped at {MAX_MATCHES_IN_JSON:,})")
-    print(f"  final inliers           : {payload['stats']['numFinalInliers']}")
+
+def main() -> None:
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    index = []
+    for preset in PRESETS:
+        payload = run_one(preset)
+        out = OUT_DIR / f"kiss_matcher_{preset['id']}.json"
+        with open(out, "w") as f:
+            json.dump(payload, f)
+        size_kb = out.stat().st_size / 1024
+        print(f"  → {out.relative_to(REPO)} ({size_kb:.1f} KB)")
+        index.append({
+            "id": preset["id"],
+            "label": preset["label"],
+            "url": f"data/precomputed/{out.name}",
+            "stats": payload["stats"],
+        })
+
+    index_path = OUT_DIR / "kiss_matcher_index.json"
+    with open(index_path, "w") as f:
+        json.dump({"presets": index}, f, indent=2)
+    print(f"\nWrote index: {index_path.relative_to(REPO)} ({len(index)} presets)")
 
 
 if __name__ == "__main__":

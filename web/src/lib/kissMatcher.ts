@@ -5,7 +5,19 @@ import { cloudFromPositions, type PointCloud } from "./types";
  * page never runs KISS-Matcher itself; it just visualizes whatever this
  * file says.
  */
+export type KissMatcherStats = {
+  numSrcPoints: number;
+  numTgtPoints: number;
+  numInitialMatches: number;
+  numFinalInliers: number;
+  numRotationInliers: number;
+};
+
 export type KissMatcherData = {
+  /** Stable identifier (e.g. "vel64"). */
+  id: string;
+  /** Human-readable label shown in the preset switcher. */
+  label: string;
   /** Public URL of the source point cloud — relative to web/public/. */
   srcUrl: string;
   /** Public URL of the target point cloud — relative to web/public/. */
@@ -17,14 +29,27 @@ export type KissMatcherData = {
   /** Raw KISS-Matcher correspondences. `src` / `tgt` are 3D points already
    *  in their respective frames. `isFinal` flags inliers surviving GNC. */
   matches: Array<{ src: [number, number, number]; tgt: [number, number, number]; isFinal: boolean }>;
-  stats: {
-    numSrcPoints: number;
-    numTgtPoints: number;
-    numInitialMatches: number;
-    numFinalInliers: number;
-    numRotationInliers: number;
-  };
+  stats: KissMatcherStats;
 };
+
+/** Lightweight summary entry from the precomputed index file. The page
+ *  uses these to render the preset switcher without loading every JSON. */
+export type KissMatcherPresetSummary = {
+  id: string;
+  label: string;
+  url: string;
+  stats: KissMatcherStats;
+};
+
+export type KissMatcherIndex = {
+  presets: KissMatcherPresetSummary[];
+};
+
+export async function loadKissMatcherIndex(url: string): Promise<KissMatcherIndex> {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to load ${url}: ${res.status}`);
+  return await res.json();
+}
 
 export async function loadKissMatcherData(url: string): Promise<KissMatcherData> {
   const res = await fetch(url);
