@@ -27,7 +27,7 @@ export const en = {
     headlineEm: "you can play with",
     headline2: "",
     intro:
-      "Must-to-know techniques for processing 3D point clouds — voxelization, KdTree, RANSAC, ICP and more — reimplemented in TypeScript and running live in your browser.",
+      "Must-to-know techniques for processing 3D point clouds — voxelization, KdTree, RANSAC, ICP and more — reimplemented in TypeScript and running live in your browser. While some of these methods are not officially included in PCL, I added them to the tutorial because they are intuitive, practical, and easy to use.",
     chapterPrefix: "Chapter",
   },
   author: {

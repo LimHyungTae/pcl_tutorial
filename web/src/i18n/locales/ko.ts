@@ -29,7 +29,7 @@ export const ko: LocaleDict = {
     headlineEm: "Point Cloud Library Tutorial",
     headline2: "",
     intro:
-      "3D point cloud을 다루는 핵심 기법들 — voxelization, KdTree, RANSAC, ICP 등 — 을 TypeScript로 재구현해 브라우저에서 실시간으로 돌립니다.",
+      "3D point cloud을 다루는 핵심 기법들 — voxelization, KdTree, RANSAC, ICP 등 — 을 TypeScript로 재구현해 브라우저에서 실시간으로 돌립니다. 이 중 일부는 PCL에 공식적으로 포함되어 있지는 않지만, 직관적이고 실용적이며 사용하기 쉬워서 튜토리얼에 함께 담았습니다.",
     chapterPrefix: "Chapter",
   },
   author: {
