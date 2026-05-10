@@ -70,6 +70,9 @@ export const en = {
   },
   demo: {
     parameters: "Parameters",
+    bibtex: "Cite",
+    copy: "Copy",
+    copied: "Copied",
   },
   caution: {
     title: "Sensor-specific demo",

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { findChapter } from "../chapters";
+import BibTexBlock, { type BibEntry } from "../components/BibTexBlock";
 import CautionBox from "../components/CautionBox";
 import ChapterHeader from "../components/ChapterHeader";
 import DataSourcePicker, { type PresetId } from "../components/DataSourcePicker";
@@ -15,6 +16,21 @@ import { SENSOR_BY_PRESET, type SensorConfig } from "../lib/sensorConfig";
 import { emptyCloud, type PointCloud } from "../lib/types";
 
 const ENABLED_PRESETS: PresetId[] = ["naverlabs", "kitti"];
+
+const TRAVEL_BIBTEX: BibEntry[] = [
+  {
+    key: "oh2022travel",
+    bibtex: `@article{oh2022travel,
+  title={TRAVEL: Traversable ground and above-ground object segmentation using graph representation of 3D LiDAR scans},
+  author={Oh, Minho and Jung, Euigon and Lim, Hyungtae and Song, Wonho and Hu, Sumin and Lee, Eungchang Mason and Park, Junghee and Kim, Jaekyung and Lee, Jangwoo and Myung, Hyun},
+  journal={IEEE Robotics and Automation Letters},
+  volume={7},
+  number={3},
+  pages={7255--7262},
+  year={2022}
+}`,
+  },
+];
 
 export default function Extra04Travel() {
   const chapter = findChapter("extra04")!;
@@ -141,6 +157,8 @@ aos.cluster(obstacles, clusters);`}
           </pre>
         </aside>
       </section>
+
+      <BibTexBlock entries={TRAVEL_BIBTEX} />
     </div>
   );
 }

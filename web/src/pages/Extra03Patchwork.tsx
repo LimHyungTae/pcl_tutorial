@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import * as THREE from "three";
 import { findChapter } from "../chapters";
+import BibTexBlock, { type BibEntry } from "../components/BibTexBlock";
 import CautionBox from "../components/CautionBox";
 import ChapterHeader from "../components/ChapterHeader";
 import DataSourcePicker, { type PresetId } from "../components/DataSourcePicker";
@@ -14,6 +15,31 @@ import { SENSOR_BY_PRESET, type SensorConfig } from "../lib/sensorConfig";
 import { emptyCloud, type PointCloud } from "../lib/types";
 
 const ENABLED_PRESETS: PresetId[] = ["naverlabs", "kitti"];
+
+const PATCHWORK_BIBTEX: BibEntry[] = [
+  {
+    key: "lim2021patchwork",
+    bibtex: `@article{lim2021patchwork,
+  title={Patchwork: Concentric zone-based region-wise ground segmentation with ground likelihood estimation using a 3D LiDAR sensor},
+  author={Lim, Hyungtae and Oh, Minho and Myung, Hyun},
+  journal={IEEE Robotics and Automation Letters},
+  volume={6},
+  number={4},
+  pages={6458--6465},
+  year={2021}
+}`,
+  },
+  {
+    key: "lee2022patchwork++",
+    bibtex: `@inproceedings{lee2022patchwork++,
+  title={Patchwork++: Fast and robust ground segmentation solving partial under-segmentation using 3D point cloud},
+  author={Lee, Seungjae and Lim, Hyungtae and Myung, Hyun},
+  booktitle={2022 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  pages={13276--13283},
+  year={2022}
+}`,
+  },
+];
 
 export default function Extra03Patchwork() {
   const chapter = findChapter("extra03")!;
@@ -125,6 +151,8 @@ pw.estimate_ground(cloud, ground, nonground);`}
           </pre>
         </aside>
       </section>
+
+      <BibTexBlock entries={PATCHWORK_BIBTEX} />
     </div>
   );
 }

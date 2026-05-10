@@ -72,6 +72,9 @@ export const ko: LocaleDict = {
   },
   demo: {
     parameters: "파라미터",
+    bibtex: "인용 (BibTeX)",
+    copy: "복사",
+    copied: "복사됨",
   },
   caution: {
     title: "센서 의존적 데모",
