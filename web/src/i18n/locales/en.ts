@@ -389,7 +389,7 @@ export const en = {
       title: "KISS-Matcher — Global Registration",
       subtitle: "No initial guess needed: FasterPFH descriptors → ROBIN matching → GNC solver.",
       about:
-        "KISS-Matcher (Lim et al., ICRA, 2025) is a fast and robust global point cloud registration pipeline. It chains FasterPFH (a faster Point Feature Histogram descriptor), ROBIN graph-based outlier matching, and a Graduated Non-Convexity (GNC) solver to recover SE(3) without any initial pose guess. This demo replays a precomputed run on the official Vel64 sample (KITTI HDL-64 frames 540 / 1319 shipped with the KISS-Matcher repo); slate lines are the raw initial correspondences after cross-checking, amber lines are the final inliers that survived ROBIN + GNC, and \"Apply T\" applies KISS-Matcher's recovered transform to the source cloud.",
+        "KISS-Matcher (Lim et al., ICRA, 2025) is a fast and robust global point cloud registration pipeline. It chains FasterPFH (a faster Point Feature Histogram descriptor), ROBIN graph-based outlier matching, and a Graduated Non-Convexity (GNC) solver to recover SE(3) without any initial pose guess. Slate lines are the raw initial correspondences after cross-checking, amber lines are the final inliers that survived ROBIN + GNC, and \"Apply T\" applies KISS-Matcher's recovered transform to the source cloud.",
       params: [
         { name: "voxel_size", desc: "Set in tools/gen_kiss_matcher_data.py and baked into the precomputed JSON. KISS-Matcher's only knob — keypoint density and correspondence count both follow from it.", effect: "" },
         { name: "Original / Apply T", desc: "Toggle between the unaligned src and KISS-Matcher's recovered alignment.", effect: "" },
