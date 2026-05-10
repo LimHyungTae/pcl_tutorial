@@ -359,10 +359,10 @@ export const en = {
       ],
     },
     extra05: {
-      title: "GenZ-ICP — Adaptive Point-to-Plane / Point-to-Point",
-      subtitle: "Per-iteration α-blend of point-to-plane and point-to-point residuals.",
+      title: "GenZ-ICP — Generalizable and Degeneracy-Robust ICP",
+      subtitle: "Adaptive point-to-plane / point-to-point correspondences are what we need.",
       about:
-        "GenZ-ICP (Lee et al., RA-L, 2024) registers a frame against a local map by classifying every correspondence as either planar (point-to-plane) or non-planar (point-to-point) based on the local planarity of the target neighborhood, and solving a single 6-DoF Gauss-Newton step that blends both residuals with an adaptive weight α = #planar / (#planar + #non_planar). Planar pair lines are drawn in blue (RGB 0, 119, 187) and non-planar in magenta (RGB 238, 51, 119), matching the upstream rviz config. Same Step / Play skeleton as Lec11 ICP.",
+        "GenZ-ICP (Lee et al., RA-L, 2024) registers a frame against a local map by classifying every correspondence as either planar (point-to-plane) or non-planar (point-to-point) based on the local planarity of the target neighborhood, and solving a single 6-DoF Gauss-Newton step that blends both residuals with an adaptive weight α = #planar / (#planar + #non_planar). Planar pair lines are drawn in blue (RGB 0, 119, 187) and non-planar in magenta (RGB 238, 51, 119).",
       params: [
         { name: "max correspondence distance", desc: "Pairs farther apart are dropped each iteration.", effect: "Smaller → robust to outliers, but stalls when far from convergence." },
         { name: "α (adaptive)", desc: "Computed each iteration as #planar / total pairs.", effect: "1 → all planar surfaces, 0 → all unstructured." },
