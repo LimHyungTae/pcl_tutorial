@@ -9,6 +9,9 @@ import PoseOffsetControls, {
   type PoseOffset,
   ZERO_POSE,
 } from "../components/PoseOffsetControls";
+import RegistrationStatus, {
+  type RegistrationStatusKind,
+} from "../components/RegistrationStatus";
 import Slider from "../components/Slider";
 import DataSourcePicker from "../components/DataSourcePicker";
 import { useT } from "../i18n";
@@ -127,6 +130,25 @@ export default function Lec11Icp() {
   );
   const ptSize = 0.05 * scale;
 
+  // Heuristic: ICP "succeeded" when it converged AND the mean residual
+  // (fitness) is small relative to the input scale. fitness > 0.5·scale is
+  // usually a sign of a local minimum.
+  const status = useMemo<{ kind: RegistrationStatusKind; text: string } | null>(() => {
+    if (iter === 0) return null;
+    const f = fitness == null ? "—" : fitness.toFixed(3);
+    const p = pairs == null ? "—" : pairs.toLocaleString();
+    if (!converged) {
+      return { kind: "iterating", text: t.lec11.statusIterating.replace("{fitness}", f).replace("{pairs}", p) };
+    }
+    if (pairs != null && pairs < 6) {
+      return { kind: "fail", text: t.lec11.statusFail.replace("{pairs}", p) };
+    }
+    if (fitness != null && fitness > 0.5 * scale) {
+      return { kind: "warn", text: t.lec11.statusWarn.replace("{fitness}", f) };
+    }
+    return { kind: "ok", text: t.lec11.statusOk.replace("{fitness}", f).replace("{pairs}", p) };
+  }, [iter, converged, fitness, pairs, scale, t.lec11]);
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
       <ChapterHeader chapter={chapter} />
@@ -171,6 +193,7 @@ export default function Lec11Icp() {
               framingZoom={0.7}
             />
           </div>
+          {status && <RegistrationStatus kind={status.kind} text={status.text} />}
         </div>
 
         <aside className="flex flex-col gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">

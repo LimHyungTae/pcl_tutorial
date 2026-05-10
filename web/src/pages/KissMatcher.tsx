@@ -10,6 +10,9 @@ import PoseOffsetControls, {
   type PoseOffset,
   ZERO_POSE,
 } from "../components/PoseOffsetControls";
+import RegistrationStatus, {
+  type RegistrationStatusKind,
+} from "../components/RegistrationStatus";
 import { useT } from "../i18n";
 import { buildTransform } from "../lib/filters/transform";
 import { asset, useCloudFromUrl } from "../lib/useCloud";
@@ -173,6 +176,23 @@ export default function KissMatcher() {
   void srcLoading;
   void tgtLoading;
 
+  // Mirrors the upstream Python example's success heuristic:
+  //   num_final_inliers >= 5 → likely succeeded; otherwise likely failed.
+  const status = useMemo<{ kind: RegistrationStatusKind; text: string } | null>(() => {
+    if (!stats) return null;
+    const n = stats.numFinalInliers.toString();
+    if (stats.numFinalInliers >= 5) {
+      return {
+        kind: "ok",
+        text: t.kissMatcher.statusOk
+          .replace("{n}", n)
+          .replace("{rot}", stats.numRotationInliers.toString())
+          .replace("{trans}", stats.numFinalInliers.toString()),
+      };
+    }
+    return { kind: "fail", text: t.kissMatcher.statusFail.replace("{n}", n) };
+  }, [stats, t.kissMatcher]);
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
       <ChapterHeader chapter={chapter} />
@@ -214,6 +234,7 @@ export default function KissMatcher() {
               framingKey={framingEpoch}
             />
           </div>
+          {status && <RegistrationStatus kind={status.kind} text={status.text} />}
           {(dataError || srcError || tgtError) && (
             <div className="border-t border-[var(--border)] bg-[color:rgba(248,113,113,0.06)] px-4 py-2 text-[12px] text-rose-300">
               {dataError ?? srcError ?? tgtError}
