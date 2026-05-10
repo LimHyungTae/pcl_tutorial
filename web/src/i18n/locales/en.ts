@@ -152,6 +152,7 @@ export const en = {
     step: "▶ Step",
     play: "▶ Play",
     pause: "⏸ Pause",
+    converged: "✓ Converged",
     maxDist: "max correspondence distance",
     maxDistHint: "Pairs farther apart than this are dropped each iteration.",
     fitness: "fitness:",

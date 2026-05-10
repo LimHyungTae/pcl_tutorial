@@ -31,6 +31,14 @@ type Props = {
   /** When two viewers share a CameraSyncStore, orbiting one mirrors to the
    *  other. */
   sync?: CameraSyncStore;
+  /** When provided, camera framing only re-applies on first mount and when
+   *  this key changes. Use it for iterative chapters (e.g. ICP) where the
+   *  user's manual orbit should persist across per-iteration bbox shifts.
+   *  Without it, the camera re-fits on every layer/bounds change. */
+  framingKey?: unknown;
+  /** Multiplier on camera distance — values < 1 zoom in closer to the
+   *  scene. Default 1. */
+  framingZoom?: number;
 };
 
 export default function PointCloudViewer({
@@ -40,14 +48,16 @@ export default function PointCloudViewer({
   onPick,
   defaultSizeMult = 1,
   sync,
+  framingKey,
+  framingZoom = 1,
 }: Props) {
   const [sizeMult, setSizeMult] = useState(defaultSizeMult);
   const { center, radius } = useMemo(() => unionBounds(layers), [layers]);
 
   const initialPos: [number, number, number] = [
-    center.x + radius * 1.6,
-    center.y + radius * 1.0,
-    center.z + radius * 1.4,
+    center.x + radius * 1.6 * framingZoom,
+    center.y + radius * 1.0 * framingZoom,
+    center.z + radius * 1.4 * framingZoom,
   ];
 
   const scaledLayers = useMemo(
@@ -82,6 +92,8 @@ export default function PointCloudViewer({
           cy={center.y}
           cz={center.z}
           radius={radius}
+          framingKey={framingKey}
+          framingZoom={framingZoom}
         />
         <PickConfig radius={radius} pickable={!!onPick} />
         <OrbitControls enableDamping dampingFactor={0.08} makeDefault />
@@ -146,11 +158,15 @@ function ViewFrame({
   cy,
   cz,
   radius,
+  framingKey,
+  framingZoom,
 }: {
   cx: number;
   cy: number;
   cz: number;
   radius: number;
+  framingKey: unknown;
+  framingZoom: number;
 }) {
   const camera = useThree((s) => s.camera);
   const controls = useThree((s) => s.controls) as
@@ -160,26 +176,60 @@ function ViewFrame({
       })
     | null;
 
+  // Capture latest bounds in a ref so the stable-framing effect can read
+  // them at refit time without subscribing to bbox updates.
+  const latestRef = useRef({ cx, cy, cz, radius, framingZoom });
+  latestRef.current = { cx, cy, cz, radius, framingZoom };
+
+  const stableMode = framingKey !== undefined;
+
+  // Auto-fit mode (default): refit whenever bounds change.
   useEffect(() => {
-    if (!camera) return;
-    camera.position.set(
-      cx + radius * 1.6,
-      cy + radius * 1.0,
-      cz + radius * 1.4,
-    );
-    if ((camera as THREE.PerspectiveCamera).isPerspectiveCamera) {
-      const c = camera as THREE.PerspectiveCamera;
-      c.near = Math.max(radius * 0.001, 0.0001);
-      c.far = radius * 50 + 1000;
-      c.updateProjectionMatrix();
-    }
-    if (controls?.target) {
-      controls.target.set(cx, cy, cz);
-      controls.update?.();
-    }
-  }, [cx, cy, cz, radius, camera, controls]);
+    if (stableMode || !camera) return;
+    applyFraming(camera, controls, cx, cy, cz, radius, framingZoom);
+  }, [stableMode, cx, cy, cz, radius, framingZoom, camera, controls]);
+
+  // Stable-framing mode: refit only when framingKey changes (or on mount).
+  // Lets the user orbit freely between key changes without the camera
+  // snapping back as bbox shifts (e.g. each ICP iteration).
+  useEffect(() => {
+    if (!stableMode || !camera) return;
+    const b = latestRef.current;
+    applyFraming(camera, controls, b.cx, b.cy, b.cz, b.radius, b.framingZoom);
+  }, [stableMode, framingKey, camera, controls]);
 
   return null;
+}
+
+function applyFraming(
+  camera: THREE.Camera,
+  controls:
+    | (THREE.EventDispatcher & {
+        target: THREE.Vector3;
+        update?: () => void;
+      })
+    | null,
+  cx: number,
+  cy: number,
+  cz: number,
+  radius: number,
+  zoom: number,
+): void {
+  camera.position.set(
+    cx + radius * 1.6 * zoom,
+    cy + radius * 1.0 * zoom,
+    cz + radius * 1.4 * zoom,
+  );
+  if ((camera as THREE.PerspectiveCamera).isPerspectiveCamera) {
+    const c = camera as THREE.PerspectiveCamera;
+    c.near = Math.max(radius * 0.001, 0.0001);
+    c.far = radius * 50 + 1000;
+    c.updateProjectionMatrix();
+  }
+  if (controls?.target) {
+    controls.target.set(cx, cy, cz);
+    controls.update?.();
+  }
 }
 
 /** Bridge between this viewer's OrbitControls and a shared store, so two

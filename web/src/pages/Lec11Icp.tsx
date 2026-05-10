@@ -33,7 +33,14 @@ export default function Lec11Icp() {
   const [pairs, setPairs] = useState<number | null>(null);
   const [pairCoords, setPairCoords] = useState<Float32Array>(new Float32Array(0));
   const [playing, setPlaying] = useState(false);
+  const [converged, setConverged] = useState(false);
+  // Bumped on preset switch and Reset — that's when we want the camera to
+  // refit. Per-iteration bbox shifts during Play do NOT bump this, so the
+  // user's manual orbit persists across iterations.
+  const [framingEpoch, setFramingEpoch] = useState(0);
   const lastSrcId = useRef<PointCloud | null>(null);
+
+  const CONVERGE_EPS = 1e-9;
 
   // Voxelize aggressively — interactive ICP wants a few thousand points.
   const tgt = useMemo(() => {
@@ -55,6 +62,7 @@ export default function Lec11Icp() {
     if (tgt.count === 0 || lastSrcId.current === tgt) return;
     lastSrcId.current = tgt;
     seed(tgt, scale);
+    setFramingEpoch((e) => e + 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tgt]);
 
@@ -73,26 +81,38 @@ export default function Lec11Icp() {
     setPairs(null);
     setPairCoords(new Float32Array(0));
     setPlaying(false);
+    setConverged(false);
   }
+
+  const reset = () => {
+    seed(tgt, scale);
+    setFramingEpoch((e) => e + 1);
+  };
 
   const step = () => {
     if (src.count === 0 || tgt.count === 0) return;
+    if (converged) return;
     const result = icpStep(src, tgtTree, transform, maxDist);
+    const delta = transformDelta(transform, result.transform);
     setTransform(result.transform);
     setFitness(result.fitness);
     setPairs(result.pairs);
     setPairCoords(samplePairCoords(result.pairCoords, 250));
     setIter((i) => i + 1);
+    if (result.fitness === 0 || delta < CONVERGE_EPS) {
+      setConverged(true);
+      setPlaying(false);
+    }
   };
 
   useEffect(() => {
-    if (!playing) return;
+    if (!playing || converged) return;
     const id = window.setTimeout(() => {
       step();
     }, 220);
     return () => window.clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playing, transform, src, tgt, maxDist]);
+  }, [playing, converged, transform, src, tgt, maxDist]);
 
   const transformed = useMemo(
     () => transformCloud(src, transform),
@@ -140,6 +160,8 @@ export default function Lec11Icp() {
                   ? [{ positions: pairCoords, color: "#e2e8f0", opacity: 0.6 }]
                   : undefined
               }
+              framingKey={framingEpoch}
+              framingZoom={0.7}
             />
           </div>
         </div>
@@ -157,27 +179,28 @@ export default function Lec11Icp() {
 
           <div className="grid grid-cols-3 gap-1.5">
             <button
-              onClick={() => seed(tgt, scale)}
+              onClick={reset}
               className="code-font rounded-md border border-[var(--border-strong)] bg-[var(--surface-2)] px-2 py-1.5 text-[11px] text-[var(--dim)] transition hover:text-[var(--text)]"
             >
               {t.lec11.reset}
             </button>
             <button
               onClick={step}
-              disabled={playing}
+              disabled={playing || converged}
               className="code-font rounded-md border border-[color:rgba(0,212,170,0.5)] bg-[color:rgba(0,212,170,0.10)] px-2 py-1.5 text-[11px] font-bold text-[var(--accent)] transition hover:bg-[color:rgba(0,212,170,0.18)] disabled:opacity-40"
             >
               {t.lec11.step}
             </button>
             <button
               onClick={() => setPlaying((p) => !p)}
-              className={`code-font rounded-md border px-2 py-1.5 text-[11px] font-bold transition ${
+              disabled={converged}
+              className={`code-font rounded-md border px-2 py-1.5 text-[11px] font-bold transition disabled:opacity-40 ${
                 playing
                   ? "border-[color:rgba(255,140,66,0.5)] bg-[color:rgba(255,140,66,0.12)] text-[#ff8c42]"
                   : "border-[color:rgba(77,166,255,0.5)] bg-[color:rgba(77,166,255,0.10)] text-[var(--accent-2)] hover:bg-[color:rgba(77,166,255,0.18)]"
               }`}
             >
-              {playing ? t.lec11.pause : t.lec11.play}
+              {converged ? t.lec11.converged : playing ? t.lec11.pause : t.lec11.play}
             </button>
           </div>
 
@@ -213,4 +236,16 @@ function Dot({ color }: { color: string }) {
       style={{ background: color }}
     />
   );
+}
+
+/** Frobenius norm of the difference between two 4×4 transforms. Captures
+ *  both rotation and translation change in one scalar — used as the ICP
+ *  convergence threshold (matches PCL's transformation_epsilon spirit). */
+function transformDelta(prev: Float32Array, next: Float32Array): number {
+  let s = 0;
+  for (let i = 0; i < 16; i++) {
+    const d = next[i] - prev[i];
+    s += d * d;
+  }
+  return Math.sqrt(s);
 }

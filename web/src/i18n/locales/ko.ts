@@ -154,6 +154,7 @@ export const ko: LocaleDict = {
     step: "▶ Step",
     play: "▶ Play",
     pause: "⏸ Pause",
+    converged: "✓ 수렴",
     maxDist: "max correspondence distance",
     maxDistHint: "이 거리보다 먼 pair는 매 iteration마다 버립니다.",
     fitness: "fitness:",
