@@ -5,6 +5,11 @@ import ChapterHeader from "../components/ChapterHeader";
 import DemoAbout from "../components/DemoAbout";
 import DemoParams from "../components/DemoParams";
 import PointCloudViewer from "../components/PointCloudViewer";
+import PoseOffsetControls, {
+  randomPose,
+  type PoseOffset,
+  ZERO_POSE,
+} from "../components/PoseOffsetControls";
 import Slider from "../components/Slider";
 import DataSourcePicker from "../components/DataSourcePicker";
 import { useT } from "../i18n";
@@ -59,8 +64,9 @@ export default function Extra05GenzIcp() {
   const [nonPlanarLines, setNonPlanarLines] = useState<Float32Array>(new Float32Array(0));
   const [playing, setPlaying] = useState(false);
   const [converged, setConverged] = useState(false);
+  const [poseOffset, setPoseOffset] = useState<PoseOffset>(ZERO_POSE);
   const [framingEpoch, setFramingEpoch] = useState(0);
-  const lastSrcId = useRef<PointCloud | null>(null);
+  const lastTgtRef = useRef<PointCloud | null>(null);
 
   const CONVERGE_EPS = 1e-9;
 
@@ -83,25 +89,25 @@ export default function Extra05GenzIcp() {
     return buildGenzTargetIndex(tgt, NORMAL_K, PLANARITY_THRESHOLD);
   }, [tgt]);
 
-  const [src, setSrc] = useState<PointCloud>(emptyCloud());
+  // src = tgt with the user-controlled rigid offset applied.
+  const src = useMemo(() => {
+    if (tgt.count === 0) return emptyCloud();
+    const T = buildTransform(
+      poseOffset.tx, poseOffset.ty, poseOffset.tz,
+      poseOffset.rxDeg, poseOffset.ryDeg, poseOffset.rzDeg,
+    );
+    return transformCloud(tgt, T);
+  }, [tgt, poseOffset]);
 
   useEffect(() => {
-    if (tgt.count === 0 || lastSrcId.current === tgt) return;
-    lastSrcId.current = tgt;
-    seed(tgt, scale);
+    if (tgt.count === 0 || lastTgtRef.current === tgt) return;
+    lastTgtRef.current = tgt;
+    setPoseOffset(randomPose(scale));
     setFramingEpoch((e) => e + 1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tgt]);
+  }, [tgt, scale]);
 
-  function seed(target: PointCloud, sc: number) {
-    const tx = (Math.random() - 0.5) * 2.5 * sc;
-    const ty = (Math.random() - 0.5) * 2.5 * sc;
-    const tz = (Math.random() - 0.5) * 0.6 * sc;
-    const rx = (Math.random() - 0.5) * 25;
-    const ry = (Math.random() - 0.5) * 25;
-    const rz = (Math.random() - 0.5) * 25;
-    const groundTruth = buildTransform(tx, ty, tz, rx, ry, rz);
-    setSrc(transformCloud(target, groundTruth));
+  // src changed → reset iteration state.
+  useEffect(() => {
     setTransform(identityTransform());
     setIter(0);
     setFitness(null);
@@ -113,12 +119,7 @@ export default function Extra05GenzIcp() {
     setNonPlanarLines(new Float32Array(0));
     setPlaying(false);
     setConverged(false);
-  }
-
-  const reset = () => {
-    seed(tgt, scale);
-    setFramingEpoch((e) => e + 1);
-  };
+  }, [src]);
 
   const step = () => {
     if (src.count === 0 || tgt.count === 0 || !tgtIndex) return;
@@ -232,13 +233,7 @@ export default function Extra05GenzIcp() {
             }}
           />
 
-          <div className="grid grid-cols-3 gap-1.5">
-            <button
-              onClick={reset}
-              className="code-font rounded-md border border-[var(--border-strong)] bg-[var(--surface-2)] px-2 py-1.5 text-[11px] text-[var(--dim)] transition hover:text-[var(--text)]"
-            >
-              {t.lec11.reset}
-            </button>
+          <div className="grid grid-cols-2 gap-1.5">
             <button
               onClick={step}
               disabled={playing || converged}
@@ -267,6 +262,13 @@ export default function Extra05GenzIcp() {
             value={maxDist}
             unit="m"
             onChange={setMaxDist}
+          />
+
+          <PoseOffsetControls
+            value={poseOffset}
+            scale={scale}
+            onChange={setPoseOffset}
+            onCommit={() => setFramingEpoch((e) => e + 1)}
           />
 
           <pre className="code-font overflow-x-auto rounded-md bg-[var(--surface-2)] p-3 text-[10px] leading-relaxed text-[var(--text)]">

@@ -6,7 +6,12 @@ import ChapterHeader from "../components/ChapterHeader";
 import DemoAbout from "../components/DemoAbout";
 import DemoParams from "../components/DemoParams";
 import PointCloudViewer from "../components/PointCloudViewer";
+import PoseOffsetControls, {
+  type PoseOffset,
+  ZERO_POSE,
+} from "../components/PoseOffsetControls";
 import { useT } from "../i18n";
+import { buildTransform } from "../lib/filters/transform";
 import { asset, useCloudFromUrl } from "../lib/useCloud";
 import {
   applyRigid,
@@ -42,6 +47,12 @@ export default function KissMatcher() {
   const [aligned, setAligned] = useState(false);
   const [showInitial, setShowInitial] = useState(true);
   const [showFinal, setShowFinal] = useState(true);
+  // 6-DoF offset the user dials in to displace the source cloud relative to
+  // the target. KISS-Matcher's recovered transform doesn't depend on this
+  // — but visually, dragging the sliders shows that global registration
+  // doesn't need a good initial guess.
+  const [poseOffset, setPoseOffset] = useState<PoseOffset>(ZERO_POSE);
+  const [framingEpoch, setFramingEpoch] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -66,26 +77,73 @@ export default function KissMatcher() {
   const { cloud: tgtCloud, loading: tgtLoading, error: tgtError } =
     useCloudFromUrl(tgtUrl);
 
+  // Apply the user's offset to src for the "before alignment" view. The
+  // offset is ignored once the user clicks Apply T — KISS-Matcher's
+  // recovered transform takes over.
+  const offsetMatrix = useMemo(
+    () =>
+      buildTransform(
+        poseOffset.tx, poseOffset.ty, poseOffset.tz,
+        poseOffset.rxDeg, poseOffset.ryDeg, poseOffset.rzDeg,
+      ),
+    [poseOffset],
+  );
+
+  const offsetMatrixRowMajor = useMemo(
+    () => [
+      offsetMatrix[0], offsetMatrix[1], offsetMatrix[2],
+      offsetMatrix[4], offsetMatrix[5], offsetMatrix[6],
+      offsetMatrix[8], offsetMatrix[9], offsetMatrix[10],
+    ],
+    [offsetMatrix],
+  );
+  const offsetT = useMemo(
+    () => [offsetMatrix[3], offsetMatrix[7], offsetMatrix[11]],
+    [offsetMatrix],
+  );
+
+  const srcOffsetCloud = useMemo(() => {
+    if (srcCloud.count === 0) return emptyCloud();
+    return applyRigid(srcCloud.positions, offsetMatrixRowMajor, offsetT);
+  }, [srcCloud, offsetMatrixRowMajor, offsetT]);
+
   const srcAligned = useMemo(() => {
     if (!data || srcCloud.count === 0) return emptyCloud();
     return applyRigid(srcCloud.positions, data.estimatedRotation, data.estimatedTranslation);
   }, [data, srcCloud]);
 
-  const displayedSrc = aligned ? srcAligned : srcCloud;
+  const displayedSrc = aligned ? srcAligned : srcOffsetCloud;
 
   // Match-line buffers. Everything KISS-Matcher produced at this voxel_size
   // is rendered — no client-side throttling, since `voxel_size` (set in
   // tools/gen_kiss_matcher_data.py) already determines the correspondence
-  // count.
+  // count. src endpoints get the user offset applied so the lines stay
+  // attached to the displayed src cloud.
+  const transformSrcEndpoint = (m: { src: [number, number, number] }): [number, number, number] => {
+    const [x, y, z] = m.src;
+    const r = offsetMatrixRowMajor;
+    return [
+      r[0] * x + r[1] * y + r[2] * z + offsetT[0],
+      r[3] * x + r[4] * y + r[5] * z + offsetT[1],
+      r[6] * x + r[7] * y + r[8] * z + offsetT[2],
+    ];
+  };
+
   const initialLines = useMemo(() => {
     if (!data) return new Float32Array(0);
-    return packMatchSegments(data.matches, (m) => !m.isFinal, Number.POSITIVE_INFINITY);
-  }, [data]);
+    const remapped = data.matches
+      .filter((m) => !m.isFinal)
+      .map((m) => ({ ...m, src: transformSrcEndpoint(m) }));
+    return packMatchSegments(remapped, () => true, Number.POSITIVE_INFINITY);
+  }, [data, offsetMatrixRowMajor, offsetT]);
 
   const finalLines = useMemo(() => {
     if (!data) return new Float32Array(0);
-    return packMatchSegments(data.matches, (m) => m.isFinal, Number.POSITIVE_INFINITY);
-  }, [data]);
+    const remapped = data.matches
+      .filter((m) => m.isFinal)
+      .map((m) => ({ ...m, src: transformSrcEndpoint(m) }));
+    return packMatchSegments(remapped, () => true, Number.POSITIVE_INFINITY);
+  }, [data, offsetMatrixRowMajor, offsetT]);
 
   const lines = useMemo(() => {
     // Suppress lines after Apply T — they would no longer connect to the
@@ -149,7 +207,12 @@ export default function KissMatcher() {
             </div>
           </div>
           <div className="aspect-[4/3] md:aspect-[16/10] w-full">
-            <PointCloudViewer layers={layers} lines={lines} framingZoom={0.85} />
+            <PointCloudViewer
+              layers={layers}
+              lines={lines}
+              framingZoom={0.85}
+              framingKey={framingEpoch}
+            />
           </div>
           {(dataError || srcError || tgtError) && (
             <div className="border-t border-[var(--border)] bg-[color:rgba(248,113,113,0.06)] px-4 py-2 text-[12px] text-rose-300">
@@ -208,6 +271,23 @@ export default function KissMatcher() {
               <span className={aligned ? "opacity-40" : ""}>{t.kissMatcher.toggleFinal}</span>
             </label>
           </div>
+
+          <PoseOffsetControls
+            value={poseOffset}
+            scale={1}
+            onChange={(p) => {
+              setPoseOffset(p);
+              if (aligned) setAligned(false);
+            }}
+            onCommit={(p) => {
+              if (p === ZERO_POSE || (p.tx === 0 && p.ty === 0 && p.tz === 0 && p.rxDeg === 0 && p.ryDeg === 0 && p.rzDeg === 0)) {
+                // Reset went back to origin — refit camera so the cloud stays in view.
+                setFramingEpoch((e) => e + 1);
+              } else {
+                setFramingEpoch((e) => e + 1);
+              }
+            }}
+          />
 
           <CautionBox
             title={t.caution.title}
