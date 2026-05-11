@@ -53,7 +53,7 @@ PRESETS = [
         "label": "Velodyne HDL-64 (KITTI scan-to-scan)",
         "src": MATERIALS / "kiss_vel64_src.pcd",
         "tgt": MATERIALS / "kiss_vel64_tgt.pcd",
-        "voxel": 0.6,
+        "voxel": 0.3,
     },
     {
         "id": "kitti0007",

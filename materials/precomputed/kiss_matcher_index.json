@@ -7,8 +7,8 @@
       "stats": {
         "numSrcPoints": 25370,
         "numTgtPoints": 25049,
-        "numInitialMatches": 545,
-        "numFinalInliers": 114,
+        "numInitialMatches": 544,
+        "numFinalInliers": 115,
         "numRotationInliers": 59
       }
     },
@@ -19,9 +19,9 @@
       "stats": {
         "numSrcPoints": 122303,
         "numTgtPoints": 127032,
-        "numInitialMatches": 407,
-        "numFinalInliers": 34,
-        "numRotationInliers": 19
+        "numInitialMatches": 1353,
+        "numFinalInliers": 62,
+        "numRotationInliers": 32
       }
     },
     {
@@ -31,9 +31,9 @@
       "stats": {
         "numSrcPoints": 456163,
         "numTgtPoints": 103821,
-        "numInitialMatches": 4994,
+        "numInitialMatches": 4999,
         "numFinalInliers": 27,
-        "numRotationInliers": 18
+        "numRotationInliers": 15
       }
     },
     {
@@ -44,8 +44,8 @@
         "numSrcPoints": 212870,
         "numTgtPoints": 124759,
         "numInitialMatches": 5000,
-        "numFinalInliers": 132,
-        "numRotationInliers": 49
+        "numFinalInliers": 138,
+        "numRotationInliers": 48
       }
     }
   ]
