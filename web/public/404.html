@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>PCL Tutorial</title>
+    <script>
+      // GitHub Pages SPA redirect — captures the path the user came in on,
+      // encodes it into a query string, and bounces to the SPA root. The
+      // matching decoder in index.html restores the path via
+      // history.replaceState before React mounts, so the browser bar still
+      // shows the deep link the user typed.
+      //
+      // Based on https://github.com/rafgraph/spa-github-pages (MIT).
+      (function () {
+        var segments = 1; // /pcl_tutorial/ → drop the project prefix
+        var l = window.location;
+        l.replace(
+          l.protocol +
+            "//" +
+            l.hostname +
+            (l.port ? ":" + l.port : "") +
+            l.pathname.split("/").slice(0, 1 + segments).join("/") +
+            "/?p=/" +
+            l.pathname.split("/").slice(1 + segments).join("/").replace(/&/g, "~and~") +
+            (l.search ? "&q=" + l.search.slice(1).replace(/&/g, "~and~") : "") +
+            l.hash
+        );
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>

@@ -4,7 +4,41 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>📍</text></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>【Interactive】PCL Tutorial · Point Cloud Library · PCL 튜토리얼</title>
+    <script>
+      // Two SPA URL helpers that must run before React mounts:
+      //
+      // 1. Decode the path encoded by 404.html (GH Pages SPA redirect).
+      //    A deep link that hit 404 was bounced to /?p=/<path>&q=<query>;
+      //    restore the original URL so React Router sees the right path.
+      // 2. Migrate legacy `#/<slug>` hash routes to `/<slug>` so old
+      //    bookmarks keep working after the HashRouter → BrowserRouter
+      //    switch.
+      (function () {
+        var loc = window.location;
+        var q = loc.search;
+        if (q && q.indexOf("?p=/") === 0) {
+          var rest = q.slice(3).split("&");
+          var p = rest[0].replace(/~and~/g, "&");
+          var search = "";
+          for (var i = 1; i < rest.length; i++) {
+            if (rest[i].indexOf("q=") === 0) {
+              search = "?" + rest[i].slice(2).replace(/~and~/g, "&");
+              break;
+            }
+          }
+          window.history.replaceState(
+            null,
+            "",
+            loc.pathname.replace(/\/$/, "") + p + search + loc.hash
+          );
+        }
+        if (loc.hash && loc.hash.indexOf("#/") === 0) {
+          var newPath = loc.pathname.replace(/\/$/, "") + loc.hash.slice(1);
+          window.history.replaceState(null, "", newPath + loc.search);
+        }
+      })();
+    </script>
+    <title>【Interactive】 PCL Tutorial · Point Cloud Library · PCL 튜토리얼</title>
     <meta
       name="description"
       content="PCL Tutorial — an interactive Point Cloud Library tutorial covering voxel, passthrough, KdTree, normals, ICP, RANSAC and Euclidean clustering, all in your browser. Point Cloud Library(PCL) 인터랙티브 튜토리얼 — 브라우저에서 바로 실습할 수 있는 PCL 튜토리얼."
@@ -16,20 +50,25 @@
     <link rel="canonical" href="https://limhyungtae.github.io/pcl_tutorial/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="PCL Tutorial · PCL 튜토리얼" />
-    <meta property="og:title" content="【Interactive】PCL Tutorial · Point Cloud Library · PCL 튜토리얼" />
+    <meta property="og:title" content="【Interactive】 PCL Tutorial · Point Cloud Library · PCL 튜토리얼" />
     <meta
       property="og:description"
       content="PCL Tutorial — an interactive Point Cloud Library tutorial, all in your browser. PCL 튜토리얼 — 브라우저에서 바로 실습하는 Point Cloud Library 인터랙티브 튜토리얼."
     />
     <meta property="og:url" content="https://limhyungtae.github.io/pcl_tutorial/" />
+    <meta property="og:image" content="https://limhyungtae.github.io/pcl_tutorial/og-cover.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Interactive PCL Tutorial — Hands-on Point Cloud Library" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:locale:alternate" content="ko_KR" />
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="【Interactive】PCL Tutorial · Point Cloud Library · PCL 튜토리얼" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="【Interactive】 PCL Tutorial · Point Cloud Library · PCL 튜토리얼" />
     <meta
       name="twitter:description"
       content="PCL Tutorial — an interactive Point Cloud Library tutorial, all in your browser. PCL 튜토리얼 — 브라우저에서 바로 실습하는 Point Cloud Library 인터랙티브 튜토리얼."
     />
+    <meta name="twitter:image" content="https://limhyungtae.github.io/pcl_tutorial/og-cover.png" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -57,7 +96,22 @@
     />
   </head>
   <body class="bg-[var(--bg)] text-[var(--text)]">
-    <div id="root"></div>
+    <div id="root">
+      <noscript style="display:block; padding:24px; max-width:780px; margin:0 auto; color:#ecf1f9; font-family:sans-serif; line-height:1.6;">
+        <h1 style="margin:0 0 12px">PCL Tutorial · Point Cloud Library · PCL 튜토리얼</h1>
+        <p>
+          An interactive web tutorial for the Point Cloud Library — voxel grid,
+          PassThrough, KdTree, normal estimation, ICP, RANSAC plane segmentation,
+          Euclidean clustering, KISS-Matcher and GenZ-ICP, all in your browser.
+        </p>
+        <p lang="ko">
+          Point Cloud Library(PCL) 인터랙티브 튜토리얼입니다. 브라우저에서 바로
+          voxel, KdTree, normal estimation, ICP, RANSAC, Euclidean clustering,
+          KISS-Matcher, GenZ-ICP 등 핵심 알고리즘을 실습할 수 있습니다.
+        </p>
+        <p>This site needs JavaScript. Please enable it to load the demos.</p>
+      </noscript>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

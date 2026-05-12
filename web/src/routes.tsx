@@ -1,4 +1,4 @@
-import { createHashRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import AppLayout from "./layout/AppLayout";
 import Home from "./pages/Home";
 import Lec03Transformation from "./pages/Lec03Transformation";
@@ -16,12 +16,17 @@ import Extra04Travel from "./pages/Extra04Travel";
 import Extra05GenzIcp from "./pages/Extra05GenzIcp";
 import KissMatcher from "./pages/KissMatcher";
 
-// Hash routing keeps GH Pages happy: no 404 on deep-linked refresh.
+// Browser routing so each chapter has a real URL Google can index. Deep
+// links survive on GH Pages via two bits of glue:
+//   1. web/public/404.html — captures the path and re-enters the SPA.
+//   2. A post-build step writes <slug>/index.html stubs for every
+//      chapter, so common chapter URLs hit a real file (no 404 round-
+//      trip) and ship chapter-specific <title> / og:* meta.
 //
 // Slugs are the human-readable algorithm names (e.g. /voxelization). The
 // previous codename routes (/lec05, /extra01, ...) redirect to the new
 // names so any existing link or bookmark still lands on the right page.
-export const router = createHashRouter([
+export const router = createBrowserRouter([
   {
     path: "/",
     element: <AppLayout />,
@@ -62,4 +67,8 @@ export const router = createHashRouter([
       { path: "*", element: <Navigate to="/" replace /> },
     ],
   },
-]);
+], {
+  // Must match `base` in vite.config.ts so deep links resolve under
+  // /pcl_tutorial/ on GH Pages.
+  basename: "/pcl_tutorial",
+});

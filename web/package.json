@@ -8,6 +8,7 @@
     "prebuild": "node scripts/sync-data.mjs",
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "postbuild": "node scripts/postbuild-seo.mjs",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit"
   },
